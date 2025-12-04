@@ -1,51 +1,93 @@
 package dit.hua.gr.greenride.core.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.Instant;
 
 @Entity
 @Table(
         name = "person",
         uniqueConstraints = {
-                @UniqueConstraint(name="uk_person_email_address", columnNames = "email_address"),
-                @UniqueConstraint(name="uk_person_mobile_phone_number", columnNames = "mobile_phone_number")
+                @UniqueConstraint(name = "uk_person_user_id", columnNames = "user_id"),
+                @UniqueConstraint(name = "uk_person_email_address", columnNames = "email_address"),
+                @UniqueConstraint(name = "uk_person_mobile_phone_number", columnNames = "mobile_phone_number")
+        },
+        indexes = {
+                @Index(name = "idx_person_type", columnList = "person_type"),
+                @Index(name = "idx_person_last_name", columnList = "last_name")
         }
 )
-public class Person {
+public final class Person {
 
     @Id
-    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name="first_name", nullable=false, length=20)
+    // Public display id (e.g. GR-000123). Generated in the service layer.
+    @NotNull
+    @NotBlank
+    @Size(max = 20)
+    @Column(name = "user_id", nullable = false, length = 20)
+    private String userId;
+
+    @NotNull
+    @NotBlank
+    @Size(max = 20)
+    @Column(name = "first_name", nullable = false, length = 20)
     private String firstName;
 
-    @Column(name="last_name", nullable=false, length=20)
+    @NotNull
+    @NotBlank
+    @Size(max = 20)
+    @Column(name = "last_name", nullable = false, length = 20)
     private String lastName;
 
-    @Column(name="mobile_phone_number", nullable=false, length=18)
+    @NotNull
+    @NotBlank
+    @Size(max = 18)
+    @Column(name = "mobile_phone_number", nullable = false, length = 18)
     private String mobilePhoneNumber;
 
-    @Column(name="email_address", nullable=false, length=40)
+    @NotNull
+    @NotBlank
+    @Size(max = 40)
+    @Email
+    @Column(name = "email_address", nullable = false, length = 40)
     private String emailAddress;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name="person_type", nullable=false, length=20)
+    @Column(name = "person_type", nullable = false, length = 20)
     private PersonType personType;
 
-    @Column(name="hashed_password", nullable=false)
+    @NotNull
+    @NotBlank
+    @Size(max = 255)
+    @Column(name = "hashed_password", nullable = false, length = 255)
     private String hashedPassword;
 
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+
+    // Required by JPA
     protected Person() {
     }
 
-    public Person(Long id,
+    public Person(String userId,
                   String firstName,
                   String lastName,
                   String mobilePhoneNumber,
                   String emailAddress,
                   PersonType personType,
                   String hashedPassword) {
-        this.id = id;
+        this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.mobilePhoneNumber = mobilePhoneNumber;
@@ -54,27 +96,78 @@ public class Person {
         this.hashedPassword = hashedPassword;
     }
 
-    // Getters – Setters
+    // Getters (no public setter for id or createdAt)
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getUserId() {
+        return userId;
+    }
 
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-    public String getMobilePhoneNumber() { return mobilePhoneNumber; }
-    public void setMobilePhoneNumber(String mobilePhoneNumber) { this.mobilePhoneNumber = mobilePhoneNumber; }
+    public String getFirstName() {
+        return firstName;
+    }
 
-    public String getEmailAddress() { return emailAddress; }
-    public void setEmailAddress(String emailAddress) { this.emailAddress = emailAddress; }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-    public PersonType getPersonType() { return personType; }
-    public void setPersonType(PersonType personType) { this.personType = personType; }
+    public String getLastName() {
+        return lastName;
+    }
 
-    public String getHashedPassword() { return hashedPassword; }
-    public void setHashedPassword(String hashedPassword) { this.hashedPassword = hashedPassword; }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getMobilePhoneNumber() {
+        return mobilePhoneNumber;
+    }
+
+    public void setMobilePhoneNumber(String mobilePhoneNumber) {
+        this.mobilePhoneNumber = mobilePhoneNumber;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public PersonType getPersonType() {
+        return personType;
+    }
+
+    public void setPersonType(PersonType personType) {
+        this.personType = personType;
+    }
+
+    public String getHashedPassword() {
+        return hashedPassword;
+    }
+
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", userId='" + userId + '\'' +
+                ", personType=" + personType +
+                '}';
+    }
 }
-
