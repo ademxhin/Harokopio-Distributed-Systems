@@ -2,8 +2,12 @@ package dit.hua.gr.greenride.service.impl;
 
 import dit.hua.gr.greenride.core.model.Person;
 import dit.hua.gr.greenride.core.model.PersonType;
+import dit.hua.gr.greenride.core.port.PhoneNumberPort;
+import dit.hua.gr.greenride.core.port.SmsNotificationPort;
+import dit.hua.gr.greenride.core.port.impl.dto.PhoneNumberValidationResult;
 import dit.hua.gr.greenride.core.repository.PersonRepository;
 import dit.hua.gr.greenride.service.PersonService;
+import dit.hua.gr.greenride.service.mapper.PersonMapper;
 import dit.hua.gr.greenride.service.model.CreatePersonRequest;
 import dit.hua.gr.greenride.service.model.CreatePersonResult;
 import dit.hua.gr.greenride.service.model.PersonView;
@@ -18,9 +22,6 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * Default implementation of {@link PersonService} for the GreenRide application.
- */
 @Service
 public class PersonServiceImpl implements PersonService {
 
@@ -29,17 +30,29 @@ public class PersonServiceImpl implements PersonService {
     private final Validator validator;
     private final PasswordEncoder passwordEncoder;
     private final PersonRepository personRepository;
+    private final PersonMapper personMapper;
+    private final PhoneNumberPort phoneNumberPort;
+    private final SmsNotificationPort smsNotificationPort;
 
     public PersonServiceImpl(final Validator validator,
                              final PasswordEncoder passwordEncoder,
-                             final PersonRepository personRepository) {
+                             final PersonRepository personRepository,
+                             final PersonMapper personMapper,
+                             final PhoneNumberPort phoneNumberPort,
+                             final SmsNotificationPort smsNotificationPort) {
         if (validator == null) throw new NullPointerException("validator is null");
         if (passwordEncoder == null) throw new NullPointerException("passwordEncoder is null");
         if (personRepository == null) throw new NullPointerException("personRepository is null");
+        if (personMapper == null) throw new NullPointerException("personMapper is null");
+        if (phoneNumberPort == null) throw new NullPointerException("phoneNumberPort is null");
+        if (smsNotificationPort == null) throw new NullPointerException("smsNotificationPort is null");
 
         this.validator = validator;
         this.passwordEncoder = passwordEncoder;
         this.personRepository = personRepository;
+        this.personMapper = personMapper;
+        this.phoneNumberPort = phoneNumberPort;
+        this.smsNotificationPort = smsNotificationPort;
     }
 
     @Transactional
@@ -47,11 +60,9 @@ public class PersonServiceImpl implements PersonService {
     public CreatePersonResult createPerson(final CreatePersonRequest createPersonRequest, final boolean notify) {
         if (createPersonRequest == null) throw new NullPointerException("createPersonRequest is null");
 
-        // Validate CreatePersonRequest using Bean Validation
-        // --------------------------------------------------
+        // Validate CreatePersonRequest
         final Set<ConstraintViolation<CreatePersonRequest>> requestViolations =
                 this.validator.validate(createPersonRequest);
-
         if (!requestViolations.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             for (ConstraintViolation<CreatePersonRequest> violation : requestViolations) {
@@ -60,43 +71,39 @@ public class PersonServiceImpl implements PersonService {
                         .append(violation.getMessage())
                         .append("\n");
             }
-            // Για την ώρα πετάμε exception· μπορεί αργότερα να γίνει CreatePersonResult.fail(...)
-            throw new IllegalArgumentException("Invalid CreatePersonRequest:\n" + sb);
+            return CreatePersonResult.fail(sb.toString());
         }
 
-        // Unpack (we assume valid CreatePersonRequest instance)
-        // --------------------------------------------------
+        // Unpack & normalize
         final String firstName = createPersonRequest.firstName().strip();
         final String lastName = createPersonRequest.lastName().strip();
         final String emailAddress = createPersonRequest.emailAddress().strip();
-        final String rawMobilePhoneNumber = createPersonRequest.mobilePhoneNumber().strip();
+        String mobilePhoneNumber = createPersonRequest.mobilePhoneNumber().strip();
         final String rawPassword = createPersonRequest.rawPassword();
 
-        // Basic normalization
-        String mobilePhoneNumber = rawMobilePhoneNumber.replaceAll("\\s+", "");
+        // Advanced phone validation via PhoneNumberPort
+        PhoneNumberValidationResult phoneResult = this.phoneNumberPort.validate(mobilePhoneNumber);
+        if (!phoneResult.isValidMobile()) {
+            return CreatePersonResult.fail("Mobile Phone Number is not valid");
+        }
+        mobilePhoneNumber = phoneResult.e164();
 
         // Uniqueness checks
-        // --------------------------------------------------
         if (this.personRepository.existsByEmailAddress(emailAddress)) {
-            LOGGER.warn("Attempt to register with already used email address: {}", emailAddress);
-            throw new IllegalArgumentException("Email address already registered");
+            return CreatePersonResult.fail("Email Address already registered");
         }
 
         if (this.personRepository.existsByMobilePhoneNumber(mobilePhoneNumber)) {
-            LOGGER.warn("Attempt to register with already used mobile number: {}", mobilePhoneNumber);
-            throw new IllegalArgumentException("Mobile phone number already registered");
+            return CreatePersonResult.fail("Mobile Phone Number already registered");
         }
 
-        // Generate public display userId (e.g. GR-AB12CD34) and ensure uniqueness
-        // --------------------------------------------------
+        // Generate unique public userId
         final String userId = generateUniqueUserId();
 
         // Hash password
-        // --------------------------------------------------
         final String hashedPassword = this.passwordEncoder.encode(rawPassword);
 
-        // Instantiate Person (default type = USER)
-        // --------------------------------------------------
+        // Instantiate Person (default USER)
         Person person = new Person(
                 userId,
                 firstName,
@@ -107,48 +114,35 @@ public class PersonServiceImpl implements PersonService {
                 hashedPassword
         );
 
-        // Validate Person entity as well (domain-level validation)
-        // --------------------------------------------------
+        // Validate Person entity
         final Set<ConstraintViolation<Person>> personViolations = this.validator.validate(person);
         if (!personViolations.isEmpty()) {
-            // Programmer error: the mapping from request → entity is wrong.
             throw new RuntimeException("Invalid Person instance created from request");
         }
 
-        // Persist person (save/insert to database)
-        // --------------------------------------------------
+        // Persist
         person = this.personRepository.save(person);
 
-        // Optional notification hook
-        // --------------------------------------------------
+        // Notify via SMS if required
         if (notify) {
-            LOGGER.info("User {} ({}) registered successfully. Notification flag is true (no-op for now).",
-                    person.getEmailAddress(), person.getUserId());
-            // TODO: Implement notification logic (e.g. email or SMS) if required.
+            final String content = String.format(
+                    "You have successfully registered for the GreenRide application. " +
+                            "Use your email (%s) to log in.", emailAddress);
+            final boolean sent = this.smsNotificationPort.sendSms(mobilePhoneNumber, content);
+            if (!sent) {
+                LOGGER.warn("SMS send to {} failed!", mobilePhoneNumber);
+            }
         }
 
-        // Map Person to PersonView
-        // --------------------------------------------------
-        PersonView personView = new PersonView(
-                person.getId(),
-                person.getFirstName(),
-                person.getLastName(),
-                person.getMobilePhoneNumber(),
-                person.getEmailAddress(),
-                person.getPersonType()
-        );
+        // Map to PersonView
+        final PersonView personView = this.personMapper.convertPersonToPersonView(person);
 
         return CreatePersonResult.success(personView);
     }
 
-    /**
-     * Generates a unique public display user id (e.g. GR-AB12CD34).
-     * It checks the database to ensure uniqueness.
-     */
     private String generateUniqueUserId() {
         String candidate;
         do {
-            // Example format: GR-XXXXXXXX (8 hex chars)
             candidate = "GR-" + UUID.randomUUID()
                     .toString()
                     .replace("-", "")
