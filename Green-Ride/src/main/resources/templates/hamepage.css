@@ -1,0 +1,36 @@
+body {
+    color: white;
+    background-color: black;
+    background-image: url(https://media.istockphoto.com/id/1267223729/photo/car-driver-with-gps.jpg?s=612x612&w=0&k=20&c=0amWPdzQtmjxNy96A8I8V1xRtkrwaVFpjSmFitzibD4=);
+    background-repeat: no-repeat;
+    background-position-x: left;
+    background-position-y: top;
+}
+
+
+h1 {
+    color: white;
+    text-align: center;
+}
+
+
+#register {
+    background-color: white;
+    border-style: double;
+    border-radius: 10%;
+    border-width: 10px;
+    border-color: darkslateblue;
+    font-style: italic;
+    font-size: 18px;
+    font-weight: 300;
+    font-display: fallback;
+    text-decoration: double;
+}
+
+
+#register:hover {
+    background-color: blue;
+    border-radius: 7%;
+    border-color: black;
+    text-decoration: wavy;
+}
