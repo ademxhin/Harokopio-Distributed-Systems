@@ -1,23 +1,40 @@
 package dit.hua.gr.greenride.web.ui;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 
-final class AuthUtils {
+/**
+ * Authentication utilities for UI controllers.
+ */
+public final class AuthUtils {
 
     private AuthUtils() {
         throw new UnsupportedOperationException();
     }
 
-    public static boolean isAuthenticated(final Authentication authentication) {
-        if(authentication == null) return false;
-        if(authentication instanceof AnonymousAuthenticationToken) return false;
-        return authentication.isAuthenticated();
+    /**
+     * Checks whether the provided authentication
+     * represents an authenticated user.
+     *
+     * @param auth the Spring Security Authentication object
+     * @return true if the user is authenticated, false otherwise
+     */
+    public static boolean isAuthenticated(final Authentication auth) {
+        if (auth == null) return false;
+        if (auth instanceof AnonymousAuthenticationToken) return false;
+        return auth.isAuthenticated();
     }
 
-    public static boolean isAnonymous(final Authentication authentication) {
-        if(authentication == null) return true;
-        if(authentication instanceof AnonymousAuthenticationToken) return true;
-        return !authentication.isAuthenticated();
+    /**
+     * Checks whether the provided authentication
+     * represents an anonymous (non-authenticated) user.
+     *
+     * @param auth the Spring Security Authentication object
+     * @return true if the user is anonymous, false otherwise
+     */
+    public static boolean isAnonymous(final Authentication auth) {
+        if (auth == null) return true;
+        if (auth instanceof AnonymousAuthenticationToken) return true;
+        return !auth.isAuthenticated();
     }
 }

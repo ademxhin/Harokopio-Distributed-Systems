@@ -1,4 +1,6 @@
 package dit.hua.gr.greenride.core.port.impl.dto;
 
-public class SendSmsRequest {
-}
+/**
+ * SendSmsRequest DTO.
+ */
+public record SendSmsRequest(String e164, String content) {}

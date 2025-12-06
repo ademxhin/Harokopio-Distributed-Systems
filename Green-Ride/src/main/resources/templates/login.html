@@ -11,40 +11,41 @@
 <body>
 
 <header layout:fragment="header">
-    <h1>Office Hours <small>/ Login</small></h1>
+    <h1>GreenRide <small>/ Login</small></h1>
 </header>
 
 <section layout:fragment="main">
 
     <form th:action="@{/login}" method="post">
+        <input type="hidden"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}" />
 
-        <!-- MESSAGE -->
-        <div class="text-center mb-3" th:if="${message}">
-            <p class="text-primary" th:text="${message}"></p>
+        <div class="text-center mb-3" th:if="${param.error}">
+            <p class="text-danger m-0 p-0">Invalid credentials. Please try again.</p>
         </div>
 
-        <!-- ERROR MESSAGE -->
-        <div class="text-center mb-3" th:if="${error}">
-            <p class="text-danger" th:text="${error}"></p>
-        </div>
-
-        <!-- FORM CONTROLS -->
-        <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input name="username" type="text" class="form-control" required autofocus>
+        <div class="text-center mb-3" th:if="${param.logout}">
+            <p class="text-success m-0 p-0">You have been logged out successfully.</p>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input name="password" type="password" class="form-control" required>
+            <label class="form-label" for="username">Email Address</label>
+            <input id="username" type="text" name="username" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="password">Password</label>
+            <input id="password" type="password" name="password" class="form-control" required />
         </div>
 
         <div class="mb-4">
-            <button type="submit" class="btn btn-primary">Log in</button>
+            <button type="submit" class="btn btn-primary">Login</button>
         </div>
 
-        <p><a th:href="@{/register}">Don't have an account? Register</a></p>
-
+        <p class="m-0 p-0">
+            <a th:href="@{/register}">Don't have an account? Register</a>
+        </p>
     </form>
 
 </section>
