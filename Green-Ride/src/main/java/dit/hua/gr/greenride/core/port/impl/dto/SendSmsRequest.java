@@ -1,0 +1,4 @@
+package dit.hua.gr.greenride.core.port.impl.dto;
+
+public class SendSmsRequest {
+}

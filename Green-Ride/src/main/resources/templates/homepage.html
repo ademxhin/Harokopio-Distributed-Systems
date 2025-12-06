@@ -1,16 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html
+        xmlns:th="https://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{base}">
+
 <head>
-    <link rel="stylesheet" href="homepage.css">
-    <title>Home Page</title>
+    <title>Home</title>
 </head>
+
 <body>
-<h1>Welcome to our home page of our website</h1>
-<h4>Here we offer the facilities of transportation to our campus and the city by car. You have the option to book a seat of your
-    liking, cancel your ride, search multiple routes to arrive to your destination faster and we even offer the ability to view
-    your history of your previous bookings. We also provide you with a system that allow you to evaluate your experience and give
-    us a very helping feedback in order to improve. Get ready to start your journey along side us and create a new account.
-    <button id="register"><b>Create new account</b></button>
-</h4>
+
+<header layout:fragment="header">
+    <h1>🌐 Office Hours</h1>
+    <h3>The Smart Way to Connect Students and Faculty</h3>
+</header>
+
+<section layout:fragment="main">
+
+    <div class="mb-4">
+        <img src="https://www.tourismheritage.hua.gr/wp-content/uploads/2017/07/university-harokopio-test-01-min.jpg" style="width: 100%" />
+    </div>
+
+    <div>
+        <p>The Office Hours web application modernizes academic communication at Harokopio University. Students can easily submit questions or academic requests, track their progress, and receive real-time notifications — all from one intuitive interface. Faculty members get a streamlined dashboard to manage, process, and complete incoming requests efficiently.</p>
+        <p>With secure authentication, automated reminders, and seamless integration with university services, Office Hours brings clarity, speed, and transparency to everyday academic interactions. A better, faster, smarter way to stay connected.</p>
+    </div>
+
+    <div class="text-center mt-4">
+        <p><a th:href="@{/login}">Log in</a></p>
+        <p><a th:href="@{/register}">Register</a></p>
+    </div>
+
+</section>
+
 </body>
 </html>
