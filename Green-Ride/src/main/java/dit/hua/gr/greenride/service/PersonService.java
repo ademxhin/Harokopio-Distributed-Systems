@@ -13,4 +13,7 @@ public interface PersonService {
      * @return result containing status and created person view
      */
     CreatePersonResult createPerson(CreatePersonRequest request, boolean notify);
+    default CreatePersonResult createPerson(final CreatePersonRequest createPersonRequest) {
+        return this.createPerson(createPersonRequest, true);
+    }
 }
