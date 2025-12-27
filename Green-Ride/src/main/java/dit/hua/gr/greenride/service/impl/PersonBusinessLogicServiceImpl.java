@@ -6,7 +6,7 @@ import dit.hua.gr.greenride.core.port.PhoneNumberPort;
 import dit.hua.gr.greenride.core.port.SmsNotificationPort;
 import dit.hua.gr.greenride.core.port.impl.dto.PhoneNumberValidationResult;
 import dit.hua.gr.greenride.core.repository.PersonRepository;
-import dit.hua.gr.greenride.service.PersonService;
+import dit.hua.gr.greenride.service.PersonBusinessLogicService;
 import dit.hua.gr.greenride.service.mapper.PersonMapper;
 import dit.hua.gr.greenride.service.model.CreatePersonRequest;
 import dit.hua.gr.greenride.service.model.CreatePersonResult;
@@ -23,9 +23,9 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
-public class PersonServiceImpl implements PersonService {
+public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PersonServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonBusinessLogicServiceImpl.class);
 
     private final Validator validator;
     private final PasswordEncoder passwordEncoder;
@@ -34,12 +34,12 @@ public class PersonServiceImpl implements PersonService {
     private final PhoneNumberPort phoneNumberPort;
     private final SmsNotificationPort smsNotificationPort;
 
-    public PersonServiceImpl(final Validator validator,
-                             final PasswordEncoder passwordEncoder,
-                             final PersonRepository personRepository,
-                             final PersonMapper personMapper,
-                             final PhoneNumberPort phoneNumberPort,
-                             final SmsNotificationPort smsNotificationPort) {
+    public PersonBusinessLogicServiceImpl(final Validator validator,
+                                          final PasswordEncoder passwordEncoder,
+                                          final PersonRepository personRepository,
+                                          final PersonMapper personMapper,
+                                          final PhoneNumberPort phoneNumberPort,
+                                          final SmsNotificationPort smsNotificationPort) {
         if (validator == null) throw new NullPointerException("validator is null");
         if (passwordEncoder == null) throw new NullPointerException("passwordEncoder is null");
         if (personRepository == null) throw new NullPointerException("personRepository is null");

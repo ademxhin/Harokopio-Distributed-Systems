@@ -1,7 +1,7 @@
 package dit.hua.gr.greenride.web.ui;
 
 import dit.hua.gr.greenride.core.model.PersonType;
-import dit.hua.gr.greenride.service.PersonService;
+import dit.hua.gr.greenride.service.PersonBusinessLogicService;
 import dit.hua.gr.greenride.service.model.CreatePersonRequest;
 import dit.hua.gr.greenride.service.model.CreatePersonResult;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class RegistrationController {
 
-    private final PersonService personService;
+    private final PersonBusinessLogicService personBusinessLogicService;
 
-    public RegistrationController(final PersonService personService) {
-        if (personService == null) throw new NullPointerException();
-        this.personService = personService;
+    public RegistrationController(final PersonBusinessLogicService personBusinessLogicService) {
+        if (personBusinessLogicService == null) throw new NullPointerException();
+        this.personBusinessLogicService = personBusinessLogicService;
     }
 
     @GetMapping("/register")
@@ -47,7 +47,7 @@ public class RegistrationController {
             return "redirect:/profile"; // already logged in.
         }
         // TODO Form validation + UI errors.
-        final CreatePersonResult createPersonResult = this.personService.createPerson(createPersonRequest);
+        final CreatePersonResult createPersonResult = this.personBusinessLogicService.createPerson(createPersonRequest);
         if (createPersonResult.created()) {
             return "redirect:/login"; // registration successful - redirect to login form (not yet ready)
         }
