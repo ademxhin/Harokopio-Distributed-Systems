@@ -1,7 +1,6 @@
 package dit.hua.gr.greenride.core.security;
 
 import dit.hua.gr.greenride.core.model.PersonType;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,25 +8,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
-
-@SuppressWarnings("RedundantMethodOverride")
 public final class ApplicationUserDetails implements UserDetails {
 
-    private long personId;
-    private  String emailAddress;
-    private  String passwordHash;
-    private  PersonType type;
+    private final long personId;
+    private final String emailAddress;
+    private final String passwordHash;
+    private final PersonType type;
 
     public ApplicationUserDetails(final long personId,
                                   final String emailAddress,
                                   final String passwordHash,
                                   final PersonType type) {
-        if (personId <= 0) throw new IllegalArgumentException();
-        if (emailAddress == null) throw new NullPointerException();
-        if (emailAddress.isBlank()) throw new IllegalArgumentException();
-        if (passwordHash == null) throw new NullPointerException();
-        if (passwordHash.isBlank()) throw new IllegalArgumentException();
-        if (type == null) throw new NullPointerException();
+
+        if (personId <= 0) throw new IllegalArgumentException("Invalid personId");
+        if (emailAddress == null || emailAddress.isBlank()) throw new IllegalArgumentException("Invalid email");
+        if (passwordHash == null || passwordHash.isBlank()) throw new IllegalArgumentException("Invalid password");
+        if (type == null) throw new NullPointerException("PersonType is null");
 
         this.personId = personId;
         this.emailAddress = emailAddress;
@@ -35,7 +31,9 @@ public final class ApplicationUserDetails implements UserDetails {
         this.type = type;
     }
 
+    // FIXED: Proper constructor delegation
     public ApplicationUserDetails(Long id, String emailAddress, String hashedPassword, PersonType personType) {
+        this(id.longValue(), emailAddress, hashedPassword, personType);
     }
 
     public long personId() {
@@ -48,10 +46,10 @@ public final class ApplicationUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        final String role;
-        if (this.type == PersonType.USER) role = "ROLE_USER";
-        else if (this.type == PersonType.ADMIN) role = "ROLE_ADMIN";
-        else throw new RuntimeException("Invalid type: " + this.type);
+        String role = switch (this.type) {
+            case USER -> "ROLE_USER";
+            case ADMIN -> "ROLE_ADMIN";
+        };
         return Collections.singletonList(new SimpleGrantedAuthority(role));
     }
 
@@ -65,23 +63,8 @@ public final class ApplicationUserDetails implements UserDetails {
         return this.emailAddress;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    @Override public boolean isAccountNonExpired() { return true; }
+    @Override public boolean isAccountNonLocked() { return true; }
+    @Override public boolean isCredentialsNonExpired() { return true; }
+    @Override public boolean isEnabled() { return true; }
 }

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PersonMapper {
 
-    public PersonView toPersonView(Person person){
-        if(person == null)
+    public PersonView convertPersonToPersonView(Person person) {
+        if (person == null)
             return null;
 
         return new PersonView(

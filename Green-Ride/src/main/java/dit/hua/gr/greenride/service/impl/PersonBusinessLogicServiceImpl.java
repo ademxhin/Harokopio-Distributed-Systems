@@ -40,12 +40,6 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
                                           final PersonMapper personMapper,
                                           final PhoneNumberPort phoneNumberPort,
                                           final SmsNotificationPort smsNotificationPort) {
-        if (validator == null) throw new NullPointerException("validator is null");
-        if (passwordEncoder == null) throw new NullPointerException("passwordEncoder is null");
-        if (personRepository == null) throw new NullPointerException("personRepository is null");
-        if (personMapper == null) throw new NullPointerException("personMapper is null");
-        if (phoneNumberPort == null) throw new NullPointerException("phoneNumberPort is null");
-        if (smsNotificationPort == null) throw new NullPointerException("smsNotificationPort is null");
 
         this.validator = validator;
         this.passwordEncoder = passwordEncoder;
@@ -80,6 +74,10 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
         final String emailAddress = createPersonRequest.emailAddress().strip();
         String mobilePhoneNumber = createPersonRequest.mobilePhoneNumber().strip();
         final String rawPassword = createPersonRequest.rawPassword();
+
+        if (rawPassword == null || rawPassword.isBlank()) {
+            return CreatePersonResult.fail("Password cannot be empty");
+        }
 
         // Advanced phone validation via PhoneNumberPort
         PhoneNumberValidationResult phoneResult = this.phoneNumberPort.validate(mobilePhoneNumber);
