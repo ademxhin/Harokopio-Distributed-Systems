@@ -3,7 +3,7 @@ package dit.hua.gr.greenride.service;
 import dit.hua.gr.greenride.service.model.CreatePersonRequest;
 import dit.hua.gr.greenride.service.model.CreatePersonResult;
 
-public interface PersonService {
+public interface PersonBusinessLogicService {
 
     /**
      * Creates a new Person based on the given request.
@@ -13,4 +13,7 @@ public interface PersonService {
      * @return result containing status and created person view
      */
     CreatePersonResult createPerson(CreatePersonRequest request, boolean notify);
+    default CreatePersonResult createPerson(final CreatePersonRequest createPersonRequest) {
+        return this.createPerson(createPersonRequest, true);
+    }
 }

@@ -4,9 +4,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-/**
- * Request DTO used when registering a new user (person).
- */
 public record CreatePersonRequest(
 
         @NotBlank
@@ -22,12 +19,11 @@ public record CreatePersonRequest(
         String mobilePhoneNumber,
 
         @NotBlank
-        @Size(max = 40)
         @Email
+        @Size(max = 40)
         String emailAddress,
 
         @NotBlank
-        @Size(min = 8, max = 100)
+        @Size(min = 6, max = 50)
         String rawPassword
-) {
-}
+) {}

@@ -1,11 +1,10 @@
 package dit.hua.gr.greenride.web.ui;
 
-import dit.hua.gr.greenride.service.PersonService;
+import dit.hua.gr.greenride.core.model.PersonType;
+import dit.hua.gr.greenride.service.PersonBusinessLogicService;
 import dit.hua.gr.greenride.service.model.CreatePersonRequest;
 import dit.hua.gr.greenride.service.model.CreatePersonResult;
-
-import jakarta.validation.Valid;
-import org.springframework.security.core.Authentication;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,17 +12,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-/**
- * UI controller for managing user registration in GreenRide.
- */
 @Controller
 public class RegistrationController {
 
-    private final PersonService personService;
+    private final PersonBusinessLogicService personBusinessLogicService;
 
-    public RegistrationController(final PersonService personService) {
-        if (personService == null) throw new NullPointerException("personService is null");
-        this.personService = personService;
+    public RegistrationController(final PersonBusinessLogicService personBusinessLogicService) {
+        if (personBusinessLogicService == null) throw new NullPointerException();
+        this.personBusinessLogicService = personBusinessLogicService;
     }
 
     @GetMapping("/register")
@@ -31,49 +27,32 @@ public class RegistrationController {
             final Authentication authentication,
             final Model model
     ) {
-        // If user is already authenticated, redirect to profile page.
         if (AuthUtils.isAuthenticated(authentication)) {
             return "redirect:/profile";
         }
-
         // Initial data for the form.
-        final CreatePersonRequest createPersonRequest =
-                new CreatePersonRequest("", "", "", "", "");
+        final CreatePersonRequest createPersonRequest = new CreatePersonRequest(PersonType.USER, "", "", "", "", "", "");
         model.addAttribute("createPersonRequest", createPersonRequest);
-
         return "register";
     }
 
     @PostMapping("/register")
     public String handleFormSubmission(
             final Authentication authentication,
-            @Valid @ModelAttribute("createPersonRequest") final CreatePersonRequest createPersonRequest,
-            final BindingResult bindingResult, // IMPORTANT: must come immediately after @Valid
+            @ModelAttribute("createPersonRequest") final CreatePersonRequest createPersonRequest,
+            final BindingResult bindingResult,
             final Model model
     ) {
-        // If user is already authenticated, redirect to profile page.
         if (AuthUtils.isAuthenticated(authentication)) {
-            return "redirect:/profile";
+            return "redirect:/profile"; // already logged in.
         }
-
-        // If form validation failed, return to registration form.
-        if (bindingResult.hasErrors()) {
-            return "register";
-        }
-
-        // Call the service to create a new Person (with SMS notification enabled).
-        final CreatePersonResult createPersonResult =
-                this.personService.createPerson(createPersonRequest, true);
-
-        // If registration succeeded, redirect to login page.
+        // TODO Form validation + UI errors.
+        final CreatePersonResult createPersonResult = this.personBusinessLogicService.createPerson(createPersonRequest);
         if (createPersonResult.created()) {
-            return "redirect:/login";
+            return "redirect:/login"; // registration successful - redirect to login form (not yet ready)
         }
-
-        // Registration failed: show error message and keep the submitted data.
-        model.addAttribute("createPersonRequest", createPersonRequest);
-        model.addAttribute("errorMessage", createPersonResult.reason());
-
+        model.addAttribute("createPersonRequest", createPersonRequest); // Pass the same form data.
+        model.addAttribute("errorMessage", createPersonResult.reason()); // Show an error message!
         return "register";
     }
 }
