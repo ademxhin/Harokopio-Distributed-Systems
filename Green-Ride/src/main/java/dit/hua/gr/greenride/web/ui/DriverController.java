@@ -4,10 +4,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class AdminController {
+public class DriverController {
 
-    @GetMapping("/admin")
-    public String adminHome() {
-        return "admin"; // templates/admin.html
+    @GetMapping("/driver")
+    public String driverPage() {
+        return "driver";
     }
 }

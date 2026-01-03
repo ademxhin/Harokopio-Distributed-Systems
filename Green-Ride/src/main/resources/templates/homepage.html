@@ -6,65 +6,270 @@
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{base}">
 
-<!-- ✅ This fragment is what base.html will pick up inside <head> -->
 <th:block layout:fragment="head">
     <title>GreenRide | Homepage</title>
+
+    <!-- ✅ Global theme (buttons etc) -->
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+
+    <!-- Page css -->
     <link rel="stylesheet" th:href="@{/css/homepage.css}">
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 </th:block>
 
-<!-- ✅ Main fragment -->
+
 <main layout:fragment="main" class="gr-page">
     <section class="gr-hero">
         <div class="container">
             <div class="gr-hero-grid">
 
-                <!-- LEFT: Uber-like panel -->
+                <!-- LEFT PANEL -->
                 <div class="gr-panel">
                     <h1 class="gr-title">Go anywhere with GreenRide</h1>
                     <p class="gr-subtitle">
                         A distributed system demo for connecting users and drivers with a simple workflow.
                     </p>
 
-                    <!-- Role tabs -->
-                    <div class="gr-tabs" role="tablist" aria-label="Role selection">
-                        <a class="gr-tab gr-tab-active" th:href="@{/driver}">Driver</a>
-                        <a class="gr-tab" th:href="@{/user}">User</a>
+                    <!-- WEATHER CARD -->
+                    <div class="gr-weather-card"
+                         th:if="${weather != null}"
+                         th:classappend="${
+                            #strings.containsIgnoreCase(weather.condition, 'rain') ? ' gr-weather-rain' :
+                            (#strings.containsIgnoreCase(weather.condition, 'storm') ? ' gr-weather-storm' :
+                            (#strings.containsIgnoreCase(weather.condition, 'snow') ? ' gr-weather-snow' :
+                            (#strings.containsIgnoreCase(weather.condition, 'cloud') ? ' gr-weather-cloudy' :
+                            ' gr-weather-clear')))
+                         }">
+
+                        <div class="gr-weather-top">
+                            <div class="gr-weather-leftcol">
+                                <div class="gr-weather-location" th:text="${weatherLocation}">Athens</div>
+                                <div class="gr-weather-condition" th:text="${weather.condition}">Partly Cloudy</div>
+                            </div>
+
+                            <div class="gr-weather-icon"
+                                 th:text="${
+                                    #strings.containsIgnoreCase(weather.condition, 'rain') ? '🌧️' :
+                                    (#strings.containsIgnoreCase(weather.condition, 'storm') ? '⛈️' :
+                                    (#strings.containsIgnoreCase(weather.condition, 'snow') ? '🌨️' :
+                                    (#strings.containsIgnoreCase(weather.condition, 'cloud') ? '⛅' :
+                                    '☀️')))
+                                 }">⛅</div>
+                        </div>
+
+                        <div class="gr-weather-temp-big"
+                             th:text="${#numbers.formatDecimal(weather.temperatureCelsius, 1, 1)} + '°C'">15.6°C</div>
                     </div>
 
-                    <!-- Action box -->
+                    <div class="gr-weather-card gr-weather-error" th:if="${weather == null}">
+                        <div class="gr-weather-top">
+                            <div class="gr-weather-leftcol">
+                                <div class="gr-weather-location" th:text="${weatherLocation}">Athens</div>
+                                <div class="gr-weather-condition" th:text="${weatherError}">Weather service unavailable</div>
+                            </div>
+                            <div class="gr-weather-icon">⚠️</div>
+                        </div>
+                        <div class="gr-weather-temp-big">—</div>
+                    </div>
+
+                    <!-- MAIN BOX -->
                     <div class="gr-box">
-                        <div class="gr-field">
-                            <span class="gr-field-label">Mode</span>
-                            <span class="gr-field-value">Select role from above</span>
-                        </div>
-                        <div class="gr-field">
-                            <span class="gr-field-label">Access</span>
-                            <span class="gr-field-value">Login or create account</span>
+
+                        <!-- BOX 1: Search -->
+                        <div class="gr-subbox">
+                            <div class="gr-search-head">
+                                <div class="gr-search-title">Where do you wanna go?</div>
+                                <div class="gr-search-sub">
+                                    Enter pickup, destination, date and time to see available rides.
+                                </div>
+                            </div>
+
+                            <form class="gr-search-form" th:action="@{/driver}" method="get">
+
+                                <div class="gr-search-grid">
+                                    <!-- FROM -->
+                                    <div class="gr-input">
+                                        <label class="gr-label" for="from">From</label>
+                                        <input class="gr-control"
+                                               id="from"
+                                               name="from"
+                                               type="text"
+                                               placeholder="e.g. Kallithea"
+                                               required>
+                                    </div>
+
+                                    <!-- TO -->
+                                    <div class="gr-input">
+                                        <label class="gr-label" for="to">To</label>
+                                        <input class="gr-control"
+                                               id="to"
+                                               name="to"
+                                               type="text"
+                                               placeholder="e.g. Syntagma"
+                                               required>
+                                    </div>
+
+                                    <!-- DATE -->
+                                    <div class="gr-input">
+                                        <label class="gr-label" for="date">Date</label>
+                                        <input class="gr-control"
+                                               id="date"
+                                               name="date"
+                                               type="date"
+                                               required>
+                                    </div>
+
+                                    <!-- TIME (single dropdown with AM/PM) -->
+                                    <div class="gr-input">
+                                        <label class="gr-label" for="time">Time</label>
+                                        <select class="gr-control"
+                                                id="time"
+                                                name="time"
+                                                required>
+                                            <!-- Filled by JS: 12:00 AM → 11:55 PM -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- PRIMARY ACTION -->
+                                <button type="submit" class="gr-btn gr-btn-primary">
+                                    Search rides
+                                </button>
+
+                            </form>
                         </div>
 
-                        <div class="gr-actions">
-                            <a class="gr-btn gr-btn-solid gr-btn-wide" th:href="@{/login}">See options</a>
-                            <a class="gr-btn gr-btn-ghost gr-btn-wide" th:href="@{/register}">Create account</a>
+                        <!-- ✅ Default date = today | Default time = now + 30 minutes -->
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const dateEl = document.getElementById("date");
+                                const timeEl = document.getElementById("time");
+
+                                if (!dateEl || !timeEl) return;
+
+                                function pad2(n){ return String(n).padStart(2, "0"); }
+
+                                // ---------- Build time dropdown (12h with AM/PM) ----------
+                                // Change stepMinutes to 1 if you want every minute
+                                const stepMinutes = 15;
+
+                                timeEl.innerHTML = "";
+                                for (let h = 0; h < 24; h++) {
+                                    for (let m = 0; m < 60; m += stepMinutes) {
+                                        const isPM = h >= 12;
+                                        let h12 = h % 12;
+                                        if (h12 === 0) h12 = 12;
+
+                                        const label = `${pad2(h12)}:${pad2(m)} ${isPM ? "PM" : "AM"}`;
+                                        const value = `${pad2(h12)}:${pad2(m)} ${isPM ? "PM" : "AM"}`;
+
+                                        const opt = document.createElement("option");
+                                        opt.value = value;
+                                        opt.textContent = label;
+                                        timeEl.appendChild(opt);
+                                    }
+                                }
+
+                                // ---------- Default date = today ----------
+                                const now = new Date();
+                                const yyyy = now.getFullYear();
+                                const mm = pad2(now.getMonth() + 1);
+                                const dd = pad2(now.getDate());
+                                const today = `${yyyy}-${mm}-${dd}`;
+
+                                if (!dateEl.value) dateEl.value = today;
+                                dateEl.min = today; // prevent past dates (optional)
+
+                                // ---------- Default time = now + 30 minutes ----------
+                                const plus30 = new Date(now.getTime() + 30 * 60 * 1000);
+
+                                let H24 = plus30.getHours();
+                                let M = plus30.getMinutes();
+
+                                // round minutes up to stepMinutes
+                                const rounded = Math.ceil(M / stepMinutes) * stepMinutes;
+                                if (rounded === 60) {
+                                    H24 = (H24 + 1) % 24;
+                                    M = 0;
+                                } else {
+                                    M = rounded;
+                                }
+
+                                const isPM = H24 >= 12;
+                                let H12 = H24 % 12;
+                                if (H12 === 0) H12 = 12;
+
+                                const defaultValue = `${pad2(H12)}:${pad2(M)} ${isPM ? "PM" : "AM"}`;
+                                timeEl.value = defaultValue;
+                            });
+                        </script>
+
+                        <!-- BOX 2: Roles + buttons -->
+                        <div class="gr-subbox">
+                            <div class="gr-choose-title">Choose how you want to use GreenRide</div>
+                            <div class="gr-choose-sub">Select a role to continue.</div>
+
+                            <div class="gr-role-grid">
+                                <a class="gr-role-card" th:href="@{/driver}">
+                                    <div class="gr-role-top">
+                                        <span class="gr-role-icon">🚗</span>
+                                        <span class="gr-role-name">Driver</span>
+                                    </div>
+                                    <div class="gr-role-desc">
+                                        Create rides, manage seats and share your route.
+                                    </div>
+                                    <div class="gr-role-cta">Continue →</div>
+                                </a>
+
+                                <a class="gr-role-card" th:href="@{/user}">
+                                    <div class="gr-role-top">
+                                        <span class="gr-role-icon">🧍</span>
+                                        <span class="gr-role-name">User</span>
+                                    </div>
+                                    <div class="gr-role-desc">
+                                        Find rides, request a seat and track your trip.
+                                    </div>
+                                    <div class="gr-role-cta">Continue →</div>
+                                </a>
+                            </div>
+
+                            <div class="gr-divider"></div>
+
+                            <div class="gr-home-actions">
+                                <!-- ✅ Secondary -->
+                                <a class="gr-btn gr-btn-secondary" th:href="@{/login}">
+                                    Login
+                                </a>
+                                <!-- ✅ Primary -->
+                                <a class="gr-btn gr-btn-primary" th:href="@{/register}">
+                                    Create account
+                                </a>
+                            </div>
                         </div>
 
-                        <p class="gr-note">
-                            *Landing UI mock (no external map integrations).
-                        </p>
                     </div>
                 </div>
 
-                <!-- RIGHT: big map placeholder -->
+                <!-- RIGHT MAP PANEL -->
                 <div class="gr-map">
-                    <div class="gr-map-toolbar">
-                        <span class="gr-pill">Bootstrap 5</span>
-                        <span class="gr-pill">Thymeleaf</span>
-                        <span class="gr-pill">Ports & Adapters</span>
-                    </div>
+                    <div class="gr-mini-map-wrap">
+                        <div class="gr-mini-map-header">
+                            <div class="gr-mini-map-title">Route estimate</div>
 
-                    <div class="gr-map-canvas" aria-hidden="true">
-                        <div class="gr-pin gr-pin-1"></div>
-                        <div class="gr-pin gr-pin-2"></div>
-                        <div class="gr-route"></div>
+                            <div class="gr-mini-map-meta" th:if="${route != null}">
+                                <span th:text="${#numbers.formatDecimal(route.distanceMeters/1000.0,1,1)} + ' km'">4.4 km</span>
+                                <span class="gr-mini-map-dot">•</span>
+                                <span th:text="${T(java.lang.Math).round(route.durationSeconds/60.0)} + ' min'">11 min</span>
+                            </div>
+
+                            <div class="gr-mini-map-meta gr-mini-map-meta-error" th:if="${route == null}">
+                                <span th:text="${routeError != null ? routeError : 'Route unavailable'}">Route unavailable</span>
+                            </div>
+                        </div>
+
+                        <div id="gr-mini-map" class="gr-mini-map gr-mini-map-fill" aria-label="Mini map"></div>
                     </div>
                 </div>
 
@@ -72,30 +277,63 @@
         </div>
     </section>
 
-    <!-- Features -->
-    <section class="gr-features">
-        <div class="container">
-            <div class="gr-features-grid">
-                <div class="gr-card">
-                    <div class="gr-card-icon">⚡</div>
-                    <h3>Fast workflow</h3>
-                    <p>Minimal steps for driver/user access and future extension with more use cases.</p>
-                </div>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-                <div class="gr-card">
-                    <div class="gr-card-icon">🧩</div>
-                    <h3>Clean architecture</h3>
-                    <p>Layered structure with ports & adapters so the core remains independent.</p>
-                </div>
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
 
-                <div class="gr-card">
-                    <div class="gr-card-icon">🔒</div>
-                    <h3>Secure access</h3>
-                    <p>Login & registration ready to integrate validations and authorization rules.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+            const routeCoords = /*[[${route != null ? route.polyline : null}]]*/ null;
+            const fallbackCenter = [37.9838, 23.7275];
+
+            const map = L.map('gr-mini-map', {
+                zoomControl: false,
+                attributionControl: false
+            });
+
+            // ✅ Slightly more colorful than "light_all" but still clean
+            L.tileLayer(
+                'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                { maxZoom: 19 }
+            ).addTo(map);
+
+            const routeStyle = {
+                className: 'gr-route-line',
+                weight: 6,
+                opacity: 0.95,
+                lineCap: 'round',
+                lineJoin: 'round'
+            };
+
+            const startPointStyle = {
+                className: 'gr-route-point gr-route-point-start',
+                radius: 7,
+                opacity: 1,
+                fillOpacity: 1
+            };
+
+            const endPointStyle = {
+                className: 'gr-route-point gr-route-point-end',
+                radius: 7,
+                opacity: 1,
+                fillOpacity: 1
+            };
+
+            if (routeCoords && Array.isArray(routeCoords) && routeCoords.length > 1) {
+                const latLngs = routeCoords.map(p => [p[1], p[0]]);
+
+                const polyline = L.polyline(latLngs, routeStyle).addTo(map);
+                L.circleMarker(latLngs[0], startPointStyle).addTo(map);
+                L.circleMarker(latLngs[latLngs.length - 1], endPointStyle).addTo(map);
+
+                map.fitBounds(polyline.getBounds(), { padding: [16, 16] });
+            } else {
+                map.setView(fallbackCenter, 12);
+            }
+
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+        });
+    </script>
 </main>
 
 </html>

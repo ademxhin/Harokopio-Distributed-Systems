@@ -1,27 +1,22 @@
 /* src/main/resources/static/css/homepage.css */
 
-/* override any base background */
-.gr-page {
-    background: #ffffff;
-}
+.gr-page { background: #f6f7f9; }
 
 /* HERO layout */
 .gr-hero {
     padding: 46px 0 32px 0;
-    background: #ffffff;
+    background: transparent;
 }
 
 .gr-hero-grid {
     display: grid;
     grid-template-columns: 420px 1fr;
     gap: 26px;
-    align-items: start;
+    align-items: stretch;
 }
 
 /* left panel */
-.gr-panel {
-    padding: 8px 0;
-}
+.gr-panel { padding: 8px 0; }
 
 .gr-title {
     font-size: 2.35rem;
@@ -37,135 +32,334 @@
     font-size: 1.02rem;
 }
 
-/* tabs */
-.gr-tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 14px;
-}
-
-.gr-tab {
-    flex: 1;
-    text-align: center;
-    padding: 10px 12px;
-    border-radius: 14px;
-    text-decoration: none;
-    font-weight: 700;
-    color: rgba(11,11,12,0.70);
-    border: 1px solid rgba(11,11,12,0.10);
-    background: #ffffff;
-}
-
-.gr-tab-active {
-    color: #0b0b0c;
-    border-color: rgba(11,11,12,0.16);
-    box-shadow: 0 8px 24px rgba(11,11,12,0.10);
-}
-
-/* action box */
-.gr-box {
-    padding: 14px;
+/* Weather card */
+.gr-weather-card{
     border-radius: 18px;
-    border: 1px solid rgba(11,11,12,0.10);
-    box-shadow: 0 10px 30px rgba(11,11,12,0.06);
-    background: #ffffff;
+    padding: 14px 14px;
+    border: 1px solid rgba(11,11,12,0.08);
+    box-shadow: 0 10px 26px rgba(11,11,12,0.06);
+    margin-bottom: 14px;
+    color: #0b0b0c;
+    background: linear-gradient(135deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01));
 }
 
-.gr-field {
+.gr-weather-top{
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    gap: 14px;
-    padding: 12px 12px;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.gr-weather-leftcol{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.gr-weather-location{
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: rgba(11,11,12,0.88);
+}
+
+.gr-weather-condition{
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: rgba(11,11,12,0.62);
+}
+
+.gr-weather-icon{
+    width: 44px;
+    height: 44px;
     border-radius: 14px;
-    background: rgba(11,11,12,0.04);
-    border: 1px solid rgba(11,11,12,0.06);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.35);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+    background: rgba(255,255,255,0.35);
+    font-size: 22px;
+}
+
+.gr-weather-temp-big{
+    font-weight: 900;
+    font-size: 1.9rem;
+    letter-spacing: -0.02em;
+    color: rgba(11,11,12,0.92);
+}
+
+/* Weather variants */
+.gr-weather-clear{
+    background: linear-gradient(135deg, rgba(255,205,86,0.55), rgba(255,255,255,0.25));
+    border-color: rgba(255,205,86,0.45);
+}
+.gr-weather-cloudy{
+    background: linear-gradient(135deg, rgba(180,190,205,0.55), rgba(255,255,255,0.25));
+    border-color: rgba(180,190,205,0.50);
+}
+.gr-weather-rain{
+    background: linear-gradient(135deg, rgba(102,178,255,0.55), rgba(255,255,255,0.22));
+    border-color: rgba(102,178,255,0.50);
+}
+.gr-weather-storm{
+    background: linear-gradient(135deg, rgba(160,120,255,0.55), rgba(255,255,255,0.18));
+    border-color: rgba(160,120,255,0.50);
+}
+.gr-weather-snow{
+    background: linear-gradient(135deg, rgba(210,235,255,0.70), rgba(255,255,255,0.35));
+    border-color: rgba(210,235,255,0.70);
+}
+.gr-weather-error{
+    background: linear-gradient(135deg, rgba(255,210,210,0.60), rgba(255,255,255,0.30));
+    border-color: rgba(255,210,210,0.70);
+}
+
+/* ✅ NEW: Search section */
+.gr-search-head{
     margin-bottom: 10px;
 }
 
-.gr-field-label {
-    font-weight: 800;
-    color: rgba(11,11,12,0.80);
+.gr-search-title{
+    font-weight: 900;
+    color: rgba(11,11,12,0.92);
+    font-size: 1.05rem;
+    margin-bottom: 4px;
 }
 
-.gr-field-value {
+.gr-search-sub{
+    font-size: 0.88rem;
     color: rgba(11,11,12,0.60);
 }
 
-.gr-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
+.gr-search-form {
     margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
+.gr-search-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.gr-input{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.gr-input:nth-child(3){
+    grid-column: 1 / -1; /* time field full width */
+}
+
+.gr-label{
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: rgba(11,11,12,0.75);
+}
+
+.gr-control{
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(11,11,12,0.14);
+    background: rgba(11,11,12,0.02);
+    outline: none;
+    font-weight: 600;
+}
+
+.gr-control:focus{
+    border-color: rgba(11,11,12,0.28);
+    box-shadow: 0 0 0 4px rgba(11,11,12,0.06);
+    background: #ffffff;
+}
+
+/* Divider */
+.gr-divider{
+    height: 1px;
+    background: rgba(11,11,12,0.10);
+    margin: 14px 0;
+}
+
+/* Role selection */
+.gr-choose-title{
+    font-weight: 800;
+    color: rgba(11,11,12,0.90);
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+.gr-choose-sub{
+    font-size: 0.88rem;
+    color: rgba(11,11,12,0.60);
+    margin-bottom: 12px;
+}
+
+.gr-role-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.gr-role-card{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid rgba(11,11,12,0.10);
+    border-radius: 16px;
+    padding: 12px 12px;
+    color: #0b0b0c;
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+}
+
+.gr-role-card:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 12px 30px rgba(11,11,12,0.10);
+    border-color: rgba(11,11,12,0.16);
+    background: rgba(11,11,12,0.01);
+}
+
+.gr-role-top{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.gr-role-icon{
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(11,11,12,0.04);
+    border: 1px solid rgba(11,11,12,0.06);
+    font-size: 16px;
+}
+
+.gr-role-name{
+    font-weight: 800;
+    color: rgba(11,11,12,0.88);
+}
+
+.gr-role-desc{
+    font-size: 0.88rem;
+    color: rgba(11,11,12,0.62);
+    line-height: 1.35;
+    margin-bottom: 10px;
+}
+
+.gr-role-cta{
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: rgba(11,11,12,0.78);
+    margin-top: auto;
+}
+
+/* Homepage actions layout (buttons styling comes from theme.css: .gr-btn, .gr-btn-primary, .gr-btn-secondary) */
+.gr-home-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 0;
+}
+
+/* Optional: normalize <button class="gr-btn ..."> rendering across browsers */
+button.gr-btn{
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* Note text */
 .gr-note {
     margin: 12px 2px 0 2px;
     color: rgba(11,11,12,0.55);
     font-size: 0.9rem;
 }
 
-/* right map */
+/* Right map card */
 .gr-map {
     border-radius: 18px;
     overflow: hidden;
     border: 1px solid rgba(11,11,12,0.10);
     box-shadow: 0 18px 50px rgba(11,11,12,0.10);
     background: #ffffff;
-    min-height: 420px;
-}
-
-.gr-map-toolbar {
     display: flex;
-    gap: 8px;
-    padding: 12px 12px;
-    border-bottom: 1px solid rgba(11,11,12,0.08);
+    flex-direction: column;
+}
+
+.gr-mini-map-wrap {
+    padding: 12px;
     background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
 }
 
-.gr-pill {
-    padding: 8px 10px;
-    border-radius: 999px;
-    font-size: 0.85rem;
+.gr-mini-map-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.gr-mini-map-title {
+    font-weight: 800;
+    color: rgba(11,11,12,0.85);
+}
+
+.gr-mini-map-meta {
     font-weight: 700;
-    background: rgba(11,11,12,0.04);
-    border: 1px solid rgba(11,11,12,0.08);
-    color: rgba(11,11,12,0.70);
+    font-size: 0.9rem;
+    color: rgba(11,11,12,0.65);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.gr-map-canvas {
-    position: relative;
-    height: 100%;
-    min-height: 360px;
-    background:
-            linear-gradient(90deg, rgba(11,11,12,0.06) 1px, transparent 1px),
-            linear-gradient(180deg, rgba(11,11,12,0.06) 1px, transparent 1px);
-    background-size: 42px 42px;
+.gr-mini-map-dot { opacity: 0.45; }
+.gr-mini-map-meta-error { color: rgba(11,11,12,0.55); }
+
+.gr-mini-map {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(11,11,12,0.10);
+    box-shadow: 0 10px 24px rgba(11,11,12,0.08);
 }
 
-.gr-route {
-    position: absolute;
-    left: 18%;
-    top: 32%;
-    width: 62%;
-    height: 6px;
-    border-radius: 999px;
-    background: rgba(11,11,12,0.18);
-    transform: rotate(8deg);
+.gr-mini-map-fill {
+    flex: 1;
+    min-height: 260px;
 }
 
-.gr-pin {
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    border-radius: 999px;
-    background: #0b0b0c;
-    box-shadow: 0 10px 20px rgba(11,11,12,0.20);
+/* Route line + points */
+.gr-route-line {
+    stroke: #1f6feb;
+    stroke-width: 6;
+    stroke-opacity: 0.95;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.18));
 }
 
-.gr-pin-1 { left: 22%; top: 38%; }
-.gr-pin-2 { left: 72%; top: 48%; }
+.gr-route-point {
+    stroke: #ffffff;
+    stroke-width: 3;
+    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.22));
+}
 
-/* features */
+.gr-route-point-start { fill: #22c55e; }
+.gr-route-point-end { fill: #ef4444; }
+
+/* Features */
 .gr-features {
     padding: 28px 0 64px 0;
     background: #ffffff;
@@ -191,21 +385,39 @@
     color: #0b0b0c;
 }
 
-.gr-card p {
-    margin: 0;
-    color: rgba(11,11,12,0.70);
-}
-
-.gr-card-icon {
-    font-size: 1.6rem;
-}
+.gr-card p { margin: 0; color: rgba(11,11,12,0.70); }
+.gr-card-icon { font-size: 1.6rem; }
 
 /* responsive */
 @media (max-width: 992px) {
-    .gr-hero-grid {
-        grid-template-columns: 1fr;
-    }
-    .gr-features-grid {
-        grid-template-columns: 1fr;
-    }
+    .gr-hero-grid { grid-template-columns: 1fr; }
+    .gr-features-grid { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 520px){
+    .gr-role-grid{ grid-template-columns: 1fr; }
+    .gr-search-grid{ grid-template-columns: 1fr; }
+    .gr-input:nth-child(3){ grid-column: auto; }
+}
+
+/* Boxes */
+.gr-subbox{
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(11,11,12,0.10);
+    box-shadow: 0 10px 30px rgba(11,11,12,0.06);
+    background: #ffffff;
+}
+
+/* Container that holds the sub-boxes (Search/Choose/etc) */
+.gr-box {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+

@@ -10,10 +10,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop   # dev only
+      ddl-auto: create-drop
     open-in-view: false
     properties:
-      hibernate.format_sql: true
+      hibernate:
+        format_sql: true
 
 server:
   error:
@@ -23,18 +24,22 @@ server:
     include-binding-errors: always
     include-exception: true
 
-# App configuration
 app:
-  # JWT (για να μην σκάει το JwtService αν το έχεις ενεργό)
   jwt:
     secret: "CHANGE_ME_CHANGE_ME_CHANGE_ME_CHANGE_ME_32CHARS_MINIMUM"
     issuer: "greenride"
     audience: "greenride-web"
     ttl-minutes: 60
 
-  # External integrations
   noc:
     base-url: "http://localhost:8081"
 
   sms:
     base-url: "http://localhost:8081"
+
+  weather:
+    base-url: "https://api.open-meteo.com"
+
+  maps:
+    base-url: "https://api.openrouteservice.org"
+    api-key: ${ORS_API_KEY:eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjVhMTg3NzdjNzA0MjQwZWJhYzYxNDUzYTMyNTNhMWM3IiwiaCI6Im11cm11cjY0In0=}

@@ -1,91 +1,37 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
-<head>
-    <title>User Profile</title>
-    <link rel="stylesheet" th:href="@{/css/profile.css}">
-</head>
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{base}">
 
-<body>
+<!-- Fragment που μπαίνει στο <head> του base.html -->
+<th:block layout:fragment="head">
+    <title>GreenRide | Profile</title>
+    <!-- (προαιρετικό) -->
+    <!-- <link rel="stylesheet" th:href="@{/css/profile.css}"> -->
+</th:block>
 
+<!-- Fragment που μπαίνει στο “main” του base.html -->
 <main layout:fragment="main" class="container py-4">
 
-    <!-- PERSONAL INFO -->
-    <section class="gr-box mb-4">
-        <h2 class="mb-3">Προσωπικές Πληροφορίες</h2>
+    <div class="mb-3">
+        <h1 class="mb-1">Profile</h1>
+        <p class="text-muted mb-0" th:if="${me != null}">
+            <span th:text="${me.emailAddress()}">email@example.com</span>
+            <span> • </span>
+            <span th:text="${me.type()}">USER</span>
+        </p>
+    </div>
 
-        <p><strong>Όνομα:</strong> <span th:text="${user.fullName}">User Name</span></p>
-        <p><strong>Email:</strong> <span th:text="${user.email}">user@uni.gr</span></p>
-        <p><strong>Ρόλος:</strong> <span th:text="${user.role}">Driver & Passenger</span></p>
-    </section>
+    <hr class="my-4"/>
 
-    <!-- USER ACTIONS -->
-    <section class="gr-box mb-4">
-        <h2 class="mb-3">Ενέργειες Χρήστη</h2>
-
-        <div class="gr-actions">
-            <a class="gr-btn gr-btn-solid" th:href="@{/new_ride}">
-                Δημιουργία Διαδρομής (Οδηγός)
-            </a>
-
-            <a class="gr-btn gr-btn-ghost" th:href="@{/search_rides}">
-                Αναζήτηση Διαδρομών (Επιβάτης)
-            </a>
-
-            <a class="gr-btn gr-btn-ghost" th:href="@{/my_bookings}">
-                Οι Κρατήσεις Μου
-            </a>
-        </div>
-    </section>
-
-    <!-- STATISTICS -->
-    <section class="gr-box mb-4">
-        <h2 class="mb-3">Στατιστικά</h2>
-        <ul>
-            <li>Διαδρομές που προσφέρθηκαν: <span th:text="${user.totalRidesOffered}">0</span></li>
-            <li>Διαδρομές που πραγματοποιήθηκαν: <span th:text="${user.totalRidesTaken}">0</span></li>
-            <li>Μέση αξιολόγηση: <span th:text="${user.averageRating}">★★★★☆</span></li>
-        </ul>
-    </section>
-
-    <!-- RIDE HISTORY -->
-    <section class="gr-box mb-4">
-        <h2 class="mb-3">Ιστορικό Διαδρομών</h2>
-
-        <div th:if="${#lists.isEmpty(user.rideHistory)}">
-            <p>Δεν υπάρχουν διαδρομές στο ιστορικό.</p>
-        </div>
-
-        <div th:each="ride : ${user.rideHistory}" class="card p-3 mb-2">
-            <p>
-                <strong th:text="${ride.origin}">Origin</strong> →
-                <strong th:text="${ride.destination}">Destination</strong>
-                | <span th:text="${ride.time}">HH:MM</span>
-            </p>
-
-            <!-- Rating -->
-            <div>
-                <label>Αξιολόγηση:</label>
-                <span th:text="${ride.rating}">★★★★★</span>
-            </div>
-
-            <!-- Cancel or Rate -->
-            <div class="mt-2">
-                <a th:href="@{'/ride/' + ${ride.id} + '/rate'}" class="gr-btn gr-btn-ghost">
-                    Αξιολόγηση
-                </a>
-
-                <a th:if="${ride.canCancel}"
-                   th:href="@{'/ride/' + ${ride.id} + '/cancel'}"
-                   class="gr-btn gr-btn-ghost">
-                    Ακύρωση
-                </a>
-            </div>
-        </div>
-    </section>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-primary" th:href="@{/profile}">Profile</a>
+        <a class="btn btn-outline-primary" th:href="@{/tickets}">Tickets</a>
+        <a class="btn btn-outline-danger" th:href="@{/logout}">Logout</a>
+    </div>
 
 </main>
 
-</body>
 </html>
