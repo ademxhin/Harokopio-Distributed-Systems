@@ -1,188 +1,38 @@
-body {
-    background-color: grey;
-    background-image: url(https://cdn.prod.website-files.com/6179a66d5f9cc70024c61878/665668e3883d43cd52b61816_Slidebean-Pitch-Deck-Template-Uber.webp);
-    color: white;
-
+.register-page {
+    padding: 48px 0;
 }
 
-
-p:hover {
-    font-style: italic;
-    font-weight: 500;
-    font-size: large;
-    margin-top: -20px;
+.register-card {
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid rgba(11,11,12,0.10);
+    box-shadow: 0 18px 50px rgba(11,11,12,0.10);
+    padding: 22px;
 }
 
+.register-card-header {
+    margin-bottom: 14px;
+}
 
-.p1 {
-    font-style: italic;
-    margin-bottom: 10px;
-    margin-top: 20px;
+.register-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0;
+    color: #0b0b0c;
+}
+
+.register-subtitle {
+    margin: 6px 0 0 0;
+    color: rgba(11,11,12,0.65);
+}
+
+.register-footer {
     text-align: center;
-    border-style: solid;
-    border-top: 20px;
-    border-bottom: 20px;
-    background-color: rgba(0, 0, 255, 0.493);
+    font-size: 0.95rem;
 }
 
-
-.form-container {
-    display: grid;
-    place-items: center;
-    margin-top: 10px;
-    padding: 20px;
-    padding-right: 30px;
-    padding-left: 30px;
-    margin-left: 700px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-style: double;
-    border-color: grey;
-    background-color: rgba(0, 0, 0, 0.651);
-    width: 100%;
-    max-width: 400px;
-}
-
-
-label {
-    display: block;
-}
-
-
-input {
-    width: 85%;
-    border: 1px solid #dddddde7;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-
-#select {
-    background-color: grey;
+.register-note {
     text-align: center;
-    font-size: medium;
-    font-weight: 200;
-    font-style: italic;
-    margin-left: 5px;
-    margin-top: 10px;
-    margin-bottom: 40px;
-}
-
-
-#fname {
-    font-size: large;
-    font-weight: 150;
-    background-color: lightblue;
-    margin-left: 8px;
-    margin-top: 10px;
-    margin-bottom: 40px;
-    border-style: solid;
-    border-width: 3px;
-}
-
-
-#lname {
-    font-size: large;
-    font-weight: 130;
-    background-color: lightskyblue;
-    margin-left: 9px;
-    margin-bottom: 40px;
-    border-style: double;
-    border-color: darkblue;
-    border-width: 2px;
-    margin-top: 10px;
-}
-
-
-#location {
-    font-size: medium;
-    font-weight: 60;
-    background-color: darkolivegreen;
-    margin-left: 5px;
-    margin-top: 10px;
-    margin-bottom: 40px;
-    border-style: dotted;
-    border-color: black;
-}
-
-
-#destination {
-    font-size: medium;
-    font-weight: 60;
-    background-color: darkslateblue;
-    margin-left: 8px;
-    margin-bottom: 40px;
-    margin-top: 10px;
-    border-style: hidden;
-}
-
-
-#arrivalTime {
-    font-size: small;
-    font-weight: 50;
-    background-color: lightseagreen;
-    margin-bottom: 40px;
-    margin-left: 7px;
-    margin-top: 10px;
-    border-color: grey;
-    border-style: dashed;
-}
-
-
-#password {
-    font-size: small;
-    color: white;
-    background-color: rgba(0, 0, 0, 0.664);
-    margin-bottom: 40px;
-    margin-left: 8px;
-    margin-top: 10px;
-}
-
-
-#email {
-    font-size: medium;
-    background-color: azure;
-    font-style: italic;
-    margin-bottom: 40px;
-    margin-left: 8px;
-    margin-top: 10px;
-}
-
-
-#prefferedSeat {
-    font-size: smaller;
-    font-weight: 40;
-    background-color: darkslategrey;
-    margin-left: 8px;
-    border-color: black;
-    border-style: ridge;
-    margin-bottom: 5px;
-    margin-top: 10px;
-}
-
-
-#submit {
-    text-align: center;
-    background-color: rgba(0, 0, 255, 0.616);
-    color: white;
-    cursor: pointer;
-    width: 100%;
-    opacity: 0.6;
-    margin-top: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-
-#submit:hover {
-    background-color: rgba(0, 0, 0, 0.205);
-    font-style: oblique;
-    font-size: large;
-}
-
-
-#submit:enabled {
-    opacity: 1;
-    pointer-events: none;
+    color: rgba(11,11,12,0.55);
+    font-size: 0.9rem;
 }

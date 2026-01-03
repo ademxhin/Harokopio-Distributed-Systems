@@ -1,7 +1,6 @@
-# application.yml (or application-dev.yml if you use profiles)
 spring:
   application:
-    name: Office Hours
+    name: Green Ride
 
   datasource:
     url: jdbc:h2:file:./LOCAL_DATA/h2/app;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
@@ -14,7 +13,6 @@ spring:
       ddl-auto: create-drop   # dev only
     open-in-view: false
     properties:
-      hibernate.dialect: org.hibernate.dialect.H2Dialect
       hibernate.format_sql: true
 
 server:
@@ -24,3 +22,19 @@ server:
     include-message: always
     include-binding-errors: always
     include-exception: true
+
+# App configuration
+app:
+  # JWT (για να μην σκάει το JwtService αν το έχεις ενεργό)
+  jwt:
+    secret: "CHANGE_ME_CHANGE_ME_CHANGE_ME_CHANGE_ME_32CHARS_MINIMUM"
+    issuer: "greenride"
+    audience: "greenride-web"
+    ttl-minutes: 60
+
+  # External integrations
+  noc:
+    base-url: "http://localhost:8081"
+
+  sms:
+    base-url: "http://localhost:8081"

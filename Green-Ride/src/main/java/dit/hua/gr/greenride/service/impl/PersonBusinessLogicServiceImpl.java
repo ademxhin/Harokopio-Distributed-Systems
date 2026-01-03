@@ -11,6 +11,7 @@ import dit.hua.gr.greenride.service.mapper.PersonMapper;
 import dit.hua.gr.greenride.service.model.CreatePersonRequest;
 import dit.hua.gr.greenride.service.model.CreatePersonResult;
 import dit.hua.gr.greenride.service.model.PersonView;
+import dit.hua.gr.greenride.web.ui.exceptions.ExternalServiceUnavailableException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
 import java.util.Set;
 import java.util.UUID;
@@ -57,6 +59,7 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
         // Validate CreatePersonRequest
         final Set<ConstraintViolation<CreatePersonRequest>> requestViolations =
                 this.validator.validate(createPersonRequest);
+
         if (!requestViolations.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             for (ConstraintViolation<CreatePersonRequest> violation : requestViolations) {
@@ -74,13 +77,26 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
         final String emailAddress = createPersonRequest.emailAddress().strip();
         String mobilePhoneNumber = createPersonRequest.mobilePhoneNumber().strip();
         final String rawPassword = createPersonRequest.rawPassword();
+        final String confirmRawPassword = createPersonRequest.confirmRawPassword();
 
-        if (rawPassword == null || rawPassword.isBlank()) {
-            return CreatePersonResult.fail("Password cannot be empty");
+        // Confirm password check (business rule)
+        if (!rawPassword.equals(confirmRawPassword)) {
+            return CreatePersonResult.fail("Password and Confirm Password do not match");
         }
 
         // Advanced phone validation via PhoneNumberPort
-        PhoneNumberValidationResult phoneResult = this.phoneNumberPort.validate(mobilePhoneNumber);
+        final PhoneNumberValidationResult phoneResult;
+        try {
+            phoneResult = this.phoneNumberPort.validate(mobilePhoneNumber);
+        } catch (RestClientException ex) {
+            // If your port starts throwing RestClientException (or your custom exception),
+            // convert to a clean "external service unavailable"
+            throw new ExternalServiceUnavailableException("NOC phone validation service is unavailable", ex);
+        } catch (RuntimeException ex) {
+            // If you decide to throw custom exceptions from the port
+            throw ex;
+        }
+
         if (!phoneResult.isValidMobile()) {
             return CreatePersonResult.fail("Mobile Phone Number is not valid");
         }

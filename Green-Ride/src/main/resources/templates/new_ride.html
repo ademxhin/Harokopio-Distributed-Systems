@@ -1,10 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Offer Ride</title>
+    <link rel="stylesheet" href="newride.css">
 </head>
 <body>
+
+<header>
+    <h1>Offer a New Ride</h1>
+</header>
+
+<nav>
+    <a th:href="@{/home}">Home</a>
+    <a th:href="@{/profile}">Profile</a>
+</nav>
+
+<main class="container">
+    <form th:action="@{/new_ride}" th:object="${rideForm}" method="post">
+        <fieldset>
+            <legend>Route Details</legend>
+
+            <label>Starting Point</label>
+            <input type="text" th:field="*{origin}" placeholder="City Center" required>
+
+            <label>Destination</label>
+            <input type="text" th:field="*{destination}" placeholder="University" required>
+        </fieldset>
+
+        <fieldset>
+            <legend>Schedule</legend>
+
+            <label>Date</label>
+            <input type="date" th:field="*{date}" required>
+
+            <label>Time</label>
+            <input type="time" th:field="*{time}" required>
+        </fieldset>
+
+        <fieldset>
+            <legend>Vehicle Capacity</legend>
+
+            <label>Available Seats</label>
+            <input type="number" th:field="*{seatsAvailable}" min="1" max="4" required>
+        </fieldset>
+
+        <button type="submit">Publish Ride</button>
+    </form>
+</main>
+
+<footer class="text-center">
+    <small>Cancellation allowed up to 10 minutes before departure</small>
+</footer>
 
 </body>
 </html>

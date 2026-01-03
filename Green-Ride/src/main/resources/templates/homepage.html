@@ -1,53 +1,101 @@
+<!-- src/main/resources/templates/homepage.html -->
 <!DOCTYPE html>
 <html
-        xmlns:th="https://www.thymeleaf.org"
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{base}">
 
-<head>
-    <title>GreenRide – Home</title>
-</head>
+<!-- ✅ This fragment is what base.html will pick up inside <head> -->
+<th:block layout:fragment="head">
+    <title>GreenRide | Homepage</title>
+    <link rel="stylesheet" th:href="@{/css/homepage.css}">
+</th:block>
 
-<body>
+<!-- ✅ Main fragment -->
+<main layout:fragment="main" class="gr-page">
+    <section class="gr-hero">
+        <div class="container">
+            <div class="gr-hero-grid">
 
-<header layout:fragment="header">
-    <h1>🚗 GreenRide</h1>
-    <h3>Carpooling between City and University</h3>
-</header>
+                <!-- LEFT: Uber-like panel -->
+                <div class="gr-panel">
+                    <h1 class="gr-title">Go anywhere with GreenRide</h1>
+                    <p class="gr-subtitle">
+                        A distributed system demo for connecting users and drivers with a simple workflow.
+                    </p>
 
-<section layout:fragment="main">
+                    <!-- Role tabs -->
+                    <div class="gr-tabs" role="tablist" aria-label="Role selection">
+                        <a class="gr-tab gr-tab-active" th:href="@{/driver}">Driver</a>
+                        <a class="gr-tab" th:href="@{/user}">User</a>
+                    </div>
 
-    <div class="mb-4">
-        <img src="https://images.pexels.com/photos/1383829/pexels-photo-1383829.jpeg"
-             alt="Carpooling to university"
-             style="width: 100%; border-radius: 6px;" />
-    </div>
+                    <!-- Action box -->
+                    <div class="gr-box">
+                        <div class="gr-field">
+                            <span class="gr-field-label">Mode</span>
+                            <span class="gr-field-value">Select role from above</span>
+                        </div>
+                        <div class="gr-field">
+                            <span class="gr-field-label">Access</span>
+                            <span class="gr-field-value">Login or create account</span>
+                        </div>
 
-    <div>
-        <p>
-            GreenRide is a carpooling web application that helps students and employees
-            share rides to and from the university or the city center. Each user can act
-            as a driver or as a passenger, using a single account.
-        </p>
-        <p>
-            As a driver, you can create rides by setting departure point, destination,
-            time and available seats. As a passenger, you can search for available rides,
-            book a seat and cancel your booking when needed. The system keeps a basic
-            history of past rides and allows simple ratings between drivers and passengers.
-        </p>
-        <p>
-            An administrator can monitor the platform, handle malicious accounts and
-            view simple statistics such as number of rides and average occupancy. The goal
-            is to make everyday commuting more efficient, cheaper and more eco-friendly.
-        </p>
-    </div>
+                        <div class="gr-actions">
+                            <a class="gr-btn gr-btn-solid gr-btn-wide" th:href="@{/login}">See options</a>
+                            <a class="gr-btn gr-btn-ghost gr-btn-wide" th:href="@{/register}">Create account</a>
+                        </div>
 
-    <div class="text-center mt-4">
-        <p><a th:href="@{/login}">Log in</a></p>
-        <p><a th:href="@{/register}">Register</a></p>
-    </div>
+                        <p class="gr-note">
+                            *Landing UI mock (no external map integrations).
+                        </p>
+                    </div>
+                </div>
 
-</section>
+                <!-- RIGHT: big map placeholder -->
+                <div class="gr-map">
+                    <div class="gr-map-toolbar">
+                        <span class="gr-pill">Bootstrap 5</span>
+                        <span class="gr-pill">Thymeleaf</span>
+                        <span class="gr-pill">Ports & Adapters</span>
+                    </div>
 
-</body>
+                    <div class="gr-map-canvas" aria-hidden="true">
+                        <div class="gr-pin gr-pin-1"></div>
+                        <div class="gr-pin gr-pin-2"></div>
+                        <div class="gr-route"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="gr-features">
+        <div class="container">
+            <div class="gr-features-grid">
+                <div class="gr-card">
+                    <div class="gr-card-icon">⚡</div>
+                    <h3>Fast workflow</h3>
+                    <p>Minimal steps for driver/user access and future extension with more use cases.</p>
+                </div>
+
+                <div class="gr-card">
+                    <div class="gr-card-icon">🧩</div>
+                    <h3>Clean architecture</h3>
+                    <p>Layered structure with ports & adapters so the core remains independent.</p>
+                </div>
+
+                <div class="gr-card">
+                    <div class="gr-card-icon">🔒</div>
+                    <h3>Secure access</h3>
+                    <p>Login & registration ready to integrate validations and authorization rules.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
 </html>

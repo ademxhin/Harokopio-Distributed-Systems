@@ -1,23 +1,19 @@
 package dit.hua.gr.greenride.core.port.impl;
 
-import dit.hua.gr.greenride.config.RestApiClientConfig;
 import dit.hua.gr.greenride.core.port.SmsNotificationPort;
 import dit.hua.gr.greenride.core.port.impl.dto.SendSmsRequest;
 import dit.hua.gr.greenride.core.port.impl.dto.SendSmsResult;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-/**
- * Default implementation of {@link SmsNotificationPort}.
- * It uses an external SMS service (simulated for now).
- */
 @Service
 public class SmsNotificationPortImpl implements SmsNotificationPort {
 
@@ -25,75 +21,60 @@ public class SmsNotificationPortImpl implements SmsNotificationPort {
 
     /**
      * Flag indicating whether the external SMS service is active or not.
-     * Currently set to false so that no real HTTP call is performed.
      */
-    private static final boolean ACTIVE = false; // @future Get from application properties.
+    private static final boolean ACTIVE = false; // later → from properties
 
     private final RestTemplate restTemplate;
+    private final String baseUrl;
 
-    public SmsNotificationPortImpl(final RestTemplate restTemplate) {
-        if (restTemplate == null) {
-            throw new NullPointerException();
-        }
+    public SmsNotificationPortImpl(
+            final RestTemplate restTemplate,
+            @Value("${app.sms.base-url}") final String baseUrl
+    ) {
+        if (restTemplate == null) throw new NullPointerException();
+        if (baseUrl == null || baseUrl.isBlank()) throw new IllegalArgumentException();
+
         this.restTemplate = restTemplate;
+        this.baseUrl = baseUrl;
     }
 
     @Override
     public boolean sendSms(final String e164, final String content) {
-        if (e164 == null) {
-            throw new NullPointerException();
-        }
-        if (e164.isBlank()) {
-            throw new IllegalArgumentException();
-        }
-        if (content == null) {
-            throw new NullPointerException();
-        }
-        if (content.isBlank()) {
-            throw new IllegalArgumentException();
-        }
-
-        // --------------------------------------------------
+        if (e164 == null) throw new NullPointerException();
+        if (e164.isBlank()) throw new IllegalArgumentException();
+        if (content == null) throw new NullPointerException();
+        if (content.isBlank()) throw new IllegalArgumentException();
 
         if (!ACTIVE) {
             LOGGER.warn("SMS Notification is not active");
-            // For now, we consider this as a "successful" operation.
             return true;
         }
 
-        // Optional: ignore test or not allocated numbers (example logic)
+        // Optional ignore logic
         if (e164.startsWith("+30692") || e164.startsWith("+30690000")) {
             LOGGER.warn("Not allocated E164 {}. Aborting...", e164);
             return true;
         }
 
-        // Headers
-        // --------------------------------------------------
-
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        // Payload
-        // --------------------------------------------------
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
         final SendSmsRequest body = new SendSmsRequest(e164, content);
+        final HttpEntity<SendSmsRequest> entity = new HttpEntity<>(body, headers);
 
-        // HTTP Request
-        // --------------------------------------------------
+        final String url = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .pathSegment("api", "v1", "sms")
+                .build()
+                .toUriString();
 
-        final String baseUrl = RestApiClientConfig.BASE_URL;
-        final String url = baseUrl + "/api/v1/sms";
-
-        final HttpEntity<SendSmsRequest> entity = new HttpEntity<>(body, httpHeaders);
         final ResponseEntity<SendSmsResult> response =
                 this.restTemplate.postForEntity(url, entity, SendSmsResult.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            final SendSmsResult sendSmsResult = response.getBody();
-            if (sendSmsResult == null) {
-                throw new NullPointerException();
-            }
-            return sendSmsResult.sent();
+            final SendSmsResult result = response.getBody();
+            if (result == null) throw new NullPointerException();
+            return result.sent();
         }
 
         throw new RuntimeException("External SMS service responded with " + response.getStatusCode());

@@ -1,23 +1,33 @@
 package dit.hua.gr.greenride.core.port.impl;
 
-import dit.hua.gr.greenride.config.RestApiClientConfig;
 import dit.hua.gr.greenride.core.port.PhoneNumberPort;
 import dit.hua.gr.greenride.core.port.impl.dto.PhoneNumberValidationResult;
+import dit.hua.gr.greenride.web.ui.exceptions.ExternalServiceUnavailableException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-/**
- * Default implementation of {@link PhoneNumberPort}. It uses the NOC external service.
- */
+import java.net.URI;
+
 @Service
 public class PhoneNumberPortImpl implements PhoneNumberPort {
 
     private final RestTemplate restTemplate;
+    private final String baseUrl;
 
-    public PhoneNumberPortImpl(final RestTemplate restTemplate) {
+    public PhoneNumberPortImpl(
+            final RestTemplate restTemplate,
+            @Value("${app.noc.base-url:http://localhost:8081}") final String baseUrl
+    ) {
         if (restTemplate == null) throw new NullPointerException();
+        if (baseUrl == null) throw new NullPointerException();
+        if (baseUrl.isBlank()) throw new IllegalArgumentException();
+
         this.restTemplate = restTemplate;
+        this.baseUrl = baseUrl;
     }
 
     @Override
@@ -25,21 +35,46 @@ public class PhoneNumberPortImpl implements PhoneNumberPort {
         if (rawPhoneNumber == null) throw new NullPointerException();
         if (rawPhoneNumber.isBlank()) throw new IllegalArgumentException();
 
-        // HTTP Request
-        // --------------------------------------------------
+        final String normalized = normalizeGreekMobile(rawPhoneNumber);
 
-        final String baseUrl = RestApiClientConfig.BASE_URL;
-        final String url = baseUrl + "/api/v1/phone-numbers/" + rawPhoneNumber + "/validations";
+        final URI uri = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .path("/api/v1/phone-numbers/{raw}/validations")
+                .buildAndExpand(normalized)
+                .encode()
+                .toUri();
 
-        final ResponseEntity<PhoneNumberValidationResult> response =
-                this.restTemplate.getForEntity(url, PhoneNumberValidationResult.class);
+        try {
+            final ResponseEntity<PhoneNumberValidationResult> response =
+                    this.restTemplate.getForEntity(uri, PhoneNumberValidationResult.class);
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            final PhoneNumberValidationResult phoneNumberValidationResult = response.getBody();
-            if (phoneNumberValidationResult == null) throw new NullPointerException();
-            return phoneNumberValidationResult;
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                return response.getBody();
+            }
+
+            // service responded but no body / non-2xx: treat as invalid
+            return fallbackInvalid(rawPhoneNumber);
+
+        } catch (RestClientException ex) {
+            // ✅ service down / refused / timeout => explicit "unavailable"
+            throw new ExternalServiceUnavailableException("NOC phone validation service is unavailable", ex);
         }
+    }
 
-        throw new RuntimeException("External service responded with " + response.getStatusCode());
+    private String normalizeGreekMobile(final String raw) {
+        final String trimmed = raw.trim();
+        final String digits = trimmed.replaceAll("[^0-9]", "");
+
+        if (digits.length() == 10 && digits.startsWith("69")) {
+            return "+30" + digits;
+        }
+        if (trimmed.startsWith("+")) {
+            return trimmed;
+        }
+        return trimmed;
+    }
+
+    private PhoneNumberValidationResult fallbackInvalid(final String rawPhoneNumber) {
+        return new PhoneNumberValidationResult(rawPhoneNumber, false, null, null);
     }
 }
