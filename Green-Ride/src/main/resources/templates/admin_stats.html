@@ -1,10 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
+
 <body>
+
+<main layout:fragment="main" class="container py-4">
+
+    <!-- ADMIN DASHBOARD TITLE -->
+    <h1 class="mb-4">Πίνακας Διαχειριστή</h1>
+
+    <!-- SYSTEM STATISTICS -->
+    <section class="gr-box mb-4">
+        <h2 class="mb-3">Στατιστικά Συστήματος</h2>
+
+        <ul>
+            <li>Συνολικός αριθμός διαδρομών:
+                <strong th:text="${stats.totalRides}">0</strong>
+            </li>
+
+            <li>Μέσος όρος πληρότητας:
+                <strong th:text="${stats.averageOccupancy}">0%</strong>
+            </li>
+
+            <li>Ενεργοί οδηγοί:
+                <strong th:text="${stats.activeDrivers}">0</strong>
+            </li>
+
+            <li>Ενεργοί επιβάτες:
+                <strong th:text="${stats.activePassengers}">0</strong>
+            </li>
+        </ul>
+    </section>
+
+    <!-- MALICIOUS USERS MANAGEMENT -->
+    <section class="gr-box mb-4">
+        <h2 class="mb-3">Διαχείριση Κακόβουλων Χρηστών</h2>
+
+        <div th:if="${#lists.isEmpty(flaggedUsers)}">
+            <p>Δεν υπάρχουν αναφορές για κακόβουλους χρήστες.</p>
+        </div>
+
+        <table th:if="${!#lists.isEmpty(flaggedUsers)}" class="table">
+            <thead>
+            <tr>
+                <th>Όνομα</th>
+                <th>Email</th>
+                <th>Αναφορές</th>
+                <th>Κατάσταση</th>
+                <th>Ενέργειες</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="u : ${flaggedUsers}">
+                <td th:text="${u.fullName}">User Name</td>
+                <td th:text="${u.email}">email@uni.gr</td>
+                <td th:text="${u.reportCount}">0</td>
+
+                <td>
+                    <span th:if="${u.banned}" class="text-danger">Αποκλεισμένος</span>
+                    <span th:if="${!u.banned}" class="text-success">Ενεργός</span>
+                </td>
+
+                <td>
+                    <a th:if="${!u.banned}"
+                       th:href="@{'/admin/ban/' + ${u.id}}"
+                       class="gr-btn gr-btn-ghost">
+                        Αποκλεισμός
+                    </a>
+
+                    <a th:if="${u.banned}"
+                       th:href="@{'/admin/unban/' + ${u.id}}"
+                       class="gr-btn gr-btn-solid">
+                        Επανενεργοποίηση
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
 
 </body>
 </html>

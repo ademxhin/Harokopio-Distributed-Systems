@@ -1,55 +1,88 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Profile</title>
-    <link rel="stylesheet" href="profile.css">
+    <title>User Profile</title>
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
 </head>
+
 <body>
 
-<header>
-    <h1>User Profile</h1>
-</header>
+<main layout:fragment="main" class="container py-4">
 
-<nav>
-    <a th:href="@{/home}">Home</a>
-    <a th:href="@{/new_ride}">Offer Ride</a>
-    <a th:href="@{/logout}">Logout</a>
-</nav>
+    <!-- PERSONAL INFO -->
+    <section class="gr-box mb-4">
+        <h2 class="mb-3">Προσωπικές Πληροφορίες</h2>
 
-<main class="container">
-
-    <section>
-        <h2>Personal Information</h2>
-        <p><strong>Name:</strong> <span th:text="${user.fullName}">User Name</span></p>
+        <p><strong>Όνομα:</strong> <span th:text="${user.fullName}">User Name</span></p>
         <p><strong>Email:</strong> <span th:text="${user.email}">user@uni.gr</span></p>
-        <p><strong>Role:</strong> <span th:text="${user.role}">Driver & Passenger</span></p>
+        <p><strong>Ρόλος:</strong> <span th:text="${user.role}">Driver & Passenger</span></p>
     </section>
 
-    <section>
-        <h2>Statistics</h2>
+    <!-- USER ACTIONS -->
+    <section class="gr-box mb-4">
+        <h2 class="mb-3">Ενέργειες Χρήστη</h2>
+
+        <div class="gr-actions">
+            <a class="gr-btn gr-btn-solid" th:href="@{/new_ride}">
+                Δημιουργία Διαδρομής (Οδηγός)
+            </a>
+
+            <a class="gr-btn gr-btn-ghost" th:href="@{/search_rides}">
+                Αναζήτηση Διαδρομών (Επιβάτης)
+            </a>
+
+            <a class="gr-btn gr-btn-ghost" th:href="@{/my_bookings}">
+                Οι Κρατήσεις Μου
+            </a>
+        </div>
+    </section>
+
+    <!-- STATISTICS -->
+    <section class="gr-box mb-4">
+        <h2 class="mb-3">Στατιστικά</h2>
         <ul>
-            <li>Total rides offered: <span th:text="${user.totalRidesOffered}">0</span></li>
-            <li>Total rides taken: <span th:text="${user.totalRidesTaken}">0</span></li>
-            <li>Average rating: <span th:text="${user.averageRating}">★★★★☆</span></li>
+            <li>Διαδρομές που προσφέρθηκαν: <span th:text="${user.totalRidesOffered}">0</span></li>
+            <li>Διαδρομές που πραγματοποιήθηκαν: <span th:text="${user.totalRidesTaken}">0</span></li>
+            <li>Μέση αξιολόγηση: <span th:text="${user.averageRating}">★★★★☆</span></li>
         </ul>
     </section>
 
-    <section>
-        <h2>Ride History</h2>
+    <!-- RIDE HISTORY -->
+    <section class="gr-box mb-4">
+        <h2 class="mb-3">Ιστορικό Διαδρομών</h2>
 
         <div th:if="${#lists.isEmpty(user.rideHistory)}">
-            <p>No ride history available.</p>
+            <p>Δεν υπάρχουν διαδρομές στο ιστορικό.</p>
         </div>
 
-        <div th:each="ride : ${user.rideHistory}" class="card">
+        <div th:each="ride : ${user.rideHistory}" class="card p-3 mb-2">
             <p>
-                <span th:text="${ride.origin}">Origin</span> →
-                <span th:text="${ride.destination}">Destination</span> |
-                <span th:text="${ride.time}">HH:MM</span>
+                <strong th:text="${ride.origin}">Origin</strong> →
+                <strong th:text="${ride.destination}">Destination</strong>
+                | <span th:text="${ride.time}">HH:MM</span>
             </p>
-        </div>
 
+            <!-- Rating -->
+            <div>
+                <label>Αξιολόγηση:</label>
+                <span th:text="${ride.rating}">★★★★★</span>
+            </div>
+
+            <!-- Cancel or Rate -->
+            <div class="mt-2">
+                <a th:href="@{'/ride/' + ${ride.id} + '/rate'}" class="gr-btn gr-btn-ghost">
+                    Αξιολόγηση
+                </a>
+
+                <a th:if="${ride.canCancel}"
+                   th:href="@{'/ride/' + ${ride.id} + '/cancel'}"
+                   class="gr-btn gr-btn-ghost">
+                    Ακύρωση
+                </a>
+            </div>
+        </div>
     </section>
 
 </main>
