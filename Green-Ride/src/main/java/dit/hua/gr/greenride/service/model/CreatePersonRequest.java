@@ -25,5 +25,9 @@ public record CreatePersonRequest(
 
         @NotBlank
         @Size(min = 6, max = 50)
-        String rawPassword
-) {}
+        String rawPassword,
+
+        @NotBlank
+        @Size(min = 6, max = 50)
+        String confirmRawPassword
+) { }

@@ -1,0 +1,77 @@
+/* Page background */
+body {
+    background: #f6f7f9;
+}
+
+/* NAV */
+.gr-nav {
+    background: #0b0b0c;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.gr-nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+}
+
+.gr-brand {
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+}
+
+.gr-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.gr-link {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 6px 8px;
+    border-radius: 10px;
+}
+
+.gr-link:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+}
+
+/* Buttons */
+.gr-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.gr-btn-ghost {
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: transparent;
+}
+
+.gr-btn-ghost:hover {
+    background: rgba(255,255,255,0.10);
+    color: #fff;
+}
+
+.gr-btn-solid {
+    color: #0b0b0c;
+    background: #ffffff;
+    border: 1px solid rgba(255,255,255,0.10);
+}
+
+.gr-btn-solid:hover {
+    filter: brightness(0.95);
+    color: #0b0b0c;
+}

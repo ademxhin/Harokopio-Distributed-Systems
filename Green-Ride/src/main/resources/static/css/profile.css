@@ -1,0 +1,41 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e7f5ff;
+    margin: 0;
+}
+
+header {
+    background-color: #0ca678;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+nav {
+    background-color: #099268;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    margin: 0 10px;
+}
+
+main {
+    max-width: 700px;
+    margin: 30px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 6px;
+}
+
+section {
+    margin-bottom: 25px;
+}
+
+.card {
+    border-left: 5px solid #0ca678;
+    padding: 10px;
+    background-color: #f8f9fa;
+}

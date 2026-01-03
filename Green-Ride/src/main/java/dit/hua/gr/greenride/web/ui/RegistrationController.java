@@ -1,10 +1,11 @@
 package dit.hua.gr.greenride.web.ui;
 
-import dit.hua.gr.greenride.core.model.PersonType;
 import dit.hua.gr.greenride.service.PersonBusinessLogicService;
 import dit.hua.gr.greenride.service.model.CreatePersonRequest;
 import dit.hua.gr.greenride.service.model.CreatePersonResult;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import dit.hua.gr.greenride.web.ui.exceptions.ExternalServiceUnavailableException;
+import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,36 +24,62 @@ public class RegistrationController {
     }
 
     @GetMapping("/register")
-    public String showRegistrationForm(
-            final Authentication authentication,
-            final Model model
-    ) {
+    public String showRegistrationForm(final Authentication authentication, final Model model) {
         if (AuthUtils.isAuthenticated(authentication)) {
             return "redirect:/profile";
         }
-        // Initial data for the form.
-        final CreatePersonRequest createPersonRequest = new CreatePersonRequest(PersonType.USER, "", "", "", "", "", "");
-        model.addAttribute("createPersonRequest", createPersonRequest);
+
+        // record -> provide initial values
+        model.addAttribute("createPersonRequest", new CreatePersonRequest("", "", "", "", "", ""));
         return "register";
     }
 
     @PostMapping("/register")
     public String handleFormSubmission(
             final Authentication authentication,
-            @ModelAttribute("createPersonRequest") final CreatePersonRequest createPersonRequest,
+            @Valid @ModelAttribute("createPersonRequest") final CreatePersonRequest createPersonRequest,
             final BindingResult bindingResult,
             final Model model
     ) {
         if (AuthUtils.isAuthenticated(authentication)) {
-            return "redirect:/profile"; // already logged in.
+            return "redirect:/profile";
         }
-        // TODO Form validation + UI errors.
-        final CreatePersonResult createPersonResult = this.personBusinessLogicService.createPerson(createPersonRequest);
-        if (createPersonResult.created()) {
-            return "redirect:/login"; // registration successful - redirect to login form (not yet ready)
+
+        // 1) Bean validation errors
+        if (bindingResult.hasErrors()) {
+            return "register";
         }
-        model.addAttribute("createPersonRequest", createPersonRequest); // Pass the same form data.
-        model.addAttribute("errorMessage", createPersonResult.reason()); // Show an error message!
-        return "register";
+
+        // 2) Additional rule: password must match confirm
+        if (!createPersonRequest.rawPassword().equals(createPersonRequest.confirmRawPassword())) {
+            bindingResult.rejectValue(
+                    "confirmRawPassword",
+                    "password.mismatch",
+                    "Password and Confirm Password do not match"
+            );
+            return "register";
+        }
+
+        try {
+            final CreatePersonResult createPersonResult =
+                    this.personBusinessLogicService.createPerson(createPersonRequest);
+
+            if (createPersonResult.created()) {
+                return "redirect:/login";
+            }
+
+            // business failure (duplicate email, invalid phone, etc.)
+            model.addAttribute("errorMessage", createPersonResult.reason());
+            return "register";
+
+        } catch (ExternalServiceUnavailableException ex) {
+            // NOC is down (explicit message)
+            bindingResult.rejectValue(
+                    "mobilePhoneNumber",
+                    "noc.down",
+                    "Phone validation service is currently unavailable. Please try again later."
+            );
+            return "register";
+        }
     }
 }

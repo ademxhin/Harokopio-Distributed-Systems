@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Reservations | Carpooling</title>
+    <link rel="stylesheet" href="reservation.css">
+</head>
+<body>
+
+<header>
+    <h1>My Reservations</h1>
+    <nav>
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/new_ride}">Offer Ride</a>
+        <a th:href="@{/profile}">Profile</a>
+        <a th:href="@{/logout}">Logout</a>
+    </nav>
+</header>
+
+<main class="container">
+    <section>
+        <h2>Upcoming Reservations</h2>
+
+        <div th:if="${#lists.isEmpty(reservations)}" class="empty">
+            <p>You have no reservations yet.</p>
+        </div>
+
+        <div class="reservations-list" th:each="reservation : ${reservations}">
+            <article class="card">
+                <h3 th:text="${reservation.origin} + ' → ' + ${reservation.destination}"></h3>
+                <p><strong>Driver:</strong> <span th:text="${reservation.driverName}"></span></p>
+                <p><strong>Departure:</strong> <span th:text="${reservation.date} + ' at ' + ${reservation.time}"></span></p>
+                <p><strong>Seats Reserved:</strong> <span th:text="${reservation.seatsReserved}"></span></p>
+                <form th:action="@{/cancel/{id}(id=${reservation.id})}" method="post">
+                    <button type="submit" class="btn-cancel">Cancel Reservation</button>
+                </form>
+            </article>
+        </div>
+    </section>
+</main>
+
+<footer class="text-center">
+    <small>Manage your reservations easily and cancel anytime before departure.</small>
+</footer>
+
+</body>
+</html>

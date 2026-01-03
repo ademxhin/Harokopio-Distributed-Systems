@@ -1,54 +1,72 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="https://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorate="~{base}">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
 
-<head>
-    <title>Login</title>
-</head>
+<th:block layout:fragment="head">
+    <title>GreenRide | Login</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</th:block>
 
-<body>
+<main layout:fragment="main" class="login-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-7 col-lg-5">
 
-<header layout:fragment="header">
-    <h1>GreenRide <small>/ Login</small></h1>
-</header>
+                <div class="login-card">
+                    <div class="login-card-header">
+                        <h1 class="login-title">Welcome back</h1>
+                        <p class="login-subtitle">Sign in to continue to GreenRide.</p>
+                    </div>
 
-<section layout:fragment="main">
+                    <div class="alert alert-danger py-2" th:if="${param.error}">
+                        Invalid email or password.
+                    </div>
+                    <div class="alert alert-success py-2" th:if="${param.logout}">
+                        You have been logged out successfully.
+                    </div>
 
-    <form th:action="@{/login}" method="post">
-        <input type="hidden"
-               th:name="${_csrf.parameterName}"
-               th:value="${_csrf.token}" />
+                    <form th:action="@{/login}" method="post" class="login-form">
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email"
+                                   name="username"
+                                   class="form-control"
+                                   placeholder="you@example.com"
+                                   autocomplete="username"
+                                   required>
+                        </div>
 
-        <div class="text-center mb-3" th:if="${param.error}">
-            <p class="text-danger m-0 p-0">Invalid credentials. Please try again.</p>
+                        <div class="mb-3">
+                            <label class="form-label d-flex justify-content-between">
+                                <span>Password</span>
+                                <a class="small text-decoration-none" th:href="@{/forgot-password}">Forgot?</a>
+                            </label>
+                            <input type="password"
+                                   name="password"
+                                   class="form-control"
+                                   placeholder="••••••••"
+                                   autocomplete="current-password"
+                                   required>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 py-2">Login</button>
+
+                        <p class="login-footer mt-3 mb-0">
+                            Don’t have an account?
+                            <a th:href="@{/register}">Sign Up</a>
+                        </p>
+                    </form>
+                </div>
+
+                <p class="login-note mt-3">
+                    *Academic project UI. Credentials are validated by the backend.
+                </p>
+
+            </div>
         </div>
+    </div>
+</main>
 
-        <div class="text-center mb-3" th:if="${param.logout}">
-            <p class="text-success m-0 p-0">You have been logged out successfully.</p>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label" for="username">Email Address</label>
-            <input id="username" type="text" name="username" class="form-control" required />
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label" for="password">Password</label>
-            <input id="password" type="password" name="password" class="form-control" required />
-        </div>
-
-        <div class="mb-4">
-            <button type="submit" class="btn btn-primary">Login</button>
-        </div>
-
-        <p class="m-0 p-0">
-            <a th:href="@{/register}">Don't have an account? Register</a>
-        </p>
-    </form>
-
-</section>
-
-</body>
 </html>

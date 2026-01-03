@@ -1,86 +1,102 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="https://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorate="~{base}">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
 
-<head>
-    <title>Registration</title>
-</head>
+<th:block layout:fragment="head">
+    <title>GreenRide | Registration</title>
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+</th:block>
 
-<body>
+<main layout:fragment="main" class="register-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-7 col-lg-6">
 
-<header layout:fragment="header">
-    <h1>GreenRide <small>/ Registration</small></h1>
-</header>
+                <div class="register-card">
+                    <div class="register-card-header">
+                        <h1 class="register-title">Create your account</h1>
+                        <p class="register-subtitle">Join GreenRide in less than a minute.</p>
+                    </div>
 
-<section layout:fragment="main">
+                    <!-- ✅ business error from service -->
+                    <div class="alert alert-danger py-2"
+                         th:if="${errorMessage != null}"
+                         th:text="${errorMessage}">
+                    </div>
 
-    <!-- REGISTRATION FORM -->
-    <form th:action="@{/register}" method="post" th:object="${createPersonRequest}">
+                    <form th:action="@{/register}" method="post" th:object="${createPersonRequest}">
 
-        <!-- ERROR MESSAGE -->
-        <div class="text-center mb-3" th:if="${errorMessage != null}">
-            <p class="text-danger m-0 p-0" th:text="${errorMessage}"></p>
-        </div>
+                        <!-- ✅ validation summary (MUST be inside form) -->
+                        <div class="alert alert-danger py-2" th:if="${#fields.hasAnyErrors()}">
+                            <ul class="m-0 ps-3">
+                                <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
+                            </ul>
+                        </div>
 
-        <div class="mb-3">
-            <label class="form-label">First Name</label>
-            <input type="text" th:field="*{firstName}" class="form-control" required />
-            <div class="text-danger small mt-1"
-                 th:if="${#fields.hasErrors('firstName')}"
-                 th:errors="*{firstName}">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" th:field="*{firstName}" required>
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('firstName')}"
+                                     th:errors="*{firstName}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" th:field="*{lastName}" required>
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('lastName')}"
+                                     th:errors="*{lastName}"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Mobile Phone Number</label>
+                                <input type="text" class="form-control" th:field="*{mobilePhoneNumber}" placeholder="69xxxxxxxx" required>
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('mobilePhoneNumber')}"
+                                     th:errors="*{mobilePhoneNumber}"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" th:field="*{emailAddress}" placeholder="you@example.com" required>
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('emailAddress')}"
+                                     th:errors="*{emailAddress}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" th:field="*{rawPassword}" required>
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('rawPassword')}"
+                                     th:errors="*{rawPassword}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" th:field="*{confirmRawPassword}" required>
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('confirmRawPassword')}"
+                                     th:errors="*{confirmRawPassword}"></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 mt-3">
+                            Create account
+                        </button>
+
+                        <p class="register-footer mt-3 mb-0">
+                            Already have an account?
+                            <a th:href="@{/login}">Login</a>
+                        </p>
+                    </form>
+                </div>
+
+                <p class="register-note mt-3">
+                    *Academic project UI. Registration is validated by the backend.
+                </p>
+
             </div>
         </div>
+    </div>
+</main>
 
-        <div class="mb-3">
-            <label class="form-label">Last Name</label>
-            <input type="text" th:field="*{lastName}" class="form-control" required />
-            <div class="text-danger small mt-1"
-                 th:if="${#fields.hasErrors('lastName')}"
-                 th:errors="*{lastName}">
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Email Address</label>
-            <input type="email" th:field="*{emailAddress}" class="form-control" required />
-            <div class="text-danger small mt-1"
-                 th:if="${#fields.hasErrors('emailAddress')}"
-                 th:errors="*{emailAddress}">
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Mobile Phone Number</label>
-            <input type="tel" th:field="*{mobilePhoneNumber}" class="form-control" required />
-            <div class="text-danger small mt-1"
-                 th:if="${#fields.hasErrors('mobilePhoneNumber')}"
-                 th:errors="*{mobilePhoneNumber}">
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input type="password" th:field="*{rawPassword}" class="form-control" required />
-            <div class="text-danger small mt-1"
-                 th:if="${#fields.hasErrors('rawPassword')}"
-                 th:errors="*{rawPassword}">
-            </div>
-        </div>
-
-        <div class="mb-4">
-            <button type="submit" class="btn btn-primary">Register</button>
-        </div>
-
-        <!-- USEFUL LINKS -->
-        <p class="m-0 p-0">
-            <a th:href="@{/login}">Already have an account? Log in</a>
-        </p>
-
-    </form>
-
-</section>
-
-</body>
 </html>

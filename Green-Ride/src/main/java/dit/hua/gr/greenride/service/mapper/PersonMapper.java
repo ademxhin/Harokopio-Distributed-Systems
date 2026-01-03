@@ -12,7 +12,7 @@ public class PersonMapper {
             return null;
 
         return new PersonView(
-                String.valueOf(person.getId()),   // ✅ σωστό
+                person.getId(),
                 person.getFirstName(),
                 person.getLastName(),
                 person.getMobilePhoneNumber(),
