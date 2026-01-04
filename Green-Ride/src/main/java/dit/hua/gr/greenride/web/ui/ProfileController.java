@@ -8,19 +8,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.Principal;
 
-/**
- * UI controller for managing profile.
- */
 @Controller
 public class ProfileController {
 
     @GetMapping("/profile")
     public String showProfile(final Model model, final Principal principal) {
 
-        // principal.getName() συνήθως είναι το username/email (ό,τι έβαλες στο UserDetails)
+        // Συνήθως είναι email/username (ό,τι έχεις στο UserDetails/JWT subject)
         String username = (principal != null) ? principal.getName() : null;
 
-        // Προαιρετικά: παίρνουμε και roles για εμφάνιση
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         model.addAttribute("username", username);
