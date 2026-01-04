@@ -4,38 +4,14 @@ body {
     font-family: Arial, sans-serif;
 }
 
-h1, h2 {
-    color: #0b0b0c;
-    font-weight: 800;
-}
-
 .container {
     max-width: 800px;
     margin: 30px auto;
 }
 
-.gr-box {
-    background: #ffffff;
-    padding: 18px;
-    border-radius: 18px;
-    border: 1px solid rgba(11,11,12,0.10);
-    box-shadow: 0 10px 30px rgba(11,11,12,0.06);
-}
-
-.search-form .form-row {
-    margin-bottom: 12px;
-}
-
-.search-form label {
-    font-weight: 700;
+h1 {
+    font-weight: 800;
     color: #0b0b0c;
-}
-
-.search-form input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(11,11,12,0.15);
 }
 
 .empty {

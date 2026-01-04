@@ -1,10 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
 
-</body>
+<th:block layout:fragment="head">
+    <title>GreenRide | My Rides</title>
+    <link rel="stylesheet" th:href="@{/css/rides.css}">
+</th:block>
+
+<main layout:fragment="main" class="container py-4">
+
+    <h1 class="mb-3">My Offered Rides</h1>
+
+    <section>
+        <div th:if="${#lists.isEmpty(rides)}" class="empty">
+            <p>You haven't offered any rides yet.</p>
+        </div>
+
+        <div class="reservations-list" th:each="ride : ${rides}">
+            <article class="card">
+                <h3 th:text="${ride.origin} + ' → ' + ${ride.destination}"></h3>
+                <p><strong>Date:</strong> <span th:text="${ride.date}"></span></p>
+                <p><strong>Time:</strong> <span th:text="${ride.time}"></span></p>
+                <p><strong>Seats:</strong> <span th:text="${ride.seatsAvailable}"></span></p>
+
+                <form th:action="@{/cancel_ride/{id}(id=${ride.id})}" method="post">
+                    <button class="gr-btn gr-btn-ghost" type="submit">Cancel Ride</button>
+                </form>
+            </article>
+        </div>
+    </section>
+
+</main>
+
 </html>

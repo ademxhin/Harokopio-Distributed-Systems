@@ -1,26 +1,43 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #212529;
-    color: white;
-    margin: 0;
+    background: #f6f7f9;
 }
 
-header {
-    text-align: center;
-    padding: 40px 20px;
-}
-
-main {
-    max-width: 400px;
+/* Centered box */
+.gr-box {
+    max-width: 480px;
     margin: 0 auto;
-    background-color: #343a40;
-    padding: 30px;
-    border-radius: 8px;
-    text-align: center;
+    padding: 32px;
+    border-radius: 18px;
+    border: 1px solid rgba(11,11,12,0.10);
+    box-shadow: 0 10px 30px rgba(11,11,12,0.06);
+    background: #ffffff;
 }
 
-a {
-    color: #0d6efd;
-    text-decoration: none;
-    font-weight: bold;
+/* Title styling */
+.gr-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0b0b0c;
+    margin-bottom: 12px;
+}
+
+/* Subtitle styling */
+.gr-subtitle {
+    font-size: 1rem;
+    color: rgba(11,11,12,0.65);
+    margin-bottom: 20px;
+}
+
+/* Button group */
+.gr-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .gr-actions {
+        flex-direction: column;
+    }
 }

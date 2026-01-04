@@ -1,47 +1,63 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>My Reservations | Carpooling</title>
-    <link rel="stylesheet" href="reservation.css">
-</head>
-<body>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
 
-<header>
-    <h1>My Reservations</h1>
-    <nav>
-        <a th:href="@{/home}">Home</a>
-        <a th:href="@{/new_ride}">Offer Ride</a>
-        <a th:href="@{/profile}">Profile</a>
-        <a th:href="@{/logout}">Logout</a>
-    </nav>
-</header>
+<th:block layout:fragment="head">
+    <title>GreenRide | Reservations</title>
+    <link rel="stylesheet" th:href="@{/css/reservation.css}">
+</th:block>
 
-<main class="container">
+<main layout:fragment="main" class="container py-4">
+
+    <h1 class="mb-3">Available Rides</h1>
+
+    <!-- SEARCH FORM -->
+    <section class="gr-box mb-4">
+        <form th:action="@{/search_rides}" method="get" class="search-form">
+
+            <div class="form-row">
+                <label>Origin</label>
+                <input type="text" name="origin" placeholder="City Center">
+            </div>
+
+            <div class="form-row">
+                <label>Destination</label>
+                <input type="text" name="destination" placeholder="University">
+            </div>
+
+            <div class="form-row">
+                <label>Date</label>
+                <input type="date" name="date">
+            </div>
+
+            <button class="gr-btn gr-btn-solid" type="submit">Search</button>
+        </form>
+    </section>
+
+    <!-- RESULTS -->
     <section>
-        <h2>Upcoming Reservations</h2>
+        <h2 class="mb-3">Results</h2>
 
-        <div th:if="${#lists.isEmpty(reservations)}" class="empty">
-            <p>You have no reservations yet.</p>
+        <div th:if="${#lists.isEmpty(rides)}" class="empty">
+            <p>No rides found.</p>
         </div>
 
-        <div class="reservations-list" th:each="reservation : ${reservations}">
+        <div class="reservations-list" th:each="ride : ${rides}">
             <article class="card">
-                <h3 th:text="${reservation.origin} + ' → ' + ${reservation.destination}"></h3>
-                <p><strong>Driver:</strong> <span th:text="${reservation.driverName}"></span></p>
-                <p><strong>Departure:</strong> <span th:text="${reservation.date} + ' at ' + ${reservation.time}"></span></p>
-                <p><strong>Seats Reserved:</strong> <span th:text="${reservation.seatsReserved}"></span></p>
-                <form th:action="@{/cancel/{id}(id=${reservation.id})}" method="post">
-                    <button type="submit" class="btn-cancel">Cancel Reservation</button>
+                <h3 th:text="${ride.origin} + ' → ' + ${ride.destination}"></h3>
+                <p><strong>Driver:</strong> <span th:text="${ride.driverName}"></span></p>
+                <p><strong>Departure:</strong> <span th:text="${ride.date} + ' at ' + ${ride.time}"></span></p>
+                <p><strong>Seats Available:</strong> <span th:text="${ride.seatsAvailable}"></span></p>
+
+                <form th:action="@{/book/{id}(id=${ride.id})}" method="post">
+                    <button class="gr-btn gr-btn-solid" type="submit">Book Ride</button>
                 </form>
             </article>
         </div>
     </section>
+
 </main>
 
-<footer class="text-center">
-    <small>Manage your reservations easily and cancel anytime before departure.</small>
-</footer>
-
-</body>
 </html>

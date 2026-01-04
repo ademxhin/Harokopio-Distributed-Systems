@@ -1,20 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
-    <meta charset="UTF-8">
     <title>Logout</title>
-    <link rel="stylesheet" href="logout.css">
+    <link rel="stylesheet" th:href="@{/css/logout.css}">
 </head>
+
 <body>
 
-<header>
-    <h1>Logged Out</h1>
-</header>
+<main layout:fragment="main" class="container py-5">
 
-<main class="container text-center">
-    <p>You have successfully logged out.</p>
-    <p>See you soon 🚗</p>
-    <a th:href="@{/login}">Login again</a>
+    <section class="gr-box text-center">
+        <h1 class="gr-title mb-3">Αποσύνδεση</h1>
+        <p class="gr-subtitle mb-4">Έχετε αποσυνδεθεί με επιτυχία από το GreenRide.</p>
+
+        <div class="gr-actions">
+            <a class="gr-btn gr-btn-solid" th:href="@{/login}">Σύνδεση ξανά</a>
+            <a class="gr-btn gr-btn-ghost" th:href="@{/}">Επιστροφή στην αρχική</a>
+        </div>
+    </section>
+
 </main>
 
 </body>
