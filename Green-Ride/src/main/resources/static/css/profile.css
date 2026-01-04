@@ -1,41 +1,63 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #e7f5ff;
-    margin: 0;
+/* src/main/resources/static/css/profile.css */
+
+.gr-profile-wrap{
+    padding: 32px 0 60px 0;
 }
 
-header {
-    background-color: #0ca678;
-    color: white;
-    text-align: center;
-    padding: 20px;
+.gr-profile-card{
+    padding: 18px 18px;
 }
 
-nav {
-    background-color: #099268;
-    padding: 10px;
-    text-align: center;
+.gr-profile-head{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
 }
 
-nav a {
-    color: white;
-    margin: 0 10px;
+.gr-profile-cta{
+    display: flex;
+    gap: 10px;
 }
 
-main {
-    max-width: 700px;
-    margin: 30px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 6px;
+/* small utility spacing (αν δεν τα έχεις ήδη στο theme.css) */
+.mt-4{ margin-top: 4px; }
+.mt-16{ margin-top: 16px; }
+
+.gr-title-sm{
+    font-size: 1.9rem;
+    line-height: 1.1;
+    margin: 0 0 6px 0;
+    font-weight: 800;
 }
 
-section {
-    margin-bottom: 25px;
+.gr-h2{
+    margin: 0 0 6px 0;
+    font-size: 1.2rem;
+    font-weight: 800;
 }
 
-.card {
-    border-left: 5px solid #0ca678;
-    padding: 10px;
-    background-color: #f8f9fa;
+.gr-muted{
+    color: rgba(11,11,12,0.65);
+    font-size: 0.98rem;
+}
+
+.gr-section-head{
+    margin-bottom: 12px;
+}
+
+.gr-actions{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Αν δεν έχεις danger button στο theme */
+.gr-btn-danger{
+    border-color: rgba(220, 53, 69, 0.35) !important;
+    color: rgb(220, 53, 69) !important;
+}
+.gr-btn-danger:hover{
+    border-color: rgba(220, 53, 69, 0.7) !important;
+    background: rgba(220, 53, 69, 0.06) !important;
 }

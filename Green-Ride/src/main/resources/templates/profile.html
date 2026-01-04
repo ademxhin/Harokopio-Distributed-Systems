@@ -4,68 +4,73 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
 
-<th:block layout:fragment="head">
-    <title>GreenRide | Profile</title>
-    <link rel="stylesheet" th:href="@{/css/profile.css}">
-</th:block>
+<head>
+    <th:block layout:fragment="head">
+        <title>GreenRide | Profile</title>
+        <link rel="stylesheet" th:href="@{/css/profile.css}">
+    </th:block>
+</head>
 
-<main layout:fragment="main" class="container py-4">
+<body>
 
-    <!-- Header -->
-    <div class="mb-3">
-        <h1 class="mb-1">Profile</h1>
+<main layout:fragment="main" class="gr-page"
+      th:with="
+        isDriver=${#authorization.expression('hasAuthority(''ROLE_DRIVER'')')},
+        isPassenger=${#authorization.expression('hasAuthority(''ROLE_PASSENGER'')')}
+      ">
 
-        <p class="text-muted mb-0">
-            <span th:text="${me.fullName()}">User Name</span>
-            <span> • </span>
-            <span th:text="${me.emailAddress()}">email@example.com</span>
-        </p>
+    <section class="container gr-profile-wrap">
 
-        <!-- Role string -->
-        <p class="text-muted mt-1">
-            Role:
-            <span th:if="${me.passengerEnabled() and !me.driverEnabled()}">Passenger</span>
-            <span th:if="${me.driverEnabled() and !me.passengerEnabled()}">Driver</span>
-            <span th:if="${me.passengerEnabled() and me.driverEnabled()}">Passenger &amp; Driver</span>
-        </p>
-    </div>
+        <!-- Top card -->
+        <div class="gr-box gr-profile-card">
+            <div class="gr-profile-head">
+                <div>
+                    <h1 class="gr-title-sm">Profile</h1>
+                    <div class="gr-muted" th:text="${username != null ? username : 'Guest'}">email@example.com</div>
+                    <div class="gr-muted mt-4">
+                        Role:
+                        <span th:if="${isPassenger and !isDriver}">Passenger</span>
+                        <span th:if="${isDriver and !isPassenger}">Driver</span>
+                        <span th:if="${isPassenger and isDriver}">Passenger &amp; Driver</span>
+                        <span th:if="${!isPassenger and !isDriver}">User</span>
+                    </div>
+                </div>
 
-    <hr class="my-4"/>
-
-    <!-- PASSENGER SECTION -->
-    <section class="gr-box mb-4" th:if="${me.passengerEnabled()}">
-        <h2 class="mb-2">Passenger</h2>
-        <p class="text-muted mb-3">Use GreenRide as a passenger.</p>
-
-        <div class="gr-actions d-flex gap-2">
-            <a class="gr-btn gr-btn-solid" th:href="@{/reservation}">
-                Search rides
-            </a>
-            <a class="gr-btn gr-btn-ghost" th:href="@{/bookings}">
-                My bookings
-            </a>
+                <div class="gr-profile-cta">
+                    <a class="gr-btn gr-btn-ghost gr-btn-danger" th:href="@{/logout}">Logout</a>
+                </div>
+            </div>
         </div>
+
+        <!-- Passenger -->
+        <section class="gr-box mt-16" th:if="${isPassenger}">
+            <div class="gr-section-head">
+                <h2 class="gr-h2">Passenger</h2>
+                <p class="gr-muted">Use GreenRide as a passenger.</p>
+            </div>
+
+            <div class="gr-actions">
+                <a class="gr-btn gr-btn-solid" th:href="@{/reservation}">Search rides</a>
+                <a class="gr-btn gr-btn-ghost" th:href="@{/bookings}">My bookings</a>
+            </div>
+        </section>
+
+        <!-- Driver -->
+        <section class="gr-box mt-16" th:if="${isDriver}">
+            <div class="gr-section-head">
+                <h2 class="gr-h2">Driver</h2>
+                <p class="gr-muted">Use GreenRide as a driver.</p>
+            </div>
+
+            <div class="gr-actions">
+                <a class="gr-btn gr-btn-solid" th:href="@{/new_ride}">Offer a ride</a>
+                <a class="gr-btn gr-btn-ghost" th:href="@{/rides}">My offered rides</a>
+            </div>
+        </section>
+
     </section>
-
-    <!-- DRIVER SECTION -->
-    <section class="gr-box mb-4" th:if="${me.driverEnabled()}">
-        <h2 class="mb-2">Driver</h2>
-        <p class="text-muted mb-3">Use GreenRide as a driver.</p>
-
-        <div class="gr-actions d-flex gap-2">
-            <a class="gr-btn gr-btn-solid" th:href="@{/new_ride}">
-                Offer a ride
-            </a>
-            <a class="gr-btn gr-btn-ghost" th:href="@{/rides}">
-                My offered rides
-            </a>
-        </div>
-    </section>
-
-    <div class="mt-4">
-        <a class="btn btn-outline-danger" th:href="@{/logout}">Logout</a>
-    </div>
 
 </main>
 
+</body>
 </html>
