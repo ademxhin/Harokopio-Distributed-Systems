@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -16,7 +17,7 @@
     <!-- Shared theme -->
     <link rel="stylesheet" th:href="@{/css/theme.css}">
 
-    <!-- Page-specific head (title, page css, meta etc.) -->
+    <!-- Page-specific head -->
     <th:block layout:fragment="head"></th:block>
 </head>
 
@@ -25,20 +26,45 @@
 <!-- ✅ GLOBAL NAVBAR -->
 <nav class="gr-nav">
     <div class="container gr-nav-inner">
+
+        <!-- Brand -->
         <a class="gr-brand" th:href="@{/}">GreenRide</a>
 
+        <!-- Links -->
         <div class="gr-nav-links">
-            <a class="gr-link" th:href="@{/driver}">Driver</a>
-            <a class="gr-link" th:href="@{/user}">User</a>
-            <a class="gr-link" th:href="@{/admin}">Admin</a>
 
-            <a class="gr-btn gr-btn-ghost" th:href="@{/login}">Login</a>
-            <a class="gr-btn gr-btn-solid" th:href="@{/register}">Sign Up</a>
+            <!-- ============================= -->
+            <!-- NOT AUTHENTICATED -->
+            <!-- ============================= -->
+            <div sec:authorize="!isAuthenticated()">
+                <a class="gr-btn gr-btn-ghost" th:href="@{/login}">Login</a>
+                <a class="gr-btn gr-btn-solid" th:href="@{/register}">Sign Up</a>
+            </div>
+
+            <!-- ============================= -->
+            <!-- AUTHENTICATED -->
+            <!-- ============================= -->
+            <div sec:authorize="isAuthenticated()" class="d-inline-flex align-items-center gap-2">
+
+                <a class="gr-link" th:href="@{/profile}">Profile</a>
+
+                <!-- ✅ REAL LOGOUT (POST) -->
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}"/>
+
+                    <button type="submit" class="gr-btn gr-btn-ghost">
+                        Logout
+                    </button>
+                </form>
+            </div>
+
         </div>
     </div>
 </nav>
 
-<!-- Optional extra header slot -->
+<!-- Optional page header -->
 <header layout:fragment="header"></header>
 
 <!-- Main content -->

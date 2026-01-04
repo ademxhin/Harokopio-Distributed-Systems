@@ -1,27 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
-<head>
-    <title>Logout</title>
-    <link rel="stylesheet" th:href="@{/css/logout.css}">
-</head>
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{base}">
 
-<body>
+<th:block layout:fragment="head">
+    <title>GreenRide | Logged out</title>
+</th:block>
 
-<main layout:fragment="main" class="container py-5">
+<main layout:fragment="main" class="gr-page">
+    <section class="container py-5 d-flex justify-content-center">
+        <div class="gr-box text-center" style="max-width: 420px;">
+            <h1 class="mb-3">Logged out</h1>
+            <p class="text-muted mb-2">You have successfully logged out.</p>
+            <p class="mb-4">See you soon 🚗</p>
 
-    <section class="gr-box text-center">
-        <h1 class="gr-title mb-3">Αποσύνδεση</h1>
-        <p class="gr-subtitle mb-4">Έχετε αποσυνδεθεί με επιτυχία από το GreenRide.</p>
-
-        <div class="gr-actions">
-            <a class="gr-btn gr-btn-solid" th:href="@{/login}">Σύνδεση ξανά</a>
-            <a class="gr-btn gr-btn-ghost" th:href="@{/}">Επιστροφή στην αρχική</a>
+            <a th:href="@{/login}" class="gr-btn gr-btn-primary w-100">
+                Login again
+            </a>
         </div>
     </section>
-
 </main>
 
-</body>
 </html>

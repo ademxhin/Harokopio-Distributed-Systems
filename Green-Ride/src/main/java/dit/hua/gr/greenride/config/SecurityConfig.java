@@ -19,7 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableMethodSecurity // enables @PreAuthorize
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -55,8 +55,8 @@ public class SecurityConfig {
         http
                 .securityMatcher("/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/register").permitAll()
-                        .requestMatchers("/profile", "/logout").authenticated()
+                        .requestMatchers("/", "/login", "/register", "/logged-out").permitAll()
+                        .requestMatchers("/profile").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
@@ -67,10 +67,13 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
+                        // ONLY Spring Security logout endpoint (POST)
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
-                        .deleteCookies("JSESSIONID")
+                        // After POST /logout -> redirect here
+                        .logoutSuccessUrl("/logged-out")
                         .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
                 .httpBasic(AbstractHttpConfigurer::disable);

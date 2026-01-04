@@ -63,17 +63,21 @@ body {
 /* ===============================
    BUTTONS (Login / Sign Up)
 ================================ */
+
+/* Base button (used everywhere) */
 .gr-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 16px;
-    border-radius: 999px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 0.95rem;
     text-decoration: none;
-    font-weight: 700;
-    font-size: 0.9rem;
-    line-height: 1;
-    transition: background .15s ease, color .15s ease, border-color .15s ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap; /* ✅ prevents text wrapping */
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
 }
 
 /* Ghost button (Login) */
@@ -98,22 +102,6 @@ body {
 .gr-btn-solid:hover {
     filter: brightness(0.95);
     color: #0b0b0c;
-}
-
-/* Base button */
-.gr-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-weight: 800;
-    font-size: 0.95rem;
-    text-decoration: none;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: background .15s ease, border-color .15s ease, color .15s ease;
 }
 
 /* Primary */

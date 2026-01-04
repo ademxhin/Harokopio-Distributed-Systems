@@ -29,6 +29,10 @@
 
                     <!-- Normal user login -->
                     <form th:action="@{/login}" method="post" class="login-form">
+
+                        <!-- ✅ ADD THIS -->
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email"
