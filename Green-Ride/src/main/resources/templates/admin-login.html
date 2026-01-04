@@ -5,7 +5,7 @@
       layout:decorate="~{base}">
 
 <th:block layout:fragment="head">
-    <title>GreenRide | Login</title>
+    <title>GreenRide | Admin Login</title>
     <link rel="stylesheet" th:href="@{/css/login.css}">
 </th:block>
 
@@ -16,25 +16,24 @@
 
                 <div class="login-card">
                     <div class="login-card-header">
-                        <h1 class="login-title">Welcome back</h1>
-                        <p class="login-subtitle">Sign in to continue to GreenRide.</p>
+                        <h1 class="login-title">Administrator Login</h1>
+                        <p class="login-subtitle">Sign in with an admin account.</p>
                     </div>
 
                     <div class="alert alert-danger py-2" th:if="${param.error}">
-                        Invalid email or password.
+                        Invalid admin credentials.
                     </div>
                     <div class="alert alert-success py-2" th:if="${param.logout}">
                         You have been logged out successfully.
                     </div>
 
-                    <!-- Normal user login -->
-                    <form th:action="@{/login}" method="post" class="login-form">
+                    <form th:action="@{/admin/login}" method="post" class="login-form">
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email"
                                    name="username"
                                    class="form-control"
-                                   placeholder="you@example.com"
+                                   placeholder="admin@example.com"
                                    autocomplete="username"
                                    required>
                         </div>
@@ -52,31 +51,14 @@
                                    required>
                         </div>
 
-                        <button type="submit" class="btn btn-dark w-100 py-2">Login</button>
+                        <button type="submit" class="btn btn-dark w-100 py-2">Login as Admin</button>
 
                         <p class="login-footer mt-3 mb-0">
-                            Don’t have an account?
-                            <a th:href="@{/register}">Sign Up</a>
+                            Not an administrator?
+                            <a th:href="@{/login}">Back to user login</a>
                         </p>
                     </form>
-
-                    <!-- Divider -->
-                    <div class="d-flex align-items-center gap-3 my-3">
-                        <div class="flex-grow-1" style="height:1px;background:rgba(0,0,0,.12)"></div>
-                        <span class="small text-muted">or</span>
-                        <div class="flex-grow-1" style="height:1px;background:rgba(0,0,0,.12)"></div>
-                    </div>
-
-                    <!-- Admin login option -->
-                    <a class="btn btn-outline-dark w-100 py-2"
-                       th:href="@{/admin/login}">
-                        Login as administrator
-                    </a>
                 </div>
-
-                <p class="login-note mt-3">
-                    *Academic project UI. Credentials are validated by the backend.
-                </p>
 
             </div>
         </div>

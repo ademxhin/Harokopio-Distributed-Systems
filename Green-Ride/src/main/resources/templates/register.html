@@ -20,7 +20,7 @@
                         <p class="register-subtitle">Join GreenRide in less than a minute.</p>
                     </div>
 
-                    <!-- ✅ business error from service -->
+                    <!-- Business error από service -->
                     <div class="alert alert-danger py-2"
                          th:if="${errorMessage != null}"
                          th:text="${errorMessage}">
@@ -28,7 +28,7 @@
 
                     <form th:action="@{/register}" method="post" th:object="${createPersonRequest}">
 
-                        <!-- ✅ validation summary (MUST be inside form) -->
+                        <!-- Validation summary -->
                         <div class="alert alert-danger py-2" th:if="${#fields.hasAnyErrors()}">
                             <ul class="m-0 ps-3">
                                 <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
@@ -39,44 +39,74 @@
                             <div class="col-md-6">
                                 <label class="form-label">First Name</label>
                                 <input type="text" class="form-control" th:field="*{firstName}" required>
-                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('firstName')}"
+                                <div class="text-danger small mt-1"
+                                     th:if="${#fields.hasErrors('firstName')}"
                                      th:errors="*{firstName}"></div>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Last Name</label>
                                 <input type="text" class="form-control" th:field="*{lastName}" required>
-                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('lastName')}"
+                                <div class="text-danger small mt-1"
+                                     th:if="${#fields.hasErrors('lastName')}"
                                      th:errors="*{lastName}"></div>
                             </div>
 
                             <div class="col-12">
                                 <label class="form-label">Mobile Phone Number</label>
-                                <input type="text" class="form-control" th:field="*{mobilePhoneNumber}" placeholder="69xxxxxxxx" required>
-                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('mobilePhoneNumber')}"
+                                <input type="text" class="form-control"
+                                       th:field="*{mobilePhoneNumber}"
+                                       placeholder="69xxxxxxxx"
+                                       required>
+                                <div class="text-danger small mt-1"
+                                     th:if="${#fields.hasErrors('mobilePhoneNumber')}"
                                      th:errors="*{mobilePhoneNumber}"></div>
                             </div>
 
                             <div class="col-12">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" th:field="*{emailAddress}" placeholder="you@example.com" required>
-                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('emailAddress')}"
+                                <input type="email" class="form-control"
+                                       th:field="*{emailAddress}"
+                                       placeholder="you@example.com"
+                                       required>
+                                <div class="text-danger small mt-1"
+                                     th:if="${#fields.hasErrors('emailAddress')}"
                                      th:errors="*{emailAddress}"></div>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Password</label>
                                 <input type="password" class="form-control" th:field="*{rawPassword}" required>
-                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('rawPassword')}"
+                                <div class="text-danger small mt-1"
+                                     th:if="${#fields.hasErrors('rawPassword')}"
                                      th:errors="*{rawPassword}"></div>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Confirm Password</label>
                                 <input type="password" class="form-control" th:field="*{confirmRawPassword}" required>
-                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('confirmRawPassword')}"
+                                <div class="text-danger small mt-1"
+                                     th:if="${#fields.hasErrors('confirmRawPassword')}"
                                      th:errors="*{confirmRawPassword}"></div>
                             </div>
+
+                            <!-- ✅ ROLE SELECTION DROPDOWN -->
+                            <div class="col-12 mt-2">
+                                <label class="form-label">Select Role</label>
+
+                                <select class="form-select" th:field="*{roleSelection}" required>
+                                    <option value="" disabled>Select a role</option>
+                                    <option value="PASSENGER">Passenger</option>
+                                    <option value="DRIVER">Driver</option>
+                                    <option value="BOTH">Passenger & Driver</option>
+                                </select>
+
+                                <div class="text-danger small mt-1"
+                                     th:if="${#fields.hasErrors('roleSelection')}"
+                                     th:errors="*{roleSelection}"></div>
+                            </div>
+
+                            <!-- roles field exists in the record but is filled server-side; no inputs needed -->
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 py-2 mt-3">

@@ -1,34 +1,68 @@
 <!DOCTYPE html>
-<html
-        lang="en"
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorate="~{base}">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
 
-<!-- Fragment που μπαίνει στο <head> του base.html -->
 <th:block layout:fragment="head">
     <title>GreenRide | Profile</title>
-    <!-- (προαιρετικό) -->
-    <!-- <link rel="stylesheet" th:href="@{/css/profile.css}"> -->
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
 </th:block>
 
-<!-- Fragment που μπαίνει στο “main” του base.html -->
 <main layout:fragment="main" class="container py-4">
 
+    <!-- Header -->
     <div class="mb-3">
         <h1 class="mb-1">Profile</h1>
-        <p class="text-muted mb-0" th:if="${me != null}">
-            <span th:text="${me.emailAddress()}">email@example.com</span>
+
+        <p class="text-muted mb-0">
+            <span th:text="${me.fullName()}">User Name</span>
             <span> • </span>
-            <span th:text="${me.type()}">USER</span>
+            <span th:text="${me.emailAddress()}">email@example.com</span>
+        </p>
+
+        <!-- Role string -->
+        <p class="text-muted mt-1">
+            Role:
+            <span th:if="${me.passengerEnabled() and !me.driverEnabled()}">Passenger</span>
+            <span th:if="${me.driverEnabled() and !me.passengerEnabled()}">Driver</span>
+            <span th:if="${me.passengerEnabled() and me.driverEnabled()}">Passenger &amp; Driver</span>
         </p>
     </div>
 
     <hr class="my-4"/>
 
-    <div class="d-flex gap-2">
-        <a class="btn btn-outline-primary" th:href="@{/profile}">Profile</a>
-        <a class="btn btn-outline-primary" th:href="@{/tickets}">Tickets</a>
+    <!-- PASSENGER SECTION -->
+    <section class="gr-box mb-4" th:if="${me.passengerEnabled()}">
+        <h2 class="mb-2">Passenger</h2>
+        <p class="text-muted mb-3">Use GreenRide as a passenger.</p>
+
+        <div class="gr-actions d-flex gap-2">
+            <a class="gr-btn gr-btn-solid" th:href="@{/reservation}">
+                Search rides
+            </a>
+            <a class="gr-btn gr-btn-ghost" th:href="@{/bookings}">
+                My bookings
+            </a>
+        </div>
+    </section>
+
+    <!-- DRIVER SECTION -->
+    <section class="gr-box mb-4" th:if="${me.driverEnabled()}">
+        <h2 class="mb-2">Driver</h2>
+        <p class="text-muted mb-3">Use GreenRide as a driver.</p>
+
+        <div class="gr-actions d-flex gap-2">
+            <a class="gr-btn gr-btn-solid" th:href="@{/new_ride}">
+                Offer a ride
+            </a>
+            <a class="gr-btn gr-btn-ghost" th:href="@{/rides}">
+                My offered rides
+            </a>
+        </div>
+    </section>
+
+    <div class="mt-4">
         <a class="btn btn-outline-danger" th:href="@{/logout}">Logout</a>
     </div>
 

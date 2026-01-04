@@ -2,7 +2,10 @@ package dit.hua.gr.greenride.service.model;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 public record CreatePersonRequest(
 
@@ -29,5 +32,9 @@ public record CreatePersonRequest(
 
         @NotBlank
         @Size(min = 6, max = 50)
-        String confirmRawPassword
+        String confirmRawPassword,
+
+        // ✅ Dropdown επιλογή (PASSENGER / DRIVER / BOTH)
+        @NotBlank(message = "Please select a role")
+        String roleSelection
 ) { }

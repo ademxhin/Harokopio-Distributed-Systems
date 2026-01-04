@@ -7,16 +7,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title layout:title-pattern="$CONTENT_TITLE - GreenRide">GreenRide</title>
+    <title>GreenRide</title>
 
-    <!-- Bootstrap (μπορείς να το αφαιρέσεις αργότερα αν θες) -->
+    <!-- Bootstrap (optional) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
     <!-- Shared theme -->
     <link rel="stylesheet" th:href="@{/css/theme.css}">
 
-    <!-- Page-specific head -->
+    <!-- Page-specific head (title, page css, meta etc.) -->
     <th:block layout:fragment="head"></th:block>
 </head>
 
@@ -28,12 +28,10 @@
         <a class="gr-brand" th:href="@{/}">GreenRide</a>
 
         <div class="gr-nav-links">
-            <!-- Navigation links -->
             <a class="gr-link" th:href="@{/driver}">Driver</a>
             <a class="gr-link" th:href="@{/user}">User</a>
             <a class="gr-link" th:href="@{/admin}">Admin</a>
 
-            <!-- Action buttons -->
             <a class="gr-btn gr-btn-ghost" th:href="@{/login}">Login</a>
             <a class="gr-btn gr-btn-solid" th:href="@{/register}">Sign Up</a>
         </div>
@@ -46,6 +44,8 @@
 <!-- Main content -->
 <main layout:fragment="main"></main>
 
+<!-- Page-specific scripts -->
 <th:block layout:fragment="scripts"></th:block>
+
 </body>
 </html>
