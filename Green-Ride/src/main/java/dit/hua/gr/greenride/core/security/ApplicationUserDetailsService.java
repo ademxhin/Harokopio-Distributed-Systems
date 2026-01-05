@@ -23,17 +23,20 @@ public class ApplicationUserDetailsService implements UserDetailsService {
             throw new IllegalArgumentException("Username cannot be null or blank");
         }
 
-        Person person = this.personRepository
-                .findByEmailAddress(username)
+        final String normalized = username.trim();
+
+        final Person person = this.personRepository
+                .findByEmailAddress(normalized)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("Person with email " + username + " does not exist")
+                        new UsernameNotFoundException("Person with email " + normalized + " does not exist")
                 );
 
         return new ApplicationUserDetails(
                 person.getId(),
                 person.getEmailAddress(),
                 person.getHashedPassword(),
-                person.getPersonType()
+                person.getPersonType(),
+                person.getUserType()
         );
     }
 }

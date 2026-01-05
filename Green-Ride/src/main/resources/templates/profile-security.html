@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+
+<th:block layout:fragment="head">
+    <title>GreenRide | Security</title>
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+</th:block>
+
+<main layout:fragment="main" class="gr-profile-page">
+    <div class="container gr-profile-layout">
+
+        <aside class="gr-side">
+            <div class="gr-side-user">
+                <div class="gr-side-avatar">
+                    <span th:text="${#strings.substring(fullName,0,1)}">A</span>
+                </div>
+
+                <div class="gr-side-user-meta">
+                    <div class="gr-side-user-name"
+                         th:text="${fullName}">
+                        Adem
+                    </div>
+                    <div class="gr-side-user-email"
+                         th:text="${emailAddress}">
+                        denixhin@gmail.com
+                    </div>
+                </div>
+            </div>
+
+            <nav class="gr-side-nav">
+                <a class="gr-side-link"
+                   th:classappend="${activeTab == 'home'} ? ' is-active' : ''"
+                   th:href="@{/profile(tab='home')}">Home</a>
+                <a class="gr-side-link"
+                   th:classappend="${activeTab == 'personal'} ? ' is-active' : ''"
+                   th:href="@{/profile(tab='personal')}">Personal info</a>
+                <a class="gr-side-link"
+                   th:classappend="${activeTab == 'security'} ? ' is-active' : ''"
+                   th:href="@{/profile(tab='security')}">Security</a>
+            </nav>
+        </aside>
+
+        <section class="gr-content">
+            <header class="gr-content-header">
+                <h1 class="gr-h1">Security</h1>
+                <p class="gr-sub">Password & account security settings.</p>
+            </header>
+
+            <div class="gr-card">
+                <div style="padding:18px">
+                    <div style="font-weight:900; margin-bottom:6px;">Change password</div>
+                    <div style="color:rgba(17,17,20,.65)">
+                        (Coming soon) Add a form here for old/new password.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</main>
+</html>

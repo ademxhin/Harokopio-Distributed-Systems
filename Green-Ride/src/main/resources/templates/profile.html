@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="gr-profile-cta">
-                    <!-- ✅ CHANGED: REAL LOGOUT (POST) -->
+                    <!-- ✅ REAL LOGOUT (POST) -->
                     <form th:action="@{/logout}" method="post" style="display:inline;">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <button type="submit" class="gr-btn gr-btn-ghost gr-btn-danger">Logout</button>
@@ -46,29 +46,89 @@
             </div>
         </div>
 
-        <!-- Passenger -->
+        <!-- =========================
+             PASSENGER SECTION
+        ========================== -->
         <section class="gr-box mt-16" th:if="${isPassenger}">
             <div class="gr-section-head">
                 <h2 class="gr-h2">Passenger</h2>
-                <p class="gr-muted">Use GreenRide as a passenger.</p>
+                <p class="gr-muted">Find rides, request a seat and track your trip.</p>
             </div>
 
-            <div class="gr-actions">
-                <a class="gr-btn gr-btn-solid" th:href="@{/reservation}">Search rides</a>
-                <a class="gr-btn gr-btn-ghost" th:href="@{/bookings}">My bookings</a>
+            <!-- Cards like homepage -->
+            <div class="gr-role-grid">
+
+                <!-- Card 1 -->
+                <div class="gr-role-card">
+                    <div class="gr-role-top">
+                        <div class="gr-role-icon">🧍</div>
+                        <div class="gr-role-meta">
+                            <div class="gr-role-title">Search rides</div>
+                            <div class="gr-role-desc">Browse available rides based on your route and time.</div>
+                        </div>
+                    </div>
+                    <div class="gr-role-actions">
+                        <a class="gr-btn gr-btn-solid" th:href="@{/reservation}">Continue →</a>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="gr-role-card">
+                    <div class="gr-role-top">
+                        <div class="gr-role-icon">🎫</div>
+                        <div class="gr-role-meta">
+                            <div class="gr-role-title">My bookings</div>
+                            <div class="gr-role-desc">See your requests, bookings status and history.</div>
+                        </div>
+                    </div>
+                    <div class="gr-role-actions">
+                        <a class="gr-btn gr-btn-ghost" th:href="@{/bookings}">Continue →</a>
+                    </div>
+                </div>
+
             </div>
         </section>
 
-        <!-- Driver -->
+        <!-- =========================
+             DRIVER SECTION
+        ========================== -->
         <section class="gr-box mt-16" th:if="${isDriver}">
             <div class="gr-section-head">
                 <h2 class="gr-h2">Driver</h2>
-                <p class="gr-muted">Use GreenRide as a driver.</p>
+                <p class="gr-muted">Create rides, manage seats and share your route.</p>
             </div>
 
-            <div class="gr-actions">
-                <a class="gr-btn gr-btn-solid" th:href="@{/new_ride}">Offer a ride</a>
-                <a class="gr-btn gr-btn-ghost" th:href="@{/rides}">My offered rides</a>
+            <!-- Cards like homepage -->
+            <div class="gr-role-grid">
+
+                <!-- Card 1 -->
+                <div class="gr-role-card">
+                    <div class="gr-role-top">
+                        <div class="gr-role-icon">🚗</div>
+                        <div class="gr-role-meta">
+                            <div class="gr-role-title">Offer a ride</div>
+                            <div class="gr-role-desc">Create a new ride and define pickup, destination and seats.</div>
+                        </div>
+                    </div>
+                    <div class="gr-role-actions">
+                        <a class="gr-btn gr-btn-solid" th:href="@{/new_ride}">Continue →</a>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="gr-role-card">
+                    <div class="gr-role-top">
+                        <div class="gr-role-icon">📋</div>
+                        <div class="gr-role-meta">
+                            <div class="gr-role-title">My offered rides</div>
+                            <div class="gr-role-desc">Manage your rides, passengers and ride status.</div>
+                        </div>
+                    </div>
+                    <div class="gr-role-actions">
+                        <a class="gr-btn gr-btn-ghost" th:href="@{/rides}">Continue →</a>
+                    </div>
+                </div>
+
             </div>
         </section>
 

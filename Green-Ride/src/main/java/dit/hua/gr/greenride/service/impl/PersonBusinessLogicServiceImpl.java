@@ -2,6 +2,7 @@ package dit.hua.gr.greenride.service.impl;
 
 import dit.hua.gr.greenride.core.model.Person;
 import dit.hua.gr.greenride.core.model.PersonType;
+import dit.hua.gr.greenride.core.model.UserType;
 import dit.hua.gr.greenride.core.port.PhoneNumberPort;
 import dit.hua.gr.greenride.core.port.SmsNotificationPort;
 import dit.hua.gr.greenride.core.port.impl.dto.PhoneNumberValidationResult;
@@ -79,6 +80,13 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
         final String rawPassword = createPersonRequest.rawPassword();
         final String confirmRawPassword = createPersonRequest.confirmRawPassword();
 
+        // ✅ New: business role selection
+        final UserType userType = createPersonRequest.userType();
+        if (userType == null) {
+            // Normally blocked by @NotNull, but keep it safe
+            return CreatePersonResult.fail("Please select a role");
+        }
+
         // Confirm password check (business rule)
         if (!rawPassword.equals(confirmRawPassword)) {
             return CreatePersonResult.fail("Password and Confirm Password do not match");
@@ -89,11 +97,8 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
         try {
             phoneResult = this.phoneNumberPort.validate(mobilePhoneNumber);
         } catch (RestClientException ex) {
-            // If your port starts throwing RestClientException (or your custom exception),
-            // convert to a clean "external service unavailable"
             throw new ExternalServiceUnavailableException("NOC phone validation service is unavailable", ex);
         } catch (RuntimeException ex) {
-            // If you decide to throw custom exceptions from the port
             throw ex;
         }
 
@@ -117,16 +122,20 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
         // Hash password
         final String hashedPassword = this.passwordEncoder.encode(rawPassword);
 
-        // Instantiate Person (default USER)
+        // ✅ Instantiate Person as USER with selected UserType
+        // IMPORTANT: this assumes your Person has a constructor that accepts UserType
         Person person = new Person(
                 userId,
                 firstName,
                 lastName,
                 mobilePhoneNumber,
                 emailAddress,
-                PersonType.USER,
+                userType,
                 hashedPassword
         );
+
+        // Ensure system role is USER (optional if constructor already sets it)
+        person.setPersonType(PersonType.USER);
 
         // Validate Person entity
         final Set<ConstraintViolation<Person>> personViolations = this.validator.validate(person);

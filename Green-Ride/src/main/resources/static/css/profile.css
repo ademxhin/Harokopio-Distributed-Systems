@@ -1,63 +1,213 @@
-/* src/main/resources/static/css/profile.css */
-
-.gr-profile-wrap{
-    padding: 32px 0 60px 0;
+.gr-profile-page {
+    background: #f6f7f9;
+    min-height: calc(100vh - 64px);
+    padding: 22px 0 40px;
 }
 
-.gr-profile-card{
-    padding: 18px 18px;
+.gr-profile-layout{
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 24px;
+    align-items: start;
 }
 
-.gr-profile-head{
+.gr-side{
+    background: #fff;
+    border: 1px solid rgba(15, 15, 18, 0.08);
+    border-radius: 16px;
+    padding: 16px;
+    position: sticky;
+    top: 86px;
+}
+
+.gr-side-brand{
+    font-weight: 800;
+    font-size: .95rem;
+    margin: 2px 2px 12px;
+    color: #111114;
+}
+
+.gr-side-nav{
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
+    flex-direction: column;
+    gap: 6px;
 }
 
-.gr-profile-cta{
-    display: flex;
-    gap: 10px;
+.gr-side-link{
+    display: block;
+    padding: 10px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: rgba(17,17,20,.85);
+    font-weight: 700;
 }
 
-/* small utility spacing (αν δεν τα έχεις ήδη στο theme.css) */
-.mt-4{ margin-top: 4px; }
-.mt-16{ margin-top: 16px; }
+.gr-side-link:hover{ background: rgba(17,17,20,.05); }
+.gr-side-link.is-active{
+    background: rgba(17,17,20,.08);
+    color: #111114;
+}
 
-.gr-title-sm{
-    font-size: 1.9rem;
+.gr-content{ min-width: 0; }
+
+.gr-content-header{ margin: 2px 0 12px; }
+
+.gr-h1{
+    font-size: 1.75rem;
     line-height: 1.1;
-    margin: 0 0 6px 0;
+    margin: 0;
     font-weight: 800;
+    color: #111114;
 }
 
-.gr-h2{
-    margin: 0 0 6px 0;
-    font-size: 1.2rem;
-    font-weight: 800;
+.gr-sub{
+    margin: 6px 0 0;
+    color: rgba(17,17,20,.65);
 }
 
-.gr-muted{
-    color: rgba(11,11,12,0.65);
-    font-size: 0.98rem;
+.gr-card{
+    background: #fff;
+    border: 1px solid rgba(15, 15, 18, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
 }
 
-.gr-section-head{
-    margin-bottom: 12px;
+.gr-card-top{
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 14px;
+    padding: 18px 18px 14px;
+    align-items: center;
 }
 
-.gr-actions{
+.gr-card-meta{ min-width: 0; }
+.gr-meta-name{ font-weight: 800; font-size: 1.05rem; color:#111114; }
+.gr-meta-sub{
+    margin-top: 2px;
+    color: rgba(17,17,20,.65);
+    font-size: .95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gr-avatar{
+    width: 58px; height: 58px;
+    border-radius: 999px;
+    background: rgba(17,17,20,.08);
+    display: grid;
+    place-items: center;
+    position: relative;
+    user-select: none;
+}
+
+.gr-avatar-initials{ font-weight: 900; color: rgba(17,17,20,.70); }
+
+.gr-avatar-edit{
+    position: absolute;
+    right: -2px; bottom: -2px;
+    width: 26px; height: 26px;
+    border-radius: 999px;
+    background: #111114;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: .85rem;
+    text-decoration: none;
+    border: 2px solid #fff;
+}
+
+.gr-divider{ height:1px; background: rgba(15,15,18,.08); }
+
+.gr-rows{ display:flex; flex-direction:column; }
+.gr-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 18px;
+    gap:12px;
+}
+
+.gr-row + .gr-row{ border-top: 1px solid rgba(15,15,18,.08); }
+
+.gr-row-left{ min-width:0; }
+.gr-row-label{ font-size:.85rem; font-weight:700; color: rgba(17,17,20,.60); }
+.gr-row-value{
+    margin-top:2px;
+    font-weight:700;
+    color:#111114;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.gr-row-right{ font-size:1.25rem; color: rgba(17,17,20,.35); }
+.gr-muted{ color: rgba(17,17,20,.35); }
+
+/* Home actions */
+.gr-actions-grid{
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.gr-action-card{
+    background:#fff;
+    border: 1px solid rgba(15,15,18,.08);
+    border-radius: 16px;
+    padding: 16px;
+}
+
+.gr-action-title{ font-weight: 900; margin: 0 0 6px; color:#111114; }
+.gr-action-sub{ margin:0 0 10px; color: rgba(17,17,20,.65); font-size: .95rem; }
+.gr-action-link{ font-weight: 800; text-decoration: none; color:#111114; }
+.gr-action-link:hover{ text-decoration: underline; }
+
+@media (max-width: 992px){
+    .gr-profile-layout{ grid-template-columns: 1fr; }
+    .gr-side{ position: static; }
+    .gr-actions-grid{ grid-template-columns: 1fr; }
+}
+
+/* USER HEADER (Uber-style) */
+.gr-side-user{
     display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 8px 14px;
+    margin-bottom: 10px;
 }
 
-/* Αν δεν έχεις danger button στο theme */
-.gr-btn-danger{
-    border-color: rgba(220, 53, 69, 0.35) !important;
-    color: rgb(220, 53, 69) !important;
+.gr-side-avatar{
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: rgba(17,17,20,0.10);
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    color: rgba(17,17,20,0.65);
+    font-size: 1rem;
+    flex-shrink: 0;
 }
-.gr-btn-danger:hover{
-    border-color: rgba(220, 53, 69, 0.7) !important;
-    background: rgba(220, 53, 69, 0.06) !important;
+
+.gr-side-user-meta{
+    min-width: 0;
+}
+
+.gr-side-user-name{
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #111114;
+    line-height: 1.1;
+}
+
+.gr-side-user-email{
+    font-size: 0.85rem;
+    color: rgba(17,17,20,0.60);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 160px;
 }

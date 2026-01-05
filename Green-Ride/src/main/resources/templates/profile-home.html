@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+
+<th:block layout:fragment="head">
+    <title>GreenRide | Profile</title>
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+</th:block>
+
+<main layout:fragment="main" class="gr-profile-page">
+    <div class="container gr-profile-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="gr-side">
+            <div class="gr-side-user">
+                <div class="gr-side-avatar">
+                    <span th:text="${#strings.substring(fullName,0,1)}">A</span>
+                </div>
+
+                <div class="gr-side-user-meta">
+                    <div class="gr-side-user-name"
+                         th:text="${fullName}">
+                        Adem
+                    </div>
+                    <div class="gr-side-user-email"
+                         th:text="${emailAddress}">
+                        denixhin@gmail.com
+                    </div>
+                </div>
+            </div>
+
+            <nav class="gr-side-nav">
+                <a class="gr-side-link"
+                   th:classappend="${activeTab == 'home'} ? ' is-active' : ''"
+                   th:href="@{/profile(tab='home')}">Home</a>
+
+                <a class="gr-side-link"
+                   th:classappend="${activeTab == 'personal'} ? ' is-active' : ''"
+                   th:href="@{/profile(tab='personal')}">Personal info</a>
+
+                <a class="gr-side-link"
+                   th:classappend="${activeTab == 'security'} ? ' is-active' : ''"
+                   th:href="@{/profile(tab='security')}">Security</a>
+            </nav>
+        </aside>
+
+        <!-- CONTENT -->
+        <section class="gr-content">
+            <header class="gr-content-header">
+                <h1 class="gr-h1">Home</h1>
+                <p class="gr-sub">Quick actions based on your role.</p>
+            </header>
+
+            <!-- ACTION GRID -->
+            <div class="gr-actions-grid">
+
+                <!-- DRIVER ACTION: Create ride -->
+                <div class="gr-action-card" th:if="${driverEnabled}">
+                    <div class="gr-action-title">Create ride (Driver)</div>
+                    <div class="gr-action-sub">
+                        Create a new ride with origin, destination, time and available seats.
+                    </div>
+                    <a class="gr-action-link" th:href="@{/rides/offer}">Continue →</a>
+                </div>
+
+                <!-- PASSENGER ACTION: Search rides -->
+                <div class="gr-action-card" th:if="${passengerEnabled}">
+                    <div class="gr-action-title">Search rides (Passenger)</div>
+                    <div class="gr-action-sub">
+                        Browse available rides and request a seat.
+                    </div>
+                    <a class="gr-action-link" th:href="@{/rides/search}">Continue →</a>
+                </div>
+
+                <!-- PASSENGER ACTION: Manage bookings -->
+                <div class="gr-action-card" th:if="${passengerEnabled}">
+                    <div class="gr-action-title">My bookings</div>
+                    <div class="gr-action-sub">
+                        View your bookings, cancel a request, and track status.
+                    </div>
+                    <a class="gr-action-link" th:href="@{/bookings}">Continue →</a>
+                </div>
+
+                <!-- BOTH: Ride history -->
+                <div class="gr-action-card" th:if="${passengerEnabled or driverEnabled}">
+                    <div class="gr-action-title">Ride history</div>
+                    <div class="gr-action-sub">
+                        View your completed rides history (as driver or passenger).
+                    </div>
+                    <a class="gr-action-link" th:href="@{/rides/history}">Continue →</a>
+                </div>
+
+                <!-- BOTH: Ratings -->
+                <div class="gr-action-card" th:if="${passengerEnabled or driverEnabled}">
+                    <div class="gr-action-title">Ratings</div>
+                    <div class="gr-action-sub">
+                        Basic rating for drivers and passengers after a ride.
+                    </div>
+                    <a class="gr-action-link" th:href="@{/ratings}">Continue →</a>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+</main>
+</html>
