@@ -1,50 +1,73 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #fff8f0;
+    background-color: #f4f7f6; /* Light grey background */
     margin: 0;
 }
 
 header {
-    background-color: #fd7e14;
+    background-color: #000; /* Black header like the initial style */
     color: white;
     text-align: center;
-    padding: 20px;
+    padding: 10px;
+    font-weight: bold;
 }
 
 nav {
-    text-align: center;
-    padding: 10px;
-    background-color: #ffc078;
+    background-color: #fff;
+    padding: 10px 20px;
+    text-align: right;
+    border-bottom: 1px solid #ddd;
+}
+
+nav a {
+    color: #333;
+    text-decoration: none;
+    margin-left: 15px;
+    font-size: 14px;
 }
 
 .container {
     max-width: 600px;
-    margin: 30px auto;
+    margin: 40px auto;
     background: white;
-    padding: 25px;
-    border-radius: 8px;
+    padding: 30px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-fieldset {
-    border: none;
-    margin-bottom: 20px;
+h2 {
+    color: #333;
+    margin-top: 0;
 }
 
 label {
-    font-weight: bold;
-    margin-top: 10px;
     display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #555;
 }
 
 input {
     width: 100%;
     padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Fixes padding issues */
 }
 
 button {
     width: 100%;
     padding: 12px;
-    background-color: #fd7e14;
-    border: none;
-    color: white;
+    background-color: #f8f9fa; /* Light grey button like your screenshot */
+    border: 1px solid #ddd;
+    color: #000;
+    font-weight: bold;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+button:hover {
+    background-color: #e9ecef;
 }

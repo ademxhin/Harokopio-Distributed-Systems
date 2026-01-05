@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RideRepository extends JpaRepository<Ride, Long> {
 
-    @Query("SELECT AVG(CAST(r.bookedSeats AS double) / r.availableSeats) * 100 FROM Ride r WHERE r.availableSeats > 0")
+    @Query("SELECT COALESCE(AVG(CAST(r.bookedSeats AS double) / r.availableSeats) * 100, 0.0) " +
+            "FROM Ride r WHERE r.availableSeats > 0")
     Double calculateAverageOccupancy();
 }

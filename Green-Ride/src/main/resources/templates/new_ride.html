@@ -1,36 +1,36 @@
 <!DOCTYPE html>
-<html lang="el" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{base}">
-<head><title>GreenRide | Νέα Διαδρομή</title></head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Ride - GreenRide</title>
+    <link rel="stylesheet" th:href="@{/css/new_ride.css}">
+</head>
 <body>
-<main layout:fragment="main" class="container py-4">
-    <div class="gr-box">
-        <h2 class="gr-h2">Δημιουργία Διαδρομής</h2>
-        <form th:action="@{/new_ride}" th:object="${rideForm}" method="post">
-            <div class="mb-3">
-                <label class="form-label">Αφετηρία</label>
-                <input type="text" th:field="*{origin}" class="form-control" placeholder="π.χ. Χαροκόπειο" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Προορισμός</label>
-                <input type="text" th:field="*{destination}" class="form-control" placeholder="π.χ. Σύνταγμα" required>
-            </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Ημερομηνία</label>
-                    <input type="date" th:field="*{date}" class="form-control" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Ώρα</label>
-                    <input type="time" th:field="*{time}" class="form-control" required>
-                </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Διαθέσιμες Θέσεις (1-4)</label>
-                <input type="number" th:field="*{seatsAvailable}" class="form-control" min="1" max="4" required>
-            </div>
-            <button type="submit" class="gr-btn gr-btn-solid w-100">Δημοσίευση Διαδρομής</button>
-        </form>
-    </div>
-</main>
+<header>GreenRide</header>
+<nav>
+    <a th:href="@{/profile}">Profile</a>
+    <a th:href="@{/logout}">Logout</a>
+</nav>
+<div class="container">
+    <h2>Create Ride</h2>
+    <form th:action="@{/rides/offer}" th:object="${rideForm}" method="post">
+        <label>Origin</label>
+        <input type="text" th:field="*{origin}" placeholder="Enter origin" required />
+
+        <label>Destination</label>
+        <input type="text" th:field="*{destination}" placeholder="Enter destination" required />
+
+        <label>Date</label>
+        <input type="date" th:field="*{date}" required />
+
+        <label>Time</label>
+        <input type="time" th:field="*{time}" required />
+
+        <label>Available Seats (1-4)</label>
+        <input type="number" th:field="*{seatsAvailable}" min="1" max="4" required />
+
+        <button type="submit">Publish Ride</button>
+    </form>
+</div>
 </body>
 </html>

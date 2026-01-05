@@ -100,6 +100,10 @@ public final class Person {
         this.userType = null;
         this.hashedPassword = hashedPassword;
     }
+    // Προσθήκη Getters στο Person.java για να σταματήσουν τα σφάλματα του Mapper
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
+    public String getMobilePhoneNumber() { return mobilePhoneNumber; }
 
     /* =========================
        DOMAIN HELPERS
@@ -120,4 +124,6 @@ public final class Person {
     public boolean isDriver() {
         return this.userType != null && this.userType.isDriver();
     }
+
+
 }

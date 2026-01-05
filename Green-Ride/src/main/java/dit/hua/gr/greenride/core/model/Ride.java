@@ -23,4 +23,8 @@ public class Ride {
 
     @ManyToOne
     private Person driver;
+
+    public void setSeatsAvailable(int seatsAvailable) {
+        this.availableSeats = seatsAvailable;
+    }
 }
