@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage My Rides</title>
+</head>
+<body>
+<h1>My Rides</h1>
+
+<div th:if="${#lists.isEmpty(rides)}">
+    <p>You have not created any rides yet.</p>
+</div>
+
+<div th:if="${!#lists.isEmpty(rides)}">
+    <ul>
+        <li th:each="ride : ${rides}">
+            <strong th:text="${ride.origin} + ' → ' + ${ride.destination}"></strong><br>
+            <span th:text="'Departure: ' + ${ride.departureTime}"></span><br>
+            <span th:text="'Available seats: ' + ${ride.availableSeats}"></span><br>
+
+            <h4>Bookings:</h4>
+
+            <div th:if="${#lists.isEmpty(ride.bookings)}">
+                <p>No bookings yet.</p>
+            </div>
+
+            <ul th:if="${!#lists.isEmpty(ride.bookings)}">
+                <li th:each="b : ${ride.bookings}">
+                    <span th:text="${b.person.firstName} + ' ' + ${b.person.lastName}"></span>
+                    <span th:text="' - Status: ' + ${b.status}"></span>
+                </li>
+            </ul>
+
+            <hr>
+        </li>
+    </ul>
+</div>
+
+<a th:href="@{/profile}">← Back to Profile</a>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Rides - GreenRide</title>
+    <link rel="stylesheet" th:href="@{/css/search.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Available Rides</h1>
+
+    <div th:if="${#lists.isEmpty(rides)}">
+        <p>No rides yet. Please check back later.</p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(rides)}">
+        <ul>
+            <li th:each="ride : ${rides}">
+                <strong th:text="${ride.origin} + ' → ' + ${ride.destination}">Route</strong><br>
+                <span th:text="'Departure: ' + ${ride.departureTime}">Time</span><br>
+                <span th:text="'Seats: ' + ${ride.availableSeats}">Seats</span><br>
+                <span th:text="'Driver: ' + ${ride.driver.firstName} + ' ' + ${ride.driver.lastName}">Driver</span><br>
+
+                <form th:action="@{/bookings/create}" method="post">
+                    <input type="hidden" name="rideId" th:value="${ride.id}" />
+                    <button type="submit">Book</button>
+                </form>
+
+                <hr>
+            </li>
+        </ul>
+    </div>
+
+    <a th:href="@{/profile}" style="text-decoration:none;">← Back to Profile</a>
+</div>
+</body>
+</html>

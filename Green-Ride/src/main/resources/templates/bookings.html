@@ -1,10 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>My Bookings</title>
+    <link rel="stylesheet" th:href="@{/css/bookings.css}">
 </head>
 <body>
+<div class="container">
+    <h1>My Bookings</h1>
 
+    <div th:if="${#lists.isEmpty(bookings)}">
+        <p>You have no bookings yet.</p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(bookings)}">
+        <ul>
+            <li th:each="booking : ${bookings}">
+                <strong th:text="${booking.ride.origin} + ' → ' + ${booking.ride.destination}">Route</strong><br>
+                <span th:text="'Status: ' + ${booking.status}">Status</span><br>
+                <span th:text="'Date: ' + ${booking.ride.departureTime}">Date</span><br>
+
+                <!-- ΚΟΥΜΠΙ CANCEL -->
+                <form th:action="@{/bookings/cancel}" method="post" style="margin-top:8px;">
+                    <input type="hidden" name="bookingId" th:value="${booking.id}" />
+                    <button type="submit">Cancel</button>
+                </form>
+
+                <hr>
+            </li>
+        </ul>
+    </div>
+
+    <a th:href="@{/profile}">← Back to Profile</a>
+</div>
 </body>
 </html>
