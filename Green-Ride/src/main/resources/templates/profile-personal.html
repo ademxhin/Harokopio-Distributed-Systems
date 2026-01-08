@@ -37,9 +37,7 @@
                 <a class="gr-side-link"
                    th:classappend="${activeTab == 'personal'} ? ' is-active' : ''"
                    th:href="@{/profile(tab='personal')}">Personal info</a>
-                <a class="gr-side-link"
-                   th:classappend="${activeTab == 'security'} ? ' is-active' : ''"
-                   th:href="@{/profile(tab='security')}">Security</a>
+
             </nav>
         </aside>
 
@@ -53,7 +51,6 @@
                     <div class="gr-avatar">
                         <span class="gr-avatar-initials"
                               th:text="${#strings.substring(fullName,0,1)}">U</span>
-                        <a class="gr-avatar-edit" href="#" title="Edit photo">✎</a>
                     </div>
 
                     <div class="gr-card-meta">
@@ -96,6 +93,9 @@
                         </div>
                         <div class="gr-row-right gr-muted">•</div>
                     </div>
+
+
+
                 </div>
             </div>
         </section>

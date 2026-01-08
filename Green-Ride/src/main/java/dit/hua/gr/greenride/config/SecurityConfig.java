@@ -22,6 +22,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    // ============================
+    // API SECURITY CHAIN (JWT)
+    // ============================
     @Bean
     @Order(1)
     public SecurityFilterChain apiChain(final HttpSecurity http,
@@ -48,6 +51,9 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // ============================
+    // UI SECURITY CHAIN (FORMS)
+    // ============================
     @Bean
     @Order(2)
     public SecurityFilterChain uiChain(final HttpSecurity http) throws Exception {
@@ -55,23 +61,41 @@ public class SecurityConfig {
         http
                 .securityMatcher("/**")
                 .authorizeHttpRequests(auth -> auth
+                        // Public pages
                         .requestMatchers("/", "/login", "/register", "/logged-out").permitAll()
 
-                        // 🔥 ΔΙΟΡΘΩΣΗ: Το profile πρέπει να απαιτεί login
-                        .requestMatchers("/profile", "/profile/**").authenticated()
+                        // Admin login page must be public
+                        .requestMatchers("/admin/login").permitAll()
 
-                        // 🔥 ΔΙΟΡΘΩΣΗ: Όλα τα rides endpoints απαιτούν login
-                        .requestMatchers("/rides/**").authenticated()
+                        // Admin dashboard requires admin role
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // User pages require authentication
+                        .requestMatchers("/profile/**", "/rides/**").authenticated()
 
                         .anyRequest().permitAll()
                 )
+
+                // Unified login handler for both users & admins
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/profile?tab=home", true)
+                        .successHandler((request, response, authentication) -> {
+
+                            boolean isAdmin = authentication.getAuthorities().stream()
+                                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+                            if (isAdmin) {
+                                response.sendRedirect("/admin/dashboard");
+                            } else {
+                                response.sendRedirect("/profile?tab=home");
+                            }
+                        })
                         .failureUrl("/login?error")
                         .permitAll()
                 )
+
+                // Logout
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/logged-out")
@@ -80,16 +104,23 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
+
                 .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
 
+    // ============================
+    // PASSWORD ENCODER
+    // ============================
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // ============================
+    // AUTH MANAGER
+    // ============================
     @Bean
     public AuthenticationManager authenticationManager(final AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

@@ -4,6 +4,89 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
 
+<head>
+    <title>GreenRide | Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+
+<body>
+
+<main layout:fragment="main" class="container py-4">
+
+    <!-- ADMIN DASHBOARD TITLE -->
+    <h1 class="mb-4">Administrator Dashboard</h1>
+    <p class="text-muted mb-4">Quick overview and moderation tools for system administrators.</p>
+
+    <div class="row g-4">
+
+        <!-- SYSTEM STATISTICS WINDOW -->
+        <div class="col-12 col-lg-6">
+            <section class="gr-box p-4 h-100">
+                <h2 class="mb-3">System Statistics</h2>
+                <ul class="list-unstyled">
+                    <li>Total rides: <strong th:text="${stats.totalRides}">0</strong></li>
+                    <li>Average occupancy: <strong th:text="${stats.averageOccupancy}">0%</strong></li>
+                    <li>Active drivers: <strong th:text="${stats.activeDrivers}">0</strong></li>
+                    <li>Active passengers: <strong th:text="${stats.activePassengers}">0</strong></li>
+                </ul>
+            </section>
+        </div>
+
+        <!-- FLAGGED USERS WINDOW -->
+        <div class="col-12 col-lg-6">
+            <section class="gr-box p-4 h-100">
+                <h2 class="mb-3">Flagged Users</h2>
+                <div th:if="${#lists.isEmpty(flaggedUsers)}">
+                    <p>No flagged users found.</p>
+                </div>
+                <ul th:if="${!#lists.isEmpty(flaggedUsers)}" class="list-group">
+                    <li th:each="name : ${flaggedUsers}" th:text="${name}" class="list-group-item">User Name</li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="col-12">
+            <section class="gr-box p-4 h-100 mt-4">
+                <h2 class="mb-3">All Users</h2>
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="u : ${allUsers}">
+                        <td th:text="${u.fullName}">User Name</td>
+                        <td th:text="${u.emailAddress}">email@example.com</td>
+                        <td>
+                            <span th:if="${kickedUserNames != null and kickedUserNames.contains(u.fullName)}" class="text-danger">Flagged</span>
+                            <span th:if="${kickedUserNames == null or !kickedUserNames.contains(u.fullName)}" class="text-success">Active</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/admin/kick/' + ${u.id}}" class="btn btn-sm btn-danger"
+                               onclick="return confirm('Are you sure?');">Kick</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+
+
+</main>
+
+</body>
+</html>
+εδω θελει την αλλαγη ή εδω  <!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+
 <th:block layout:fragment="head">
     <title>GreenRide | Profile</title>
     <link rel="stylesheet" th:href="@{/css/profile.css}">

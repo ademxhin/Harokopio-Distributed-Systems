@@ -17,13 +17,14 @@
         <ul>
             <li th:each="booking : ${bookings}">
                 <strong th:text="${booking.ride.origin} + ' → ' + ${booking.ride.destination}">Route</strong><br>
-                <span th:text="'Status: ' + ${booking.status}">Status</span><br>
-                <span th:text="'Date: ' + ${booking.ride.departureTime}">Date</span><br>
 
-                <!-- ΚΟΥΜΠΙ CANCEL -->
-                <form th:action="@{/bookings/cancel}" method="post" style="margin-top:8px;">
+                <span th:text="'Status: ' + (${booking.status != null} ? ${booking.status} : 'Confirmed')">Status</span><br>
+
+                <span th:text="'Date: ' + ${#temporals.format(booking.ride.departureTime, 'dd/MM/yyyy HH:mm')}">Date</span><br>
+
+                <form th:action="@{/rides/bookings/cancel}" method="post" style="margin-top:8px;">
                     <input type="hidden" name="bookingId" th:value="${booking.id}" />
-                    <button type="submit">Cancel</button>
+                    <button type="submit" style="color: red; cursor: pointer;">Cancel Booking</button>
                 </form>
 
                 <hr>

@@ -1,91 +1,71 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
 <head>
-    <title>Admin Panel</title>
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <title>GreenRide | Admin Dashboard</title>
 </head>
-
 <body>
-
 <main layout:fragment="main" class="container py-4">
+    <h1 class="mb-4">Administrator Dashboard</h1>
 
-    <!-- ADMIN DASHBOARD TITLE -->
-    <h1 class="mb-4">Πίνακας Διαχειριστή</h1>
-
-    <!-- SYSTEM STATISTICS -->
-    <section class="gr-box mb-4">
-        <h2 class="mb-3">Στατιστικά Συστήματος</h2>
-
-        <ul>
-            <li>Συνολικός αριθμός διαδρομών:
-                <strong th:text="${stats.totalRides}">0</strong>
-            </li>
-
-            <li>Μέσος όρος πληρότητας:
-                <strong th:text="${stats.averageOccupancy}">0%</strong>
-            </li>
-
-            <li>Ενεργοί οδηγοί:
-                <strong th:text="${stats.activeDrivers}">0</strong>
-            </li>
-
-            <li>Ενεργοί επιβάτες:
-                <strong th:text="${stats.activePassengers}">0</strong>
-            </li>
-        </ul>
-    </section>
-
-    <!-- MALICIOUS USERS MANAGEMENT -->
-    <section class="gr-box mb-4">
-        <h2 class="mb-3">Διαχείριση Κακόβουλων Χρηστών</h2>
-
-        <div th:if="${#lists.isEmpty(flaggedUsers)}">
-            <p>Δεν υπάρχουν αναφορές για κακόβουλους χρήστες.</p>
+    <div class="row g-4">
+        <div class="col-12 col-lg-6">
+            <section class="gr-box p-4 h-100">
+                <h2 class="mb-3">System Statistics</h2>
+                <ul class="list-unstyled">
+                    <li>Total rides: <strong th:text="${stats.totalRides}">0</strong></li>
+                    <li>Average occupancy: <strong th:text="${stats.averageOccupancy}">0%</strong></li>
+                    <li>Active drivers: <strong th:text="${stats.activeDrivers}">0</strong></li>
+                    <li>Active passengers: <strong th:text="${stats.activePassengers}">0</strong></li>
+                </ul>
+            </section>
         </div>
 
-        <table th:if="${!#lists.isEmpty(flaggedUsers)}" class="table">
-            <thead>
-            <tr>
-                <th>Όνομα</th>
-                <th>Email</th>
-                <th>Αναφορές</th>
-                <th>Κατάσταση</th>
-                <th>Ενέργειες</th>
-            </tr>
-            </thead>
+        <div class="col-12 col-lg-6">
+            <section class="gr-box p-4 h-100">
+                <h2 class="mb-3">Flagged Users</h2>
+                <div th:if="${#lists.isEmpty(flaggedUsers)}"><p>No flagged users.</p></div>
+                <ul th:if="${!#lists.isEmpty(flaggedUsers)}" class="list-group">
+                    <li th:each="name : ${flaggedUsers}" th:text="${name}" class="list-group-item"></li>
+                </ul>
+            </section>
+        </div>
 
-            <tbody>
-            <tr th:each="u : ${flaggedUsers}">
-                <td th:text="${u.fullName}">User Name</td>
-                <td th:text="${u.email}">email@uni.gr</td>
-                <td th:text="${u.reportCount}">0</td>
-
-                <td>
-                    <span th:if="${u.banned}" class="text-danger">Αποκλεισμένος</span>
-                    <span th:if="${!u.banned}" class="text-success">Ενεργός</span>
-                </td>
-
-                <td>
-                    <a th:if="${!u.banned}"
-                       th:href="@{'/admin/ban/' + ${u.id}}"
-                       class="gr-btn gr-btn-ghost">
-                        Αποκλεισμός
-                    </a>
-
-                    <a th:if="${u.banned}"
-                       th:href="@{'/admin/unban/' + ${u.id}}"
-                       class="gr-btn gr-btn-solid">
-                        Επανενεργοποίηση
-                    </a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </section>
-
+        <div class="col-12">
+            <section class="gr-box p-4 mt-4">
+                <h2 class="mb-3">User Management</h2>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Rating</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="u : ${allUsers}">
+                        <td th:text="${u.fullName}">Name</td>
+                        <td th:text="${u.emailAddress}">Email</td>
+                        <td>
+                            <span class="badge bg-warning text-dark" th:text="${u.getAverageRating()}">0.0 ★</span>
+                        </td>
+                        <td>
+                            <span th:if="${kickedUserNames != null and kickedUserNames.contains(u.fullName)}" class="text-danger">Flagged</span>
+                            <span th:if="${kickedUserNames == null or !kickedUserNames.contains(u.fullName)}" class="text-success">Active</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/admin/kick/' + ${u.id}}" class="btn btn-sm btn-danger" onclick="return confirm('Kick this user?');">Kick</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
 </main>
-
 </body>
 </html>
