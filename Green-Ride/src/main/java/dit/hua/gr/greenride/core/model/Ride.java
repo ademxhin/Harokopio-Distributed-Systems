@@ -6,8 +6,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ride")
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class Ride {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,11 +19,19 @@ public class Ride {
     private String destination;
     private LocalDateTime departureTime;
 
-    // ✅ ΑΛΛΑΓΗ: Το όνομα πρέπει να είναι availableSeats για να "βλέπει" το Query
+    // Διαθέσιμες θέσεις
     private int availableSeats;
 
+    // Πόσες έχουν κλειστεί (αν θες να το χρησιμοποιήσεις αργότερα)
     private int bookedSeats = 0;
 
+    // Ο οδηγός που δημιούργησε τη διαδρομή
     @ManyToOne
+    @JoinColumn(name = "driver_id")
     private Person driver;
+
+    // Συμβατότητα με CreateRideForm.seatsAvailable
+    public void setSeatsAvailable(int seatsAvailable) {
+        this.availableSeats = seatsAvailable;
+    }
 }

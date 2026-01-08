@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ride History - GreenRide</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; }
+        header { background-color: #000; color: white; text-align: center; padding: 10px; font-weight: bold; }
+        nav { background-color: #fff; padding: 10px 20px; text-align: right; border-bottom: 1px solid #ddd; }
+        nav a { color: #333; text-decoration: none; margin-left: 15px; font-size: 14px; }
+        .container { max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; color: #333; }
+        .back-link { display: inline-block; margin-top: 20px; color: #333; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+<header>GreenRide</header>
+<nav>
+    <a th:href="@{/profile}">Profile</a>
+    <a th:href="@{/logout}">Logout</a>
+</nav>
+<div class="container">
+    <h2>Ride History</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Origin</th>
+            <th>Destination</th>
+            <th>Departure</th>
+            <th>Seats</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="ride : ${rides}">
+            <td th:text="${ride.origin}">Origin</td>
+            <td th:text="${ride.destination}">Destination</td>
+            <td th:text="${#temporals.format(ride.departureTime, 'dd/MM/yyyy HH:mm')}">Date</td>
+            <td th:text="${ride.availableSeats}">0</td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/profile}" class="back-link">← Back to Profile</a>
+</div>
+</body>
+</html>

@@ -16,16 +16,16 @@ public class AdminController {
         this.adminService = adminService;
     }
 
+    // Μέσα στο AdminController.java
     @GetMapping("/admin")
     public String adminHome(Model model) {
-        // Καλούμε το service για να πάρουμε τα στατιστικά και τους flagged χρήστες
         AdminStats stats = adminService.getSystemStatistics();
+
+        // ✅ Αυτό προκαλεί το σφάλμα αν η μέθοδος λείπει από το Service
         List<Person> flaggedUsers = adminService.getFlaggedUsers();
 
-        // Προσθήκη στο μοντέλο για την Thymeleaf
         model.addAttribute("stats", stats);
         model.addAttribute("flaggedUsers", flaggedUsers);
-
-        return "admin"; // templates/admin.html
+        return "admin";
     }
 }

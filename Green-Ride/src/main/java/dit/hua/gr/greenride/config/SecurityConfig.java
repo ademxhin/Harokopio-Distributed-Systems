@@ -56,20 +56,24 @@ public class SecurityConfig {
                 .securityMatcher("/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/register", "/logged-out").permitAll()
-                        .requestMatchers("/profile").authenticated()
+
+                        // 🔥 ΔΙΟΡΘΩΣΗ: Το profile πρέπει να απαιτεί login
+                        .requestMatchers("/profile", "/profile/**").authenticated()
+
+                        // 🔥 ΔΙΟΡΘΩΣΗ: Όλα τα rides endpoints απαιτούν login
+                        .requestMatchers("/rides/**").authenticated()
+
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/profile", true)
+                        .defaultSuccessUrl("/profile?tab=home", true)
                         .failureUrl("/login?error")
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        // ONLY Spring Security logout endpoint (POST)
                         .logoutUrl("/logout")
-                        // After POST /logout -> redirect here
                         .logoutSuccessUrl("/logged-out")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)

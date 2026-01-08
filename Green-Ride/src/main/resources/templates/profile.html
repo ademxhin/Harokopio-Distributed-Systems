@@ -4,14 +4,10 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
 
-<head>
-    <th:block layout:fragment="head">
-        <title>GreenRide | Profile</title>
-        <link rel="stylesheet" th:href="@{/css/profile.css}">
-    </th:block>
-</head>
-
-<body>
+<th:block layout:fragment="head">
+    <title>GreenRide | Profile</title>
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+</th:block>
 
 <main layout:fragment="main" class="gr-page"
       th:with="
@@ -37,7 +33,6 @@
                 </div>
 
                 <div class="gr-profile-cta">
-                    <!-- ✅ REAL LOGOUT (POST) -->
                     <form th:action="@{/logout}" method="post" style="display:inline;">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <button type="submit" class="gr-btn gr-btn-ghost gr-btn-danger">Logout</button>
@@ -55,7 +50,6 @@
                 <p class="gr-muted">Find rides, request a seat and track your trip.</p>
             </div>
 
-            <!-- Cards like homepage -->
             <div class="gr-role-grid">
 
                 <!-- Card 1 -->
@@ -98,7 +92,6 @@
                 <p class="gr-muted">Create rides, manage seats and share your route.</p>
             </div>
 
-            <!-- Cards like homepage -->
             <div class="gr-role-grid">
 
                 <!-- Card 1 -->
@@ -129,11 +122,24 @@
                     </div>
                 </div>
 
+                <!-- ✅ Card 3: Ratings -->
+                <div class="gr-role-card">
+                    <div class="gr-role-top">
+                        <div class="gr-role-icon">⭐</div>
+                        <div class="gr-role-meta">
+                            <div class="gr-role-title">Ratings</div>
+                            <div class="gr-role-desc">Basic rating for drivers and passengers after a ride.</div>
+                        </div>
+                    </div>
+                    <div class="gr-role-actions">
+                        <a class="gr-btn gr-btn-ghost" th:href="@{/rides/ratings}">Continue →</a>
+                    </div>
+                </div>
+
             </div>
         </section>
 
     </section>
-
 </main>
 
 </body>

@@ -12,31 +12,16 @@ public class ApplicationUserDetailsService implements UserDetailsService {
 
     private final PersonRepository personRepository;
 
-    public ApplicationUserDetailsService(final PersonRepository personRepository) {
-        if (personRepository == null) throw new NullPointerException("personRepository is null");
+    public ApplicationUserDetailsService(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
     @Override
-    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username cannot be null or blank");
-        }
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        final String normalized = username.trim();
+        Person person = personRepository.findByEmailAddress(username.trim())
+                .orElseThrow(() -> new UsernameNotFoundException("Person with email " + username + " does not exist"));
 
-        final Person person = this.personRepository
-                .findByEmailAddress(normalized)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("Person with email " + normalized + " does not exist")
-                );
-
-        return new ApplicationUserDetails(
-                person.getId(),
-                person.getEmailAddress(),
-                person.getHashedPassword(),
-                person.getPersonType(),
-                person.getUserType()
-        );
+        return new ApplicationUserDetails(person);
     }
 }
