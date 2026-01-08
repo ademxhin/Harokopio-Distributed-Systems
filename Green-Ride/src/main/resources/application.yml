@@ -43,3 +43,10 @@ app:
   maps:
     base-url: "https://api.openrouteservice.org"
     api-key: ${ORS_API_KEY:eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjVhMTg3NzdjNzA0MjQwZWJhYzYxNDUzYTMyNTNhMWM3IiwiaCI6Im11cm11cjY0In0=}
+
+    spring:
+      datasource:
+        url: jdbc:h2:file:./LOCAL_DATA/h2/app;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;AUTO_SERVER=TRUE
+        username: sa
+        password: changeme
+        driver-class-name: org.h2.Driver

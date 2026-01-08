@@ -7,12 +7,17 @@ import dit.hua.gr.greenride.core.repository.PersonRepository;
 import dit.hua.gr.greenride.core.repository.RideRepository;
 import dit.hua.gr.greenride.web.ui.AdminStats;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class AdminService {
+
     private final PersonRepository personRepository;
     private final RideRepository rideRepository;
+
+    private final List<String> kickedUserNames = new ArrayList<>();
 
     public AdminService(PersonRepository personRepository, RideRepository rideRepository) {
         this.personRepository = personRepository;
@@ -25,14 +30,34 @@ public class AdminService {
 
         long drivers = personRepository.countByPersonTypeAndUserTypeIn(
                 PersonType.USER, List.of(UserType.DRIVER, UserType.BOTH));
-        long passengers = personRepository.countByPersonTypeAndUserTypeIn(
-                PersonType.USER, List.of(UserType.PASSENGER));
 
-        return new AdminStats(totalRides, avgOccupancy != null ? avgOccupancy : 0.0, drivers, passengers);
+        long passengers = personRepository.countByPersonTypeAndUserTypeIn(
+                PersonType.USER, List.of(UserType.PASSENGER, UserType.BOTH));
+
+        return new AdminStats(
+                totalRides,
+                avgOccupancy != null ? avgOccupancy : 0.0,
+                drivers,
+                passengers
+        );
     }
 
-    // ✅ Fixes "cannot find symbol: method getFlaggedUsers()"
-    public List<Person> getFlaggedUsers() {
-        return personRepository.findAllByReportCountGreaterThan(5);
+    public List<String> getFlaggedUsers() {
+        return kickedUserNames;
+    }
+
+
+    public List<Person> getAllUsersExcludingAdmins() {
+        return personRepository.findAll().stream()
+                .filter(p -> !p.isAdmin())
+                .toList();
+    }
+
+    public List<String> getKickedUserNames() {
+        return kickedUserNames;
+    }
+
+    public void logKickedUser(String fullName) {
+        kickedUserNames.add(fullName);
     }
 }

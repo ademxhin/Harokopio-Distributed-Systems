@@ -125,5 +125,27 @@ public final class Person {
         return this.userType != null && this.userType.isDriver();
     }
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    @OneToMany(mappedBy = "ratedPerson", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private java.util.List<Rating> ratings = new java.util.ArrayList<>();
+
+    public String getAverageRating() {
+        if (ratings == null || ratings.isEmpty()) {
+            return "No rating";
+        }
+
+        double sum = 0;
+        for (Rating r : ratings) {
+            sum += r.getScore();
+        }
+        double avg = sum / ratings.size();
+
+        // Επιστρέφει το πραγματικό αποτέλεσμα (π.χ. 3.0 ★)
+        return String.format("%.1f ★", avg);
+    }
+
 
 }

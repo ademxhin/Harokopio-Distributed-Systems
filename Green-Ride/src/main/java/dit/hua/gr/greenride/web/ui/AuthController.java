@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AuthController {
 
+    // USER LOGIN ONLY
     @GetMapping("/login")
     public String login(Authentication authentication, HttpServletRequest request, Model model) {
+
         if (AuthUtils.isAuthenticated(authentication)) {
             return "redirect:/profile";
         }
@@ -18,6 +20,7 @@ public class AuthController {
         if (request.getParameter("error") != null) {
             model.addAttribute("error", "Invalid email or password.");
         }
+
         if (request.getParameter("logout") != null) {
             model.addAttribute("message", "You have been logged out.");
         }
@@ -25,25 +28,9 @@ public class AuthController {
         return "login";
     }
 
-    @GetMapping("/admin/login")
-    public String adminLogin(Authentication authentication, HttpServletRequest request, Model model) {
-        if (AuthUtils.isAuthenticated(authentication)) {
-            boolean isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
-            return isAdmin ? "redirect:/admin" : "redirect:/profile";
-        }
+    // REMOVE adminLogin() — it caused the conflict
+    // Admin login is now handled ONLY by AdminController
 
-        if (request.getParameter("error") != null) {
-            model.addAttribute("error", "Invalid admin email or password.");
-        }
-        if (request.getParameter("logout") != null) {
-            model.addAttribute("message", "You have been logged out.");
-        }
-
-        return "admin-login";
-    }
-
-    // ✅ keep only this
     @GetMapping("/logged-out")
     public String loggedOut() {
         return "logout";

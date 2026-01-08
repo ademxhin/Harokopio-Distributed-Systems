@@ -28,16 +28,14 @@
         <tr>
             <th>Origin</th>
             <th>Destination</th>
-            <th>Departure</th>
-            <th>Seats</th>
+            <th>Date</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="ride : ${rides}">
             <td th:text="${ride.origin}">Origin</td>
             <td th:text="${ride.destination}">Destination</td>
-            <td th:text="${#temporals.format(ride.departureTime, 'dd/MM/yyyy HH:mm')}">Date</td>
-            <td th:text="${ride.availableSeats}">0</td>
+            <td th:text="${#temporals.format(ride.departureTime, 'dd/MM/yyyy HH:mm')}">01/01/2026 12:00</td>
         </tr>
         </tbody>
     </table>

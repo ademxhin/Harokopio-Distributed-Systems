@@ -1,35 +1,59 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Ratings - GreenRide</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; }
-        header { background-color: #000; color: white; text-align: center; padding: 10px; font-weight: bold; }
-        .container { max-width: 700px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
-        .user-item { border-bottom: 1px solid #eee; padding: 15px 0; display: flex; justify-content: space-between; align-items: center; }
-        .btn-black { background: #000; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
-    </style>
+    <title>GreenRide | Rate Users</title>
 </head>
+
 <body>
-<header>GreenRide</header>
-<div class="container">
-    <h2 th:text="'Rate your ' + ${ratingTarget}">Rate</h2>
-    <form th:action="@{/rides/ratings}" method="get" class="search-box">
-        <input type="text" name="search" placeholder="Search by name..." th:value="${param.search}" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:5px;">
-        <button type="submit" class="btn-black" style="background:#555;">Search</button>
-    </form>
-    <div th:each="user : ${users}" class="user-item">
-        <span th:text="${user.firstName} + ' ' + ${user.lastName}">Name</span>
-        <form th:action="@{/rides/ratings/submit}" method="post" style="display:flex; gap:10px; align-items:center;">
-            <input type="hidden" name="userId" th:value="${user.id}">
-            <input type="number" name="score" min="1" max="5" value="5" style="width:50px; padding:5px;">
-            <button type="submit" class="btn-black">Submit Rating</button>
-        </form>
+<main layout:fragment="main" class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+
+            <div class="text-center mb-5">
+                <h1 class="gr-h1">Ratings</h1>
+                <p class="text-muted" th:text="'Evaluate your ' + ${ratingTarget}"></p>
+            </div>
+
+            <div class="gr-box p-4 mb-4 shadow-sm">
+                <form th:action="@{/rides/ratings}" method="get" class="d-flex gap-2">
+                    <input type="text" name="search" class="form-control"
+                           placeholder="Search by name..." th:value="${param.search}">
+                    <button type="submit" class="btn btn-dark">Search</button>
+                </form>
+            </div>
+
+            <div th:each="user : ${users}" class="gr-box p-3 mb-3 shadow-sm d-flex justify-content-between align-items-center">
+                <div>
+                    <strong class="h5 mb-0" th:text="${user.firstName} + ' ' + ${user.lastName}">User Name</strong>
+                </div>
+
+                <form th:action="@{/rides/ratings/submit}" method="post" class="d-flex gap-2 align-items-center">
+                    <input type="hidden" name="userId" th:value="${user.id}">
+                    <select name="score" class="form-select form-select-sm" style="width: 70px;">
+                        <option value="5">5 ★</option>
+                        <option value="4">4 ★</option>
+                        <option value="3">3 ★</option>
+                        <option value="2">2 ★</option>
+                        <option value="1">1 ★</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm">Rate</button>
+                </form>
+            </div>
+
+            <div th:if="${#lists.isEmpty(users)}" class="text-center p-4">
+                <p class="text-muted">No users found to rate.</p>
+            </div>
+
+            <div class="text-center mt-4">
+                <a th:href="@{/profile}" class="btn btn-link">← Back to Profile</a>
+            </div>
+
+        </div>
     </div>
-    <br>
-    <a th:href="@{/profile}" style="color: #333; text-decoration: none;">← Back to Profile</a>
-</div>
+</main>
 </body>
 </html>
