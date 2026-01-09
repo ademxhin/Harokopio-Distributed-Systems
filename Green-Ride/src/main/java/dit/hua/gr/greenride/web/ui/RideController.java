@@ -22,7 +22,6 @@ public class RideController {
     private final BookingRepository bookingRepository;
     private final RatingRepository ratingRepository;
 
-    // ✅ ΕΝΑΣ σωστός Constructor για όλα τα Repositories
     public RideController(PersonRepository personRepository,
                           RideRepository rideRepository,
                           BookingRepository bookingRepository,
@@ -33,7 +32,6 @@ public class RideController {
         this.ratingRepository = ratingRepository;
     }
 
-    // ✅ Search Rides
     @GetMapping("/search")
     @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
     public String showAvailableRides(Model model) {
@@ -42,7 +40,6 @@ public class RideController {
         return "rides";
     }
 
-    // ✅ My Bookings
     @GetMapping("/bookings")
     @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
     public String showMyBookings(Model model, @AuthenticationPrincipal ApplicationUserDetails userDetails) {
@@ -52,7 +49,6 @@ public class RideController {
         return "bookings";
     }
 
-    // ✅ Ride History
     @GetMapping("/history")
     public String showRideHistory(Model model) {
         List<Ride> rides = rideRepository.findAll();
@@ -60,7 +56,6 @@ public class RideController {
         return "history";
     }
 
-    // ✅ Show Ratings Page
     @GetMapping("/ratings")
     public String showRatingsPage(@RequestParam(value = "search", required = false) String search,
                                   Model model,
@@ -90,14 +85,11 @@ public class RideController {
         rating.setRatedPerson(person);
         rating.setScore(score);
 
-        // Σώζουμε τη βαθμολογία
         ratingRepository.save(rating);
-
-        // ✅ Ενημερώνουμε τη λίστα του person και σώζουμε ξανά για σιγουριά
         person.getRatings().add(rating);
         personRepository.save(person);
 
-        return "redirect:/rides/ratings?success"; // Επιστροφή στη σελίδα ratings με μήνυμα επιτυχίας
+        return "redirect:/rides/ratings?success";
     }
 
     @GetMapping("/offer")
@@ -107,15 +99,15 @@ public class RideController {
         return "new_ride";
     }
 
-    // ✅ Process Create Ride
     @PostMapping("/offer")
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     public String processCreateRide(@ModelAttribute("rideForm") CreateRideForm form,
                                     @AuthenticationPrincipal ApplicationUserDetails userDetails) {
         if (userDetails == null) return "redirect:/login";
         Ride ride = new Ride();
-        ride.setOrigin(form.getOrigin());
-        ride.setDestination(form.getDestination());
+        // ✅ ΔΙΟΡΘΩΣΗ: startLocation & endLocation
+        ride.setStartLocation(form.getOrigin());
+        ride.setEndLocation(form.getDestination());
         ride.setDepartureTime(LocalDateTime.of(form.getDate(), form.getTime()));
         ride.setSeatsAvailable(form.getSeatsAvailable());
         ride.setDriver(userDetails.getPerson());
@@ -131,7 +123,6 @@ public class RideController {
         return "reservation";
     }
 
-    // ✅ Process Booking (Book Now)
     @PostMapping("/book/{id}")
     @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
     public String processBooking(@PathVariable Long id,
@@ -141,14 +132,15 @@ public class RideController {
         Ride ride = rideRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid ride Id:" + id));
 
-        if (ride.getAvailableSeats() > 0) {
+        // ✅ ΔΙΟΡΘΩΣΗ: seatsAvailable
+        if (ride.getSeatsAvailable() > 0) {
             Booking booking = new Booking();
             booking.setRide(ride);
             booking.setPerson(userDetails.getPerson());
             booking.setCreatedAt(LocalDateTime.now());
             bookingRepository.save(booking);
 
-            ride.setAvailableSeats(ride.getAvailableSeats() - 1);
+            ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
             ride.setBookedSeats(ride.getBookedSeats() + 1);
             rideRepository.save(ride);
         }

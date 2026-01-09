@@ -28,9 +28,6 @@ public class BookingController {
         this.rideRepository = rideRepository;
     }
 
-    // ============================
-    // CREATE BOOKING
-    // ============================
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
     public String createBooking(@RequestParam("rideId") Long rideId,
@@ -39,7 +36,8 @@ public class BookingController {
         if (userDetails == null) return "redirect:/login";
 
         Ride ride = rideRepository.findById(rideId).orElse(null);
-        if (ride == null || ride.getAvailableSeats() <= 0) {
+        // ✅ ΔΙΟΡΘΩΣΗ: seatsAvailable
+        if (ride == null || ride.getSeatsAvailable() <= 0) {
             return "redirect:/rides/search?error=ride-not-found-or-full";
         }
 
@@ -53,16 +51,13 @@ public class BookingController {
 
         bookingRepository.save(booking);
 
-        // Μείωση διαθέσιμων θέσεων
-        ride.setAvailableSeats(ride.getAvailableSeats() - 1);
+        // ✅ ΔΙΟΡΘΩΣΗ: seatsAvailable
+        ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
         rideRepository.save(ride);
 
         return "redirect:/rides/bookings";
     }
 
-    // ============================
-    // CANCEL BOOKING
-    // ============================
     @PostMapping("/cancel")
     @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
     public String cancelBooking(@RequestParam("bookingId") Long bookingId,
@@ -72,18 +67,16 @@ public class BookingController {
 
         Booking booking = bookingRepository.findById(bookingId).orElse(null);
 
-        // Αν δεν υπάρχει ή δεν ανήκει στον χρήστη → μπλοκάρισμα
         if (booking == null ||
                 !booking.getPerson().getId().equals(userDetails.getPerson().getId())) {
             return "redirect:/rides/bookings?error=unauthorized";
         }
 
-        // Επαναφορά διαθέσιμων θέσεων
+        // ✅ ΔΙΟΡΘΩΣΗ: seatsAvailable
         Ride ride = booking.getRide();
-        ride.setAvailableSeats(ride.getAvailableSeats() + 1);
+        ride.setSeatsAvailable(ride.getSeatsAvailable() + 1);
         rideRepository.save(ride);
 
-        // Διαγραφή κράτησης
         bookingRepository.delete(booking);
 
         return "redirect:/rides/bookings";

@@ -50,3 +50,11 @@ app:
         username: sa
         password: changeme
         driver-class-name: org.h2.Driver
+
+    springdoc:
+          api-docs:
+            path: /v3/api-docs
+          swagger-ui:
+            path: /swagger-ui.html
+          # Εστιάζουμε στα REST controllers για καθαρότερη προβολή
+          packages-to-scan: dit.hua.gr.greenride.web.rest
