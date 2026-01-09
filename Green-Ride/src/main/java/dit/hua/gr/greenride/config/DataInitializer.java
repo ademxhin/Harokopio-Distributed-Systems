@@ -21,16 +21,17 @@ public class DataInitializer {
     @PostConstruct
     public void init() {
         if (personRepository.findByEmailAddress("admin@example.com").isEmpty()) {
-            Person admin = new Person(
-                    "admin001",
-                    "Admin",
-                    "User",
-                    "admin@example.com",
-                    passwordEncoder.encode("adminpass")
-            );
-            admin.setMobilePhoneNumber("6900000000"); // ← Απαραίτητο
+            Person admin = new Person(); // ✅ Χρησιμοποιεί τον no-args constructor
+            admin.setUserId("admin001");
+            admin.setFirstName("Admin");
+            admin.setLastName("User");
+            admin.setEmailAddress("admin@example.com");
+            admin.setHashedPassword(passwordEncoder.encode("adminpass"));
+            admin.setMobilePhoneNumber("6900000000");
+            admin.setPersonType(dit.hua.gr.greenride.core.model.PersonType.ADMIN);
+
             personRepository.save(admin);
-            System.out.println("✔ Admin created: admin@example.com / adminpass");
+            System.out.println("✔ Admin created successfully");
         }
     }
 

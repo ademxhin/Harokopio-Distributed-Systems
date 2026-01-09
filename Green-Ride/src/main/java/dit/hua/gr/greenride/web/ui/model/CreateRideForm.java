@@ -7,6 +7,12 @@ import java.time.LocalTime;
 
 @Data
 public class CreateRideForm {
+    public String getOrigin() { return origin; }
+    public String getDestination() { return destination; }
+    public java.time.LocalDate getDate() { return date; }
+    public java.time.LocalTime getTime() { return time; }
+    public int getSeatsAvailable() { return seatsAvailable; }
+
     @NotBlank private String origin;
     @NotBlank private String destination;
     @NotNull private LocalDate date;

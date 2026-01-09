@@ -15,7 +15,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     List<Ride> findByDriverAndDepartureTimeBefore(Person driver, java.time.LocalDateTime time);
 
 
-    @Query("SELECT COALESCE(AVG(CAST(r.bookedSeats AS double) / r.availableSeats) * 100, 0.0) " +
-            "FROM Ride r WHERE r.availableSeats > 0")
+    @Query("SELECT COALESCE(AVG(CAST(r.bookedSeats AS double) / r.seatsAvailable) * 100, 0.0) " +
+            "FROM Ride r WHERE r.seatsAvailable > 0")
     Double calculateAverageOccupancy();
 }

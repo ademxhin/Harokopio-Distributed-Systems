@@ -16,4 +16,8 @@ public class Rating {
     @ManyToOne
     @JoinColumn(name = "rated_person_id")
     private Person ratedPerson; // Ποιος βαθμολογείται
+    // Μέσα στο Rating.java, πρόσθεσε αυτές τις μεθόδους χειροκίνητα:
+    public int getScore() { return score; }
+    public void setScore(int score) { this.score = score; }
+    public void setRatedPerson(Person person) { this.ratedPerson = person; }
 }
