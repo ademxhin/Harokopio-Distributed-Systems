@@ -1,38 +1,50 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>My Bookings</title>
-    <link rel="stylesheet" th:href="@{/css/bookings.css}">
-</head>
-<body>
-<div class="container">
-    <h1>My Bookings</h1>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
 
-    <div th:if="${#lists.isEmpty(bookings)}">
-        <p>You have no bookings yet.</p>
+<main layout:fragment="main" class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 text-center">
+            <h1 class="mb-5 gr-h1">My Bookings</h1>
+
+            <div th:if="${#lists.isEmpty(bookings)}" class="gr-box p-5 shadow-sm">
+                <h3 class="mt-3">No Bookings yet</h3>
+                <p class="text-muted">You haven't booked any rides. Start exploring!</p>
+                <div class="d-grid gap-2 col-6 mx-auto mt-4">
+                    <a th:href="@{/rides/search}" class="btn btn-primary fw-bold">Search Rides</a>
+                    <a th:href="@{/profile}" class="btn btn-outline-dark">← Back to Profile</a>
+                </div>
+            </div>
+
+            <div class="row justify-content-center" th:if="${not #lists.isEmpty(bookings)}">
+                <div class="col-12 col-md-10 col-lg-8 mb-4" th:each="booking : ${bookings}">
+                    <article class="gr-box p-4 shadow-sm text-start">
+                        <h3 class="gr-h3 border-bottom pb-2 mb-3"
+                            th:text="${booking.ride.origin} + ' ➔ ' + ${booking.ride.destination}"></h3>
+                        <div class="row align-items-center">
+                            <div class="col-6">
+                                <p class="mb-1 text-muted small text-uppercase fw-bold">Departure</p>
+                                <p class="mb-0">
+                                    <span th:text="${#temporals.format(booking.ride.departureTime, 'dd-MM-yyyy')}"></span><br>
+                                    <span class="fw-bold" th:text="${#temporals.format(booking.ride.departureTime, 'HH:mm')}"></span>
+                                </p>
+                            </div>
+                            <div class="col-6 text-end">
+                                <form th:action="@{/bookings/cancel}" method="post">
+                                    <input type="hidden" name="bookingId" th:value="${booking.id}" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm px-4 fw-bold">Cancel</button>
+                                </form>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <div class="col-12 mt-4">
+                    <a th:href="@{/profile}" class="btn btn-outline-dark px-5">← Back to Profile</a>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div th:if="${!#lists.isEmpty(bookings)}">
-        <ul>
-            <li th:each="booking : ${bookings}">
-                <strong th:text="${booking.ride.origin} + ' → ' + ${booking.ride.destination}">Route</strong><br>
-
-                <span th:text="'Status: ' + (${booking.status != null} ? ${booking.status} : 'Confirmed')">Status</span><br>
-
-                <span th:text="'Date: ' + ${#temporals.format(booking.ride.departureTime, 'dd/MM/yyyy HH:mm')}">Date</span><br>
-
-                <form th:action="@{/rides/bookings/cancel}" method="post" style="margin-top:8px;">
-                    <input type="hidden" name="bookingId" th:value="${booking.id}" />
-                    <button type="submit" style="color: red; cursor: pointer;">Cancel Booking</button>
-                </form>
-
-                <hr>
-            </li>
-        </ul>
-    </div>
-
-    <a th:href="@{/profile}">← Back to Profile</a>
-</div>
-</body>
+</main>
 </html>

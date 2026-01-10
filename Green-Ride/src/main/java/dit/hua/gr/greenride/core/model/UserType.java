@@ -10,14 +10,14 @@ package dit.hua.gr.greenride.core.model;
  */
 public enum UserType {
     PASSENGER,
-    DRIVER,
-    BOTH;
+    DRIVER;
+
 
     public boolean isPassenger() {
-        return this == PASSENGER || this == BOTH;
+        return this == PASSENGER ;
     }
 
     public boolean isDriver() {
-        return this == DRIVER || this == BOTH;
+        return this == DRIVER ;
     }
 }

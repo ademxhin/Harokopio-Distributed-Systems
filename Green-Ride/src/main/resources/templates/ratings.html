@@ -4,56 +4,61 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
 
-<head>
-    <title>GreenRide | Rate Users</title>
-</head>
-
-<body>
 <main layout:fragment="main" class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6">
+        <div class="col-12 col-md-8 text-center">
+            <h1 class="mb-2 gr-h1">Ratings</h1>
+            <p class="text-muted mb-5">Evaluate your experience with other users</p>
 
-            <div class="text-center mb-5">
-                <h1 class="gr-h1">Ratings</h1>
-                <p class="text-muted" th:text="'Evaluate your ' + ${ratingTarget}"></p>
-            </div>
-
-            <div class="gr-box p-4 mb-4 shadow-sm">
-                <form th:action="@{/rides/ratings}" method="get" class="d-flex gap-2">
-                    <input type="text" name="search" class="form-control"
-                           placeholder="Search by name..." th:value="${param.search}">
-                    <button type="submit" class="btn btn-dark">Search</button>
+            <div class="gr-box p-4 shadow-sm mb-5 text-start">
+                <form th:action="@{/rides/ratings}" method="get" class="row g-2">
+                    <div class="col-8 col-md-9">
+                        <input type="text" name="search" class="form-control" placeholder="Search by name...">
+                    </div>
+                    <div class="col-4 col-md-3">
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Search</button>
+                    </div>
                 </form>
             </div>
 
-            <div th:each="user : ${users}" class="gr-box p-3 mb-3 shadow-sm d-flex justify-content-between align-items-center">
-                <div>
-                    <strong class="h5 mb-0" th:text="${user.firstName} + ' ' + ${user.lastName}">User Name</strong>
+            <div th:if="${#lists.isEmpty(users)}" class="gr-box p-5 shadow-sm">
+                <h3 class="mt-3">No Users Found</h3>
+                <p class="text-muted">Try a different name or check back later.</p>
+                <div class="mt-4">
+                    <a th:href="@{/profile}" class="btn btn-outline-dark px-5">← Back to Profile</a>
                 </div>
-
-                <form th:action="@{/rides/ratings/submit}" method="post" class="d-flex gap-2 align-items-center">
-                    <input type="hidden" name="userId" th:value="${user.id}">
-                    <select name="score" class="form-select form-select-sm" style="width: 70px;">
-                        <option value="5">5 ★</option>
-                        <option value="4">4 ★</option>
-                        <option value="3">3 ★</option>
-                        <option value="2">2 ★</option>
-                        <option value="1">1 ★</option>
-                    </select>
-                    <button type="submit" class="btn btn-primary btn-sm">Rate</button>
-                </form>
             </div>
 
-            <div th:if="${#lists.isEmpty(users)}" class="text-center p-4">
-                <p class="text-muted">No users found to rate.</p>
+            <div class="row justify-content-center" th:if="${not #lists.isEmpty(users)}">
+                <div class="col-12 col-md-10 col-lg-8 mb-4" th:each="user : ${users}">
+                    <article class="gr-box p-4 shadow-sm text-start">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="gr-h3 mb-0" th:text="${user.firstName} + ' ' + ${user.lastName}">Name</h3>
+                            <span class="badge bg-light text-dark border px-3 py-2" th:text="${user.getAverageRating()}">4.5 ★</span>
+                        </div>
+                        <form th:action="@{/rides/ratings/submit}" method="post" class="row g-2 align-items-center">
+                            <input type="hidden" name="userId" th:value="${user.id}" />
+                            <div class="col-7">
+                                <select name="score" class="form-select form-select-sm" required>
+                                    <option value="" disabled selected>Select Rating</option>
+                                    <option value="5">5 - Excellent</option>
+                                    <option value="4">4 - Very Good</option>
+                                    <option value="3">3 - Good</option>
+                                    <option value="2">2 - Poor</option>
+                                    <option value="1">1 - Terrible</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <button type="submit" class="btn btn-outline-dark btn-sm w-100 fw-bold">Rate</button>
+                            </div>
+                        </form>
+                    </article>
+                </div>
+                <div class="col-12 mt-4">
+                    <a th:href="@{/profile}" class="btn btn-outline-dark px-5">← Back to Profile</a>
+                </div>
             </div>
-
-            <div class="text-center mt-4">
-                <a th:href="@{/profile}" class="btn btn-link">← Back to Profile</a>
-            </div>
-
         </div>
     </div>
 </main>
-</body>
 </html>

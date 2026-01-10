@@ -18,10 +18,10 @@
                 <h3 class="border-bottom pb-2 mb-3" th:text="${ride.origin} + ' ➔ ' + ${ride.destination}"></h3>
 
                 <div class="mb-4">
-                    <p><strong>👨‍✈️ Driver:</strong> <span th:text="${ride.driver.fullName}"></span></p>
-                    <p><strong>📅 Date:</strong> <span th:text="${#temporals.format(ride.departureTime, 'dd-MM-yyyy')}"></span></p>
-                    <p><strong>⏰ Time:</strong> <span th:text="${#temporals.format(ride.departureTime, 'HH:mm')}"></span></p>
-                    <p><strong>💺 Available Seats:</strong> <span th:text="${ride.availableSeats}"></span></p>
+                    <p><strong>Driver:</strong> <span th:text="${ride.driver.fullName}"></span></p>
+                    <p><strong>Date:</strong> <span th:text="${#temporals.format(ride.departureTime, 'dd-MM-yyyy')}"></span></p>
+                    <p><strong>Time:</strong> <span th:text="${#temporals.format(ride.departureTime, 'HH:mm')}"></span></p>
+                    <p><strong>Available Seats:</strong> <span th:text="${ride.availableSeats}"></span></p>
                 </div>
 
                 <form th:action="@{/rides/book/{id}(id=${ride.id})}" method="post">
