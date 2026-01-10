@@ -27,22 +27,19 @@ public class AdminService {
     public AdminStats getSystemStatistics() {
         long totalRides = rideRepository.count();
         Double avgOccupancy = rideRepository.calculateAverageOccupancy();
-
-        // Υπολογισμός συνολικών χρηστών (Drivers + Passengers - διπλοεγγραφές BOTH)
         long totalUsers = personRepository.count();
 
-        long drivers = personRepository.countByPersonTypeAndUserTypeIn(
-                PersonType.USER, List.of(UserType.DRIVER, UserType.BOTH));
+        // ✅ ΑΠΛΟΠΟΙΗΣΗ: Μετράμε απευθείας ανά τύπο χρήστη
+        // Χρησιμοποιούμε τη μέθοδο countByUserType που προσθέσαμε στο PersonRepository
+        long drivers = personRepository.countByUserType(UserType.DRIVER);
+        long passengers = personRepository.countByUserType(UserType.PASSENGER);
 
-        long passengers = personRepository.countByPersonTypeAndUserTypeIn(
-                PersonType.USER, List.of(UserType.PASSENGER, UserType.BOTH));
-
-        // ✅ Ενημέρωση ώστε να ταιριάζει με τον constructor του AdminStats
         return new AdminStats(
-                totalUsers,       // totalUsers
-                avgOccupancy != null ? avgOccupancy : 0.0, // avgRating (ή occupancy στην περίπτωσή σου)
-                totalRides,       // totalRides
-                passengers        // totalBookings (ή passengers ανάλογα τι θες να δείξεις)
+                totalUsers,
+                avgOccupancy != null ? avgOccupancy : 0.0,
+                totalRides,
+                drivers,
+                passengers
         );
     }
 

@@ -34,9 +34,27 @@ public class RideController {
 
     @GetMapping("/search")
     @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
-    public String showAvailableRides(Model model) {
-        List<Ride> rides = rideRepository.findAll();
-        model.addAttribute("rides", rides);
+    public String showAvailableRides(Model model, @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+        if (userDetails == null) return "redirect:/login";
+
+        Person currentUser = userDetails.getPerson();
+        LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
+
+        // 1. Φέρνουμε όλες τις μελλοντικές διαδρομές
+        List<Ride> allUpcomingRides = rideRepository.findByDepartureTimeAfter(limit);
+
+        // 2. Βρίσκουμε ποιες διαδρομές έχει ήδη κλείσει ο χρήστης
+        List<Long> alreadyBookedRideIds = bookingRepository.findAllByPerson(currentUser)
+                .stream()
+                .map(b -> b.getRide().getId())
+                .toList();
+
+        // 3. Φιλτράρουμε: Κρατάμε μόνο όσες ΔΕΝ έχει κλείσει ο χρήστης
+        List<Ride> filteredRides = allUpcomingRides.stream()
+                .filter(ride -> !alreadyBookedRideIds.contains(ride.getId()))
+                .toList();
+
+        model.addAttribute("rides", filteredRides);
         return "rides";
     }
 
@@ -44,15 +62,46 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
     public String showMyBookings(Model model, @AuthenticationPrincipal ApplicationUserDetails userDetails) {
         if (userDetails == null) return "redirect:/login";
-        List<Booking> bookings = bookingRepository.findByPerson(userDetails.getPerson());
-        model.addAttribute("bookings", bookings);
+
+        // ✅ Το όριο είναι: Τώρα + 10 λεπτά.
+        // Αν η διαδρομή ξεκινά σε λιγότερο από 10 λεπτά, θα κρυφτεί από εδώ.
+        java.time.LocalDateTime limit = java.time.LocalDateTime.now().plusMinutes(10);
+
+        List<Booking> allBookings = bookingRepository.findByPerson(userDetails.getPerson());
+
+        List<Booking> activeBookings = allBookings.stream()
+                .filter(b -> b.getRide().getDepartureTime().isAfter(limit))
+                .toList();
+
+        model.addAttribute("bookings", activeBookings);
         return "bookings";
     }
 
     @GetMapping("/history")
-    public String showRideHistory(Model model) {
-        List<Ride> rides = rideRepository.findAll();
-        model.addAttribute("rides", rides);
+    public String showRideHistory(Model model, @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+        if (userDetails == null) return "redirect:/login";
+
+        Person currentUser = userDetails.getPerson();
+        // ✅ Χρησιμοποιούμε το ίδιο όριο (Τώρα + 10 λεπτά)
+        java.time.LocalDateTime limit = java.time.LocalDateTime.now().plusMinutes(10);
+
+        // 1. Διαδρομές που οδήγησε και ξεκινούν σε λιγότερο από 10 λεπτά (ή έχουν ήδη περάσει)
+        List<Ride> drivenRides = rideRepository.findByDriverAndDepartureTimeBefore(currentUser, limit);
+
+        // 2. Διαδρομές που έκλεισε και ξεκινούν σε λιγότερο από 10 λεπτά (ή έχουν ήδη περάσει)
+        List<Booking> pastBookings = bookingRepository.findByPersonAndRide_DepartureTimeBefore(currentUser, limit);
+        List<Ride> bookedRides = pastBookings.stream().map(Booking::getRide).toList();
+
+        // 3. Ένωση και Ταξινόμηση
+        List<Ride> allHistory = new java.util.ArrayList<>();
+        allHistory.addAll(drivenRides);
+        allHistory.addAll(bookedRides);
+
+        List<Ride> finalHistory = allHistory.stream().distinct()
+                .sorted((r1, r2) -> r2.getDepartureTime().compareTo(r1.getDepartureTime()))
+                .toList();
+
+        model.addAttribute("rides", finalHistory);
         return "history";
     }
 
@@ -104,11 +153,17 @@ public class RideController {
     public String processCreateRide(@ModelAttribute("rideForm") CreateRideForm form,
                                     @AuthenticationPrincipal ApplicationUserDetails userDetails) {
         if (userDetails == null) return "redirect:/login";
+
+        // ✅ ΝΕΟΣ ΕΛΕΓΧΟΣ: Ημερομηνία και ώρα στο μέλλον
+        LocalDateTime departureDateTime = LocalDateTime.of(form.getDate(), form.getTime());
+        if (departureDateTime.isBefore(LocalDateTime.now())) {
+            return "redirect:/rides/offer?error=past-date";
+        }
+
         Ride ride = new Ride();
-        // ✅ ΔΙΟΡΘΩΣΗ: startLocation & endLocation
         ride.setStartLocation(form.getOrigin());
         ride.setEndLocation(form.getDestination());
-        ride.setDepartureTime(LocalDateTime.of(form.getDate(), form.getTime()));
+        ride.setDepartureTime(departureDateTime);
         ride.setSeatsAvailable(form.getSeatsAvailable());
         ride.setDriver(userDetails.getPerson());
         rideRepository.save(ride);
@@ -132,7 +187,17 @@ public class RideController {
         Ride ride = rideRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid ride Id:" + id));
 
-        // ✅ ΔΙΟΡΘΩΣΗ: seatsAvailable
+        // ✅ ΕΛΕΓΧΟΣ 1: Έχει ήδη κάνει κράτηση σε αυτή τη διαδρομή;
+        boolean alreadyBooked = bookingRepository.existsByRideAndPerson(ride, userDetails.getPerson());
+        if (alreadyBooked) {
+            return "redirect:/rides/search?error=already_booked";
+        }
+
+        // ✅ ΕΛΕΓΧΟΣ 2: Μήπως πέρασε το χρονικό όριο (10 λεπτά πριν);
+        if (ride.getDepartureTime().isBefore(java.time.LocalDateTime.now().plusMinutes(10))) {
+            return "redirect:/rides/search?error=too_late";
+        }
+
         if (ride.getSeatsAvailable() > 0) {
             Booking booking = new Booking();
             booking.setRide(ride);
@@ -144,6 +209,6 @@ public class RideController {
             ride.setBookedSeats(ride.getBookedSeats() + 1);
             rideRepository.save(ride);
         }
-        return "redirect:/rides/bookings";
+        return "redirect:/profile";
     }
 }

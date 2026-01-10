@@ -4,89 +4,6 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
 
-<head>
-    <title>GreenRide | Admin Dashboard</title>
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
-</head>
-
-<body>
-
-<main layout:fragment="main" class="container py-4">
-
-    <!-- ADMIN DASHBOARD TITLE -->
-    <h1 class="mb-4">Administrator Dashboard</h1>
-    <p class="text-muted mb-4">Quick overview and moderation tools for system administrators.</p>
-
-    <div class="row g-4">
-
-        <!-- SYSTEM STATISTICS WINDOW -->
-        <div class="col-12 col-lg-6">
-            <section class="gr-box p-4 h-100">
-                <h2 class="mb-3">System Statistics</h2>
-                <ul class="list-unstyled">
-                    <li>Total rides: <strong th:text="${stats.totalRides}">0</strong></li>
-                    <li>Average occupancy: <strong th:text="${stats.averageOccupancy}">0%</strong></li>
-                    <li>Active drivers: <strong th:text="${stats.activeDrivers}">0</strong></li>
-                    <li>Active passengers: <strong th:text="${stats.activePassengers}">0</strong></li>
-                </ul>
-            </section>
-        </div>
-
-        <!-- FLAGGED USERS WINDOW -->
-        <div class="col-12 col-lg-6">
-            <section class="gr-box p-4 h-100">
-                <h2 class="mb-3">Flagged Users</h2>
-                <div th:if="${#lists.isEmpty(flaggedUsers)}">
-                    <p>No flagged users found.</p>
-                </div>
-                <ul th:if="${!#lists.isEmpty(flaggedUsers)}" class="list-group">
-                    <li th:each="name : ${flaggedUsers}" th:text="${name}" class="list-group-item">User Name</li>
-                </ul>
-            </section>
-        </div>
-
-        <div class="col-12">
-            <section class="gr-box p-4 h-100 mt-4">
-                <h2 class="mb-3">All Users</h2>
-                <table class="table table-sm">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="u : ${allUsers}">
-                        <td th:text="${u.fullName}">User Name</td>
-                        <td th:text="${u.emailAddress}">email@example.com</td>
-                        <td>
-                            <span th:if="${kickedUserNames != null and kickedUserNames.contains(u.fullName)}" class="text-danger">Flagged</span>
-                            <span th:if="${kickedUserNames == null or !kickedUserNames.contains(u.fullName)}" class="text-success">Active</span>
-                        </td>
-                        <td>
-                            <a th:href="@{'/admin/kick/' + ${u.id}}" class="btn btn-sm btn-danger"
-                               onclick="return confirm('Are you sure?');">Kick</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </section>
-        </div>
-
-
-
-</main>
-
-</body>
-</html>
-εδω θελει την αλλαγη ή εδω  <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{base}">
-
 <th:block layout:fragment="head">
     <title>GreenRide | Profile</title>
     <link rel="stylesheet" th:href="@{/css/profile.css}">
@@ -94,13 +11,13 @@
 
 <main layout:fragment="main" class="gr-page"
       th:with="
+        isAdmin=${#authorization.expression('hasAuthority(''ADMIN'')')},
         isDriver=${#authorization.expression('hasAuthority(''ROLE_DRIVER'')')},
         isPassenger=${#authorization.expression('hasAuthority(''ROLE_PASSENGER'')')}
       ">
 
     <section class="container gr-profile-wrap">
 
-        <!-- Top card -->
         <div class="gr-box gr-profile-card">
             <div class="gr-profile-head">
                 <div>
@@ -108,10 +25,10 @@
                     <div class="gr-muted" th:text="${username != null ? username : 'Guest'}">email@example.com</div>
                     <div class="gr-muted mt-4">
                         Role:
-                        <span th:if="${isPassenger and !isDriver}">Passenger</span>
-                        <span th:if="${isDriver and !isPassenger}">Driver</span>
-                        <span th:if="${isPassenger and isDriver}">Passenger &amp; Driver</span>
-                        <span th:if="${!isPassenger and !isDriver}">User</span>
+                        <span th:if="${isAdmin}">Administrator</span>
+                        <span th:if="${isPassenger and !isDriver and !isAdmin}">Passenger</span>
+                        <span th:if="${isDriver and !isPassenger and !isAdmin}">Driver</span>
+                        <span th:if="${!isPassenger and !isDriver and !isAdmin}">User</span>
                     </div>
                 </div>
 
@@ -124,18 +41,33 @@
             </div>
         </div>
 
-        <!-- =========================
-             PASSENGER SECTION
-        ========================== -->
+        <section class="gr-box mt-16" th:if="${isAdmin}">
+            <div class="gr-section-head">
+                <h2 class="gr-h2">Administration</h2>
+                <p class="gr-muted">Access system-wide statistics and management tools.</p>
+            </div>
+            <div class="gr-role-grid">
+                <div class="gr-role-card">
+                    <div class="gr-role-top">
+                        <div class="gr-role-icon">📊</div>
+                        <div class="gr-role-meta">
+                            <div class="gr-role-title">Admin Dashboard</div>
+                            <div class="gr-role-desc">Monitor rides, active users and manage the platform.</div>
+                        </div>
+                    </div>
+                    <div class="gr-role-actions">
+                        <a class="gr-btn gr-btn-solid" th:href="@{/admin/dashboard}">Go to Dashboard →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="gr-box mt-16" th:if="${isPassenger}">
             <div class="gr-section-head">
                 <h2 class="gr-h2">Passenger</h2>
                 <p class="gr-muted">Find rides, request a seat and track your trip.</p>
             </div>
-
             <div class="gr-role-grid">
-
-                <!-- Card 1 -->
                 <div class="gr-role-card">
                     <div class="gr-role-top">
                         <div class="gr-role-icon">🧍</div>
@@ -148,8 +80,6 @@
                         <a class="gr-btn gr-btn-solid" th:href="@{/reservation}">Continue →</a>
                     </div>
                 </div>
-
-                <!-- Card 2 -->
                 <div class="gr-role-card">
                     <div class="gr-role-top">
                         <div class="gr-role-icon">🎫</div>
@@ -162,22 +92,15 @@
                         <a class="gr-btn gr-btn-ghost" th:href="@{/bookings}">Continue →</a>
                     </div>
                 </div>
-
             </div>
         </section>
 
-        <!-- =========================
-             DRIVER SECTION
-        ========================== -->
         <section class="gr-box mt-16" th:if="${isDriver}">
             <div class="gr-section-head">
                 <h2 class="gr-h2">Driver</h2>
                 <p class="gr-muted">Create rides, manage seats and share your route.</p>
             </div>
-
             <div class="gr-role-grid">
-
-                <!-- Card 1 -->
                 <div class="gr-role-card">
                     <div class="gr-role-top">
                         <div class="gr-role-icon">🚗</div>
@@ -190,8 +113,6 @@
                         <a class="gr-btn gr-btn-solid" th:href="@{/new_ride}">Continue →</a>
                     </div>
                 </div>
-
-                <!-- Card 2 -->
                 <div class="gr-role-card">
                     <div class="gr-role-top">
                         <div class="gr-role-icon">📋</div>
@@ -204,8 +125,6 @@
                         <a class="gr-btn gr-btn-ghost" th:href="@{/rides}">Continue →</a>
                     </div>
                 </div>
-
-                <!-- ✅ Card 3: Ratings -->
                 <div class="gr-role-card">
                     <div class="gr-role-top">
                         <div class="gr-role-icon">⭐</div>
@@ -218,12 +137,10 @@
                         <a class="gr-btn gr-btn-ghost" th:href="@{/rides/ratings}">Continue →</a>
                     </div>
                 </div>
-
             </div>
         </section>
 
     </section>
 </main>
-
 </body>
 </html>

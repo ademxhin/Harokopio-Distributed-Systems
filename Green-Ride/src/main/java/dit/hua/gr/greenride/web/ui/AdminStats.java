@@ -2,33 +2,31 @@ package dit.hua.gr.greenride.web.ui;
 
 public class AdminStats {
     private long totalUsers;
-    private double avgRating;
-    private long totalRides;
-    private long totalBookings;
-
-    // Πρόσθετα πεδία (προαιρετικά)
     private double averageOccupancy;
+    private long totalRides;
     private long activeDrivers;
     private long activePassengers;
 
-    // Κενός Constructor
-    public AdminStats() {}
-
-    // Ο Constructor που καλεί ο AdminService
-    public AdminStats(long totalUsers, double avgRating, long totalRides, long totalBookings) {
+    // Constructor με 5 παραμέτρους για να δέχεται όλα τα στατιστικά
+    public AdminStats(long totalUsers, double averageOccupancy, long totalRides, long activeDrivers, long activePassengers) {
         this.totalUsers = totalUsers;
-        this.avgRating = avgRating;
+        this.averageOccupancy = averageOccupancy;
         this.totalRides = totalRides;
-        this.totalBookings = totalBookings;
+        this.activeDrivers = activeDrivers;
+        this.activePassengers = activePassengers;
     }
 
-    // --- ΧΕΙΡΟΚΙΝΗΤΟΙ GETTERS (Απαραίτητοι για τη Thymeleaf) ---
+    // Getters - Απαραίτητοι για να μπορεί η Thymeleaf να διαβάσει τις τιμές
     public long getTotalUsers() { return totalUsers; }
-    public double getAvgRating() { return avgRating; }
-    public long getTotalRides() { return totalRides; }
-    public long getTotalBookings() { return totalBookings; }
-
     public double getAverageOccupancy() { return averageOccupancy; }
+    public long getTotalRides() { return totalRides; }
     public long getActiveDrivers() { return activeDrivers; }
     public long getActivePassengers() { return activePassengers; }
+
+    // Setters (Προαιρετικοί αλλά καλό είναι να υπάρχουν)
+    public void setTotalUsers(long totalUsers) { this.totalUsers = totalUsers; }
+    public void setAverageOccupancy(double averageOccupancy) { this.averageOccupancy = averageOccupancy; }
+    public void setTotalRides(long totalRides) { this.totalRides = totalRides; }
+    public void setActiveDrivers(long activeDrivers) { this.activeDrivers = activeDrivers; }
+    public void setActivePassengers(long activePassengers) { this.activePassengers = activePassengers; }
 }

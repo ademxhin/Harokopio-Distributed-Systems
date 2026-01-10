@@ -31,6 +31,25 @@
 
         <button type="submit">Publish Ride</button>
     </form>
+    <script>
+        // Ορίζουμε την ελάχιστη ημερομηνία ως τη σημερινή
+        const dateInput = document.querySelector('input[type="date"]');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+
+        // Προαιρετικά: Αν επιλεγεί η σημερινή ημερομηνία, περιόρισε την ώρα
+        dateInput.addEventListener('change', function() {
+            const timeInput = document.querySelector('input[type="time"]');
+            if (this.value === today) {
+                const now = new Date();
+                const currentTime = now.getHours().toString().padStart(2, '0') + ":" +
+                    now.getMinutes().toString().padStart(2, '0');
+                timeInput.setAttribute('min', currentTime);
+            } else {
+                timeInput.removeAttribute('min');
+            }
+        });
+    </script>
 </div>
 </body>
 </html>

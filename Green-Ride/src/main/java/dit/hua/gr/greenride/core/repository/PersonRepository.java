@@ -21,4 +21,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     // ✅ Μέθοδοι για την αναζήτηση χρηστών στα Ratings
     List<Person> findByFirstNameContainingIgnoreCaseAndUserType(String name, UserType type);
     List<Person> findAllByUserType(UserType type);
+
+    long countByUserType(UserType userType);
+    long countByPersonType(PersonType personType);
 }
