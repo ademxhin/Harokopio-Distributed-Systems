@@ -1,6 +1,7 @@
 package dit.hua.gr.greenride.web.rest.api;
 
 import dit.hua.gr.greenride.core.security.JwtService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Auth", description = "Authentication & registration endpoints")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthRestController {

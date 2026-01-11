@@ -6,7 +6,7 @@ import dit.hua.gr.greenride.service.AdminService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.transaction.annotation.Transactional; // ✅ Προσθήκη
+import org.springframework.transaction.annotation.Transactional;
 
 @Controller
 @RequestMapping("/admin")
@@ -33,9 +33,7 @@ public class AdminController {
     @GetMapping("/kick/{id}")
     public String kickUser(@PathVariable Long id) {
         personRepository.findById(id).ifPresent(u -> {
-            // Καταγραφή ονόματος πριν τη διαγραφή
             adminService.logKickedUser(u.getFullName());
-            // Η delete θα ενεργοποιήσει το Cascade στις σχέσεις
             personRepository.delete(u);
         });
         return "redirect:/admin/dashboard";

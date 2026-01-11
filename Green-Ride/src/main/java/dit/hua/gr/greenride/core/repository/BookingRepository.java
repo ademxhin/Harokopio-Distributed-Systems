@@ -17,5 +17,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByPersonAndRide_DepartureTimeBefore(Person person, LocalDateTime time);
 
+    List<Booking> findByRide(Ride ride);
+
     boolean existsByRideAndPerson(Ride ride, Person person);
 }

@@ -39,12 +39,16 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
+                        // Swagger / OpenAPI
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                        .requestMatchers("/api/auth/login").permitAll()
+                        // ✅ PUBLIC AUTH ENDPOINTS
+                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
 
+                        // (keep if you need it)
                         .requestMatchers("/api/v1/auth/client-tokens").permitAll()
 
+                        // Everything else under /api requires JWT
                         .requestMatchers("/api/**").authenticated()
                 )
 
@@ -53,7 +57,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(restApiAccessDeniedHandler)
                 )
 
-                // JWT filter πριν το UsernamePasswordAuthenticationFilter
+                // JWT filter before UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .httpBasic(AbstractHttpConfigurer::disable)

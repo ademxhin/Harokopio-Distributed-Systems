@@ -123,7 +123,7 @@ public class RideController {
     }
 
     /**
-     * ✅ Driver-only history: completed rides you offered as a driver.
+     * Driver-only history: completed rides you offered as a driver.
      * Uses existing history.html/css.
      */
     @GetMapping("/history/driver")
@@ -250,7 +250,6 @@ public class RideController {
                 ? personRepository.findByFirstNameContainingIgnoreCaseAndUserType(search, targetType)
                 : personRepository.findAllByUserType(targetType);
 
-        // ✅ Υπολογισμός των IDs που έχουν ήδη βαθμολογηθεί
         List<Long> alreadyRatedIds = availableUsers.stream()
                 .filter(p -> ratingRepository.existsByRaterAndRatedPerson(currentUser, p))
                 .map(Person::getId)
@@ -279,7 +278,6 @@ public class RideController {
                 ? personRepository.findByFirstNameContainingIgnoreCaseAndUserType(search, targetType)
                 : personRepository.findAllByUserType(targetType);
 
-        // ✅ Υπολογισμός των IDs που έχουν ήδη βαθμολογηθεί
         List<Long> alreadyRatedIds = availableUsers.stream()
                 .filter(p -> ratingRepository.existsByRaterAndRatedPerson(currentUser, p))
                 .map(Person::getId)
@@ -301,19 +299,17 @@ public class RideController {
         Person targetPerson = personRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // ✅ Έλεγχος ασφαλείας: Μην αφήνεις διπλή βαθμολογία
         if (ratingRepository.existsByRaterAndRatedPerson(currentUser, targetPerson)) {
             return "redirect:/rides/ratings?error=already_rated";
         }
 
         Rating rating = new Rating();
-        rating.setRater(currentUser); // ✅ Αποθήκευση του rater
+        rating.setRater(currentUser);
         rating.setRatedPerson(targetPerson);
         rating.setScore(score);
 
         ratingRepository.save(rating);
 
-        // Ενημέρωση της λίστας του targetPerson
         targetPerson.getRatings().add(rating);
         personRepository.save(targetPerson);
 

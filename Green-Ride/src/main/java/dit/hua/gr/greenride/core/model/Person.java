@@ -37,7 +37,6 @@ public class Person {
     @OneToMany(mappedBy = "ratedPerson", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Rating> ratings = new ArrayList<>();
 
-    // Διαγράφει τις βαθμολογίες που ΕΔΩΣΕ ο χρήστης (ως rater)
     @OneToMany(mappedBy = "rater", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratingsGiven = new ArrayList<>();
 

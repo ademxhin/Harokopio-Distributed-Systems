@@ -1,0 +1,69 @@
+package dit.hua.gr.greenride.web.rest.api;
+
+import dit.hua.gr.greenride.service.PersonBusinessLogicService;
+import dit.hua.gr.greenride.service.model.CreatePersonRequest;
+import dit.hua.gr.greenride.service.model.CreatePersonResult;
+import dit.hua.gr.greenride.web.ui.exceptions.ExternalServiceUnavailableException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+@Tag(name = "Auth", description = "Authentication & registration endpoints")
+@RestController
+@RequestMapping("/api/auth")
+public class RegistrationRestController {
+
+    private final PersonBusinessLogicService personBusinessLogicService;
+
+    public RegistrationRestController(final PersonBusinessLogicService personBusinessLogicService) {
+        this.personBusinessLogicService = personBusinessLogicService;
+    }
+
+    public record RegisterResponse(
+            boolean created,
+            String reason
+    ) {}
+
+    @Operation(
+            summary = "Register a new user",
+            description = "Creates a new user account (Passenger or Driver).",
+            security = {}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "User created"),
+            @ApiResponse(responseCode = "400", description = "Validation / business error (e.g. duplicate email, password mismatch)"),
+            @ApiResponse(responseCode = "503", description = "External validation service unavailable")
+    })
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public RegisterResponse register(@Valid @RequestBody CreatePersonRequest request) {
+
+        // password must match confirm (same UI logic)
+        if (request.rawPassword() == null || request.confirmRawPassword() == null
+                || !request.rawPassword().equals(request.confirmRawPassword())) {
+            // 400
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password and Confirm Password do not match");
+        }
+
+        try {
+            CreatePersonResult result = personBusinessLogicService.createPerson(request, true);
+
+            if (!result.created()) {
+                // business failure => 400 with reason
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.reason());
+            }
+
+            return new RegisterResponse(true, null);
+
+        } catch (ExternalServiceUnavailableException ex) {
+            // 503
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                    "Phone validation service is currently unavailable. Please try again later.");
+        }
+    }
+}

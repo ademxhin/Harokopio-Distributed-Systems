@@ -43,11 +43,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         final String path = request.getServletPath();
 
-        // Allow token issuing endpoint
+        // Filter only API endpoints
+        if (!path.startsWith("/api/")) return true;
+
+        // Public endpoints (no token required)
+        if (path.equals("/api/auth/login")) return true;
+        if (path.equals("/api/auth/register")) return true;
+
+        // If you keep this endpoint:
         if (path.equals("/api/v1/auth/client-tokens")) return true;
 
-        // Filter only API endpoints
-        return !path.startsWith("/api/v1");
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -57,10 +63,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     final FilterChain filterChain)
             throws ServletException, IOException {
 
+        LOGGER.info("JWT filter hit path={} authHeaderPresent={}",
+                request.getServletPath(),
+                request.getHeader("Authorization") != null);
+
         final String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+            this.writeError(response);   // 401 + {"error":"invalid_token"}
             return;
         }
 
@@ -75,7 +85,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     roles == null
                             ? List.<GrantedAuthority>of()
                             : roles.stream()
-                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                            .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
+                            .map(SimpleGrantedAuthority::new)
                             .toList();
 
             final User principal = new User(subject, "", authorities);
@@ -84,6 +95,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     new UsernamePasswordAuthenticationToken(principal, null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+            LOGGER.info("JWT auth set for subject={} authorities={}", subject, authorities);
 
         } catch (Exception ex) {
             LOGGER.warn("JwtAuthenticationFilter failed", ex);
