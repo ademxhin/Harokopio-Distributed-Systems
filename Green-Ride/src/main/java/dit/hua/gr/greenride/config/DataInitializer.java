@@ -42,7 +42,7 @@ public class DataInitializer {
             admin.setUserId("admin001");
             admin.setFirstName("Admin");
             admin.setLastName("User");
-            admin.setEmailAddress("admin");
+            admin.setEmailAddress("admin@example.com");
             admin.setMobilePhoneNumber(randomGreekMobile());
             admin.setHashedPassword(passwordEncoder.encode("password"));
             admin.setPersonType(PersonType.ADMIN);
