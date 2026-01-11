@@ -7,137 +7,11 @@
 <th:block layout:fragment="head">
     <title>GreenRide | Ratings</title>
 
-    <style>
-        .gr-ratings-page { padding: 44px 0 56px; }
-        .gr-ratings-head { text-align: center; margin-bottom: 20px; }
-        .gr-ratings-title { margin: 0; font-weight: 900; font-size: 2.1rem; color: #0b0b0c; }
-        .gr-ratings-sub { margin: 8px 0 0; color: rgba(11,11,12,0.62); font-weight: 650; }
-
-        .gr-ratings-wrap { max-width: 760px; margin: 0 auto; }
-
-        .gr-search { display: flex; gap: 10px; align-items: center; }
-        .gr-search .gr-control { height: 44px; }
-        .gr-search .gr-btn { height: 44px; padding: 10px 16px; border-radius: 14px; }
-
-        .gr-users { display: grid; gap: 14px; margin-top: 18px; }
-
-        .gr-user-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .gr-user-name {
-            margin: 0;
-            font-size: 1.15rem;
-            font-weight: 900;
-            color: #0b0b0c;
-        }
-
-        .gr-pill {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6px 10px;
-            border-radius: 999px;
-            border: 1px solid rgba(11,11,12,0.14);
-            background: rgba(11,11,12,0.02);
-            color: rgba(11,11,12,0.75);
-            font-weight: 850;
-            font-size: 0.85rem;
-            white-space: nowrap;
-        }
-
-        /* ===============================
-           Average rating (read-only)
-        ================================ */
-        .gr-avg-wrap {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-        }
-
-        .gr-avg-number {
-            font-weight: 900;
-            color: rgba(11,11,12,0.85);
-            font-size: 0.95rem;
-            letter-spacing: 0.2px;
-        }
-
-        /* ===============================
-           Stars (shared look)
-        ================================ */
-        .gr-stars {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            user-select: none;
-        }
-
-        /* empty star */
-        .gr-star,
-        .gr-star-btn {
-            font-size: 1.45rem;
-            line-height: 1;
-            color: rgba(11,11,12,0.22);
-            text-shadow: 0 1px 1px rgba(0,0,0,0.08);
-        }
-
-        /* filled star */
-        .gr-star.filled,
-        .gr-star-btn.filled {
-            color: #f5c518; /* yellow */
-        }
-
-        /* clickable */
-        .gr-star-btn {
-            appearance: none;
-            border: 0;
-            background: transparent;
-            padding: 0;
-            cursor: pointer;
-            transition: transform .08s ease, filter .12s ease;
-        }
-
-        .gr-star-btn:hover { transform: translateY(-1px) scale(1.08); }
-
-        /* ===============================
-           Rate row layout (stars + button)
-        ================================ */
-        .gr-rate-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .gr-rate-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .gr-empty { text-align: center; padding: 30px 18px; }
-        .gr-empty h3 { margin: 0 0 8px; font-weight: 900; color: #0b0b0c; }
-        .gr-empty p { margin: 0; color: rgba(11,11,12,0.62); font-weight: 650; }
-
-        .gr-actions { display: flex; justify-content: center; margin-top: 18px; }
-
-        /* Mobile */
-        @media (max-width: 520px) {
-            .gr-search { flex-direction: column; }
-            .gr-rate-row { flex-direction: column; align-items: stretch; }
-            .gr-rate-row .gr-btn { width: 100%; }
-            .gr-stars { justify-content: center; }
-            .gr-avg-wrap { justify-content: center; width: 100%; }
-        }
-    </style>
+    <!-- Page-specific CSS -->
+    <link rel="stylesheet" th:href="@{/css/ratings.css}">
 </th:block>
 
-<main layout:fragment="main">
+<main layout:fragment="main" class="gr-ratings-page">
     <section class="gr-ratings-page">
         <div class="container gr-ratings-wrap">
 
@@ -148,7 +22,7 @@
             </header>
 
             <!-- Search -->
-            <div class="gr-box gr-box-pad">
+            <div class="gr-box gr-box-pad gr-ratings-card">
                 <form th:action="@{/rides/ratings}" method="get" class="gr-search">
                     <input type="text"
                            name="search"
@@ -164,7 +38,7 @@
 
             <!-- Empty state -->
             <div th:if="${#lists.isEmpty(users)}"
-                 class="gr-box shadow-sm gr-empty"
+                 class="gr-box gr-box-pad gr-ratings-card gr-empty"
                  style="margin-top: 14px;">
                 <h3>No Users Found</h3>
                 <p>Try a different name or check back later.</p>
@@ -177,7 +51,7 @@
             <!-- Users list -->
             <div th:if="${not #lists.isEmpty(users)}" class="gr-users">
 
-                <article th:each="user : ${users}" class="gr-box gr-box-pad">
+                <article th:each="user : ${users}" class="gr-box gr-box-pad gr-ratings-card">
 
                     <!-- Top row: name + average rating -->
                     <div class="gr-user-top">
@@ -218,7 +92,7 @@
                             <button type="button" class="gr-star-btn" data-value="4" aria-label="4 stars">★</button>
                             <button type="button" class="gr-star-btn" data-value="5" aria-label="5 stars">★</button>
 
-                            <span class="gr-pill gr-picked-label" style="margin-left:10px;">Pick a rating</span>
+                            <span class="gr-pill gr-picked-label">Pick a rating</span>
                         </div>
 
                         <button type="submit" class="gr-btn gr-btn-secondary gr-rate-submit" disabled>
