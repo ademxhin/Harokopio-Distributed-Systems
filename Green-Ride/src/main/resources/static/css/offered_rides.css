@@ -1,0 +1,140 @@
+/* Page wrapper */
+.gr-offered-page{
+    padding: 34px 0 44px 0;
+}
+
+/* Header */
+.gr-page-head{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.gr-page-title{
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #0b0b0c;
+    letter-spacing: -0.2px;
+}
+
+/* Card base (page-local) */
+.gr-card{
+    background: #ffffff;
+    border: 1px solid rgba(11,11,12,0.10);
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(11,11,12,0.06);
+}
+
+/* Empty */
+.gr-empty{
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 26px 22px;
+    text-align: center;
+}
+
+.gr-card-title{
+    margin: 0 0 8px 0;
+    font-weight: 900;
+    color: #0b0b0c;
+}
+
+.gr-muted{
+    margin: 0 0 16px 0;
+    color: rgba(11,11,12,0.62);
+    font-weight: 650;
+}
+
+/* List card */
+.gr-list{
+    overflow: hidden;
+}
+
+/* Header row */
+.gr-list-head{
+    display: grid;
+    grid-template-columns: 1.6fr 0.9fr 0.9fr;
+    padding: 14px 16px;
+    background: rgba(11,11,12,0.02);
+    border-bottom: 1px solid rgba(11,11,12,0.08);
+    font-weight: 900;
+    color: rgba(11,11,12,0.70);
+}
+
+/* Rows */
+.gr-row{
+    display: grid;
+    grid-template-columns: 1.6fr 0.9fr 0.9fr;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(11,11,12,0.08);
+}
+
+.gr-row:last-child{
+    border-bottom: 0;
+}
+
+.gr-col{
+    min-width: 0;
+}
+
+/* Route */
+.gr-route{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-weight: 900;
+    color: #0b0b0c;
+}
+
+.gr-loc{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.gr-arrow{
+    color: rgba(11,11,12,0.45);
+    font-weight: 900;
+}
+
+.gr-subline{
+    margin-top: 4px;
+    color: rgba(11,11,12,0.58);
+    font-weight: 650;
+    font-size: 0.92rem;
+}
+
+/* Time */
+.gr-time{
+    font-weight: 900;
+    color: #0b0b0c;
+}
+
+/* Seats */
+.gr-seats{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.gr-pill{
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(11,11,12,0.10);
+    background: #ffffff;
+    box-shadow: 0 10px 18px rgba(11,11,12,0.05);
+    font-weight: 800;
+    color: rgba(11,11,12,0.85);
+    white-space: nowrap;
+}
+
+.gr-pill-soft{
+    background: rgba(11,11,12,0.03);
+}

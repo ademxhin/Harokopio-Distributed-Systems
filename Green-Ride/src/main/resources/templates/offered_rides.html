@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+
+<th:block layout:fragment="head">
+    <title>GreenRide | My Offered Rides</title>
+    <link rel="stylesheet" th:href="@{/css/offered_rides.css}">
+</th:block>
+
+<main layout:fragment="main" class="gr-offered-page">
+    <div class="container">
+        <div class="gr-page-head">
+            <h1 class="gr-page-title">My Offered Rides</h1>
+        </div>
+
+        <!-- Empty state -->
+        <div class="gr-card gr-empty" th:if="${#lists.isEmpty(rides)}">
+            <h3 class="gr-card-title">No upcoming rides</h3>
+            <p class="gr-muted">
+                You don’t have any upcoming rides yet. Create one to show up here.
+            </p>
+
+            <a class="gr-btn gr-btn-primary" th:href="@{/rides/offer}">
+                Create Ride
+            </a>
+        </div>
+
+        <!-- List -->
+        <div class="gr-card gr-list" th:if="${!#lists.isEmpty(rides)}">
+
+            <div class="gr-list-head">
+                <div class="gr-col gr-col-route">Route</div>
+                <div class="gr-col gr-col-time">Departure</div>
+                <div class="gr-col gr-col-seats">Seats</div>
+            </div>
+
+            <div class="gr-row" th:each="r : ${rides}">
+                <div class="gr-col gr-col-route">
+                    <div class="gr-route">
+                        <span class="gr-loc" th:text="${r.startLocation}">Origin</span>
+                        <span class="gr-arrow">→</span>
+                        <span class="gr-loc" th:text="${r.endLocation}">Destination</span>
+                    </div>
+                    <div class="gr-subline">
+                        Ride ID: <span th:text="${r.id}">0</span>
+                    </div>
+                </div>
+
+                <div class="gr-col gr-col-time">
+                    <div class="gr-time"
+                         th:text="${#temporals.format(r.departureTime, 'dd/MM/yyyy HH:mm')}">
+                        01/01/2026 12:00
+                    </div>
+                    <div class="gr-subline">Upcoming</div>
+                </div>
+
+                <div class="gr-col gr-col-seats">
+                    <div class="gr-seats">
+                        <span class="gr-pill">
+                            Available: <strong th:text="${r.seatsAvailable}">0</strong>
+                        </span>
+                        <span class="gr-pill gr-pill-soft">
+                            Booked: <strong th:text="${r.bookedSeats}">0</strong>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+</html>
