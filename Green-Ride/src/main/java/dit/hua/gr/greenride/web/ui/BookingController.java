@@ -36,7 +36,6 @@ public class BookingController {
         if (userDetails == null) return "redirect:/login";
 
         Ride ride = rideRepository.findById(rideId).orElse(null);
-        // ✅ ΔΙΟΡΘΩΣΗ: seatsAvailable
         if (ride == null || ride.getSeatsAvailable() <= 0) {
             return "redirect:/rides/search?error=ride-not-found-or-full";
         }
@@ -51,7 +50,6 @@ public class BookingController {
 
         bookingRepository.save(booking);
 
-        // ✅ ΔΙΟΡΘΩΣΗ: seatsAvailable
         ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
         rideRepository.save(ride);
 
@@ -72,7 +70,6 @@ public class BookingController {
             return "redirect:/rides/bookings?error=unauthorized";
         }
 
-        // ✅ ΔΙΟΡΘΩΣΗ: seatsAvailable
         Ride ride = booking.getRide();
         ride.setSeatsAvailable(ride.getSeatsAvailable() + 1);
         rideRepository.save(ride);

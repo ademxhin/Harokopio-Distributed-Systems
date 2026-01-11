@@ -34,10 +34,3 @@ body {
     justify-content: center;
     gap: 14px;
 }
-
-/* Responsive */
-@media (max-width: 576px) {
-    .gr-actions {
-        flex-direction: column;
-    }
-}

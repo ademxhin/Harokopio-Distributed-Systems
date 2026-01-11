@@ -52,11 +52,9 @@ public class PhoneNumberPortImpl implements PhoneNumberPort {
                 return response.getBody();
             }
 
-            // service responded but no body / non-2xx: treat as invalid
             return fallbackInvalid(rawPhoneNumber);
 
         } catch (RestClientException ex) {
-            // ✅ service down / refused / timeout => explicit "unavailable"
             throw new ExternalServiceUnavailableException("NOC phone validation service is unavailable", ex);
         }
     }

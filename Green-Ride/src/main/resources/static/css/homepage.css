@@ -2,7 +2,9 @@
 
 .gr-page { background: #f6f7f9; }
 
-/* HERO layout */
+/* ===============================
+   HERO layout
+================================ */
 .gr-hero {
     padding: 46px 0 32px 0;
     background: transparent;
@@ -15,8 +17,12 @@
     align-items: stretch;
 }
 
-/* left panel */
-.gr-panel { padding: 8px 0; }
+/* Left panel */
+.gr-panel {
+    padding: 8px 0;
+    display: flex;
+    flex-direction: column;
+}
 
 .gr-title {
     font-size: 2.35rem;
@@ -32,7 +38,9 @@
     font-size: 1.02rem;
 }
 
-/* Weather card */
+/* ===============================
+   Weather card
+================================ */
 .gr-weather-card{
     border-radius: 18px;
     padding: 14px 14px;
@@ -115,7 +123,35 @@
     border-color: rgba(255,210,210,0.70);
 }
 
-/* ✅ NEW: Search section */
+/* ===============================
+   Boxes
+================================ */
+.gr-subbox{
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(11,11,12,0.10);
+    box-shadow: 0 10px 30px rgba(11,11,12,0.06);
+    background: #ffffff;
+}
+
+/* Container that holds the sub-boxes (Search) */
+.gr-box {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    /* ✅ makes left column end aligned with map column */
+    flex: 1;
+}
+
+/* ===============================
+   Search section
+================================ */
 .gr-search-head{
     margin-bottom: 10px;
 }
@@ -152,7 +188,7 @@
 }
 
 .gr-input:nth-child(3){
-    grid-column: 1 / -1; /* time field full width */
+    grid-column: 1 / -1;
 }
 
 .gr-label{
@@ -177,113 +213,9 @@
     background: #ffffff;
 }
 
-/* Divider */
-.gr-divider{
-    height: 1px;
-    background: rgba(11,11,12,0.10);
-    margin: 14px 0;
-}
-
-/* Role selection */
-.gr-choose-title{
-    font-weight: 800;
-    color: rgba(11,11,12,0.90);
-    font-size: 0.95rem;
-    margin-bottom: 4px;
-}
-
-.gr-choose-sub{
-    font-size: 0.88rem;
-    color: rgba(11,11,12,0.60);
-    margin-bottom: 12px;
-}
-
-.gr-role-grid{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.gr-role-card{
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    text-decoration: none;
-    background: #ffffff;
-    border: 1px solid rgba(11,11,12,0.10);
-    border-radius: 16px;
-    padding: 12px 12px;
-    color: #0b0b0c;
-    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
-}
-
-.gr-role-card:hover{
-    transform: translateY(-1px);
-    box-shadow: 0 12px 30px rgba(11,11,12,0.10);
-    border-color: rgba(11,11,12,0.16);
-    background: rgba(11,11,12,0.01);
-}
-
-.gr-role-top{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
-}
-
-.gr-role-icon{
-    width: 34px;
-    height: 34px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    background: rgba(11,11,12,0.04);
-    border: 1px solid rgba(11,11,12,0.06);
-    font-size: 16px;
-}
-
-.gr-role-name{
-    font-weight: 800;
-    color: rgba(11,11,12,0.88);
-}
-
-.gr-role-desc{
-    font-size: 0.88rem;
-    color: rgba(11,11,12,0.62);
-    line-height: 1.35;
-    margin-bottom: 10px;
-}
-
-.gr-role-cta{
-    font-size: 0.88rem;
-    font-weight: 800;
-    color: rgba(11,11,12,0.78);
-    margin-top: auto;
-}
-
-/* Homepage actions layout (buttons styling comes from theme.css: .gr-btn, .gr-btn-primary, .gr-btn-secondary) */
-.gr-home-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 0;
-}
-
-/* Optional: normalize <button class="gr-btn ..."> rendering across browsers */
-button.gr-btn{
-    appearance: none;
-    -webkit-appearance: none;
-}
-
-/* Note text */
-.gr-note {
-    margin: 12px 2px 0 2px;
-    color: rgba(11,11,12,0.55);
-    font-size: 0.9rem;
-}
-
-/* Right map card */
+/* ===============================
+   Right map card
+================================ */
 .gr-map {
     border-radius: 18px;
     overflow: hidden;
@@ -359,7 +291,9 @@ button.gr-btn{
 .gr-route-point-start { fill: #22c55e; }
 .gr-route-point-end { fill: #ef4444; }
 
-/* Features */
+/* ===============================
+   Features
+================================ */
 .gr-features {
     padding: 28px 0 64px 0;
     background: #ffffff;
@@ -387,37 +321,3 @@ button.gr-btn{
 
 .gr-card p { margin: 0; color: rgba(11,11,12,0.70); }
 .gr-card-icon { font-size: 1.6rem; }
-
-/* responsive */
-@media (max-width: 992px) {
-    .gr-hero-grid { grid-template-columns: 1fr; }
-    .gr-features-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 520px){
-    .gr-role-grid{ grid-template-columns: 1fr; }
-    .gr-search-grid{ grid-template-columns: 1fr; }
-    .gr-input:nth-child(3){ grid-column: auto; }
-}
-
-/* Boxes */
-.gr-subbox{
-    padding: 16px;
-    border-radius: 18px;
-    border: 1px solid rgba(11,11,12,0.10);
-    box-shadow: 0 10px 30px rgba(11,11,12,0.06);
-    background: #ffffff;
-}
-
-/* Container that holds the sub-boxes (Search/Choose/etc) */
-.gr-box {
-    padding: 0;
-    border: none;
-    box-shadow: none;
-    background: transparent;
-
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-

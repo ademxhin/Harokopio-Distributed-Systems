@@ -4,38 +4,69 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
 
-<head>
+<th:block layout:fragment="head">
     <title>GreenRide | Confirm Booking</title>
-</head>
+    <link rel="stylesheet" th:href="@{/css/reservation.css}">
+</th:block>
 
-<body>
-<main layout:fragment="main" class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 text-center">
-            <h1 class="mb-4 gr-h1">Confirm Your Booking</h1>
+<main layout:fragment="main" class="gr-res-page">
+    <div class="container">
 
-            <div class="gr-box p-4 shadow-sm text-start">
-                <h3 class="border-bottom pb-2 mb-3" th:text="${ride.origin} + ' ➔ ' + ${ride.destination}"></h3>
+        <div class="gr-page-head">
+            <h1 class="gr-page-title">Confirm Your Booking</h1>
+        </div>
 
-                <div class="mb-4">
-                    <p><strong>Driver:</strong> <span th:text="${ride.driver.fullName}"></span></p>
-                    <p><strong>Date:</strong> <span th:text="${#temporals.format(ride.departureTime, 'dd-MM-yyyy')}"></span></p>
-                    <p><strong>Time:</strong> <span th:text="${#temporals.format(ride.departureTime, 'HH:mm')}"></span></p>
-                    <p><strong>Available Seats:</strong> <span th:text="${ride.availableSeats}"></span></p>
+        <section class="gr-res-card">
+
+            <div class="gr-res-top">
+                <h3 class="gr-res-title" th:text="${ride.origin} + ' → ' + ${ride.destination}"></h3>
+
+                <div class="gr-res-seats">
+                    <div class="gr-meta-label">Available seats</div>
+                    <div class="gr-seats-value" th:text="${ride.availableSeats}">2</div>
+                </div>
+            </div>
+
+            <div class="gr-res-grid">
+                <div class="gr-meta-box">
+                    <div class="gr-meta-label">Driver</div>
+                    <div class="gr-meta-value" th:text="${ride.driver.fullName}">Driver Name</div>
                 </div>
 
-                <form th:action="@{/rides/book/{id}(id=${ride.id})}" method="post">
-                    <button class="btn btn-success w-100 py-3 fw-bold" type="submit"
-                            th:disabled="${ride.availableSeats <= 0}">
-                        Confirm & Book Now
-                    </button>
-                    <p th:if="${ride.availableSeats <= 0}" class="text-danger mt-2 text-center">No seats left!</p>
-                </form>
+                <div class="gr-meta-box">
+                    <div class="gr-meta-label">Date</div>
+                    <div class="gr-meta-value" th:text="${#temporals.format(ride.departureTime, 'dd-MM-yyyy')}"></div>
+                </div>
 
-                <a th:href="@{/rides/search}" class="btn btn-link w-100 mt-2">Back to Search</a>
+                <div class="gr-meta-box">
+                    <div class="gr-meta-label">Time</div>
+                    <div class="gr-meta-value" th:text="${#temporals.format(ride.departureTime, 'HH:mm')}"></div>
+                </div>
+
+                <div class="gr-meta-box gr-meta-alert" th:if="${ride.availableSeats <= 0}">
+                    <div class="gr-meta-label">Status</div>
+                    <div class="gr-meta-value">No seats left</div>
+                </div>
             </div>
-        </div>
+
+            <form class="gr-res-actions"
+                  th:action="@{/rides/book/{id}(id=${ride.id})}"
+                  method="post">
+
+                <button type="submit"
+                        class="gr-btn gr-btn-primary gr-btn-wide"
+                        th:disabled="${ride.availableSeats <= 0}">
+                    Confirm &amp; Book Now
+                </button>
+
+                <a th:href="@{/rides/search}"
+                   class="gr-btn gr-btn-secondary gr-btn-wide">
+                    Back to Search
+                </a>
+            </form>
+
+        </section>
+
     </div>
 </main>
-</body>
 </html>

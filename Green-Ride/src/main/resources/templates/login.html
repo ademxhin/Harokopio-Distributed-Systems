@@ -27,52 +27,53 @@
                         You have been logged out successfully.
                     </div>
 
-                    <!-- Normal user login -->
                     <form th:action="@{/login}" method="post" class="login-form">
 
-                        <!-- ✅ ADD THIS -->
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}"/>
 
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
+                            <label class="form-label gr-label">Email</label>
                             <input type="email"
                                    name="username"
-                                   class="form-control"
+                                   class="gr-control"
                                    placeholder="you@example.com"
                                    autocomplete="username"
                                    required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label d-flex justify-content-between">
-                                <span>Password</span>
-                                <a class="small text-decoration-none" th:href="@{/forgot-password}">Forgot?</a>
-                            </label>
+                            <label class="form-label gr-label">Password</label>
+
                             <input type="password"
                                    name="password"
-                                   class="form-control"
+                                   class="gr-control"
                                    placeholder="••••••••"
                                    autocomplete="current-password"
                                    required>
+
+                            <div class="login-forgot-wrap">
+                                <a class="gr-auth-link" th:href="@{/forgot-password}">
+                                    Forgot your password?
+                                </a>
+                            </div>
                         </div>
 
-                        <button type="submit" class="btn btn-dark w-100 py-2">Login</button>
+                        <button type="submit" class="gr-btn gr-btn-primary w-100 py-2">
+                            Login
+                        </button>
 
                         <p class="login-footer mt-3 mb-0">
                             Don’t have an account?
-                            <a th:href="@{/register}">Sign Up</a>
+                            <a class="gr-auth-link" th:href="@{/register}">Sign Up</a>
                         </p>
                     </form>
 
                 </div>
 
-                <p class="login-note mt-3">
-                    *Academic project UI. Credentials are validated by the backend.
-                </p>
-
             </div>
         </div>
     </div>
 </main>
-
 </html>

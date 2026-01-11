@@ -32,24 +32,37 @@ public class RideController {
         this.ratingRepository = ratingRepository;
     }
 
+    /**
+     * Passenger: Search available rides
+     * Driver: friendly message
+     */
     @GetMapping("/search")
-    @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
-    public String showAvailableRides(Model model, @AuthenticationPrincipal ApplicationUserDetails userDetails) {
-        if (userDetails == null) return "redirect:/login";
+    public String showAvailableRides(Model model,
+                                     @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
 
         Person currentUser = userDetails.getPerson();
+
+        if (currentUser.getUserType() == UserType.DRIVER) {
+            model.addAttribute("title", "Passenger access required");
+            model.addAttribute("message", "Please login as a passenger to search rides.");
+            model.addAttribute("ctaText", "Logout");
+            model.addAttribute("ctaHref", "/logout");
+            return "rides_not_passenger";
+        }
+
         LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
 
-        // 1. Φέρνουμε όλες τις μελλοντικές διαδρομές
         List<Ride> allUpcomingRides = rideRepository.findByDepartureTimeAfter(limit);
 
-        // 2. Βρίσκουμε ποιες διαδρομές έχει ήδη κλείσει ο χρήστης
         List<Long> alreadyBookedRideIds = bookingRepository.findAllByPerson(currentUser)
                 .stream()
                 .map(b -> b.getRide().getId())
                 .toList();
 
-        // 3. Φιλτράρουμε: Κρατάμε μόνο όσες ΔΕΝ έχει κλείσει ο χρήστης
         List<Ride> filteredRides = allUpcomingRides.stream()
                 .filter(ride -> !alreadyBookedRideIds.contains(ride.getId()))
                 .toList();
@@ -58,16 +71,31 @@ public class RideController {
         return "rides";
     }
 
+    /**
+     * Passenger bookings page
+     * Driver: friendly message
+     */
     @GetMapping("/bookings")
-    @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
-    public String showMyBookings(Model model, @AuthenticationPrincipal ApplicationUserDetails userDetails) {
-        if (userDetails == null) return "redirect:/login";
+    public String showMyBookings(Model model,
+                                 @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
-        // ✅ Το όριο είναι: Τώρα + 10 λεπτά.
-        // Αν η διαδρομή ξεκινά σε λιγότερο από 10 λεπτά, θα κρυφτεί από εδώ.
-        java.time.LocalDateTime limit = java.time.LocalDateTime.now().plusMinutes(10);
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
 
-        List<Booking> allBookings = bookingRepository.findByPerson(userDetails.getPerson());
+        Person currentUser = userDetails.getPerson();
+
+        if (currentUser.getUserType() == UserType.DRIVER) {
+            model.addAttribute("title", "Passenger access required");
+            model.addAttribute("message", "Please login as a passenger to view bookings.");
+            model.addAttribute("ctaText", "Logout");
+            model.addAttribute("ctaHref", "/logout");
+            return "rides_not_passenger";
+        }
+
+        LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
+
+        List<Booking> allBookings = bookingRepository.findByPerson(currentUser);
 
         List<Booking> activeBookings = allBookings.stream()
                 .filter(b -> b.getRide().getDepartureTime().isAfter(limit))
@@ -77,49 +105,210 @@ public class RideController {
         return "bookings";
     }
 
+    /**
+     * ✅ NO combined history.
+     * /rides/history redirects based on the current user's UserType.
+     */
     @GetMapping("/history")
-    public String showRideHistory(Model model, @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+    public String historyRedirect(@AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
         if (userDetails == null) return "redirect:/login";
 
         Person currentUser = userDetails.getPerson();
-        // ✅ Χρησιμοποιούμε το ίδιο όριο (Τώρα + 10 λεπτά)
-        java.time.LocalDateTime limit = java.time.LocalDateTime.now().plusMinutes(10);
 
-        // 1. Διαδρομές που οδήγησε και ξεκινούν σε λιγότερο από 10 λεπτά (ή έχουν ήδη περάσει)
+        if (currentUser.getUserType() == UserType.DRIVER) {
+            return "redirect:/rides/history/driver";
+        }
+        return "redirect:/rides/history/passenger";
+    }
+
+    /**
+     * ✅ Driver-only history: completed rides you offered as a driver.
+     * Uses existing history.html/css.
+     */
+    @GetMapping("/history/driver")
+    public String showDriverHistory(Model model,
+                                    @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
+        if (userDetails == null) return "redirect:/login";
+
+        Person currentUser = userDetails.getPerson();
+
+        if (currentUser.getUserType() != UserType.DRIVER) {
+            model.addAttribute("title", "Driver access required");
+            model.addAttribute("message", "Please login as a driver to view driver ride history.");
+            model.addAttribute("ctaText", "Logout");
+            model.addAttribute("ctaHref", "/logout");
+            return "rides_not_passenger";
+        }
+
+        LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
+
         List<Ride> drivenRides = rideRepository.findByDriverAndDepartureTimeBefore(currentUser, limit);
 
-        // 2. Διαδρομές που έκλεισε και ξεκινούν σε λιγότερο από 10 λεπτά (ή έχουν ήδη περάσει)
-        List<Booking> pastBookings = bookingRepository.findByPersonAndRide_DepartureTimeBefore(currentUser, limit);
-        List<Ride> bookedRides = pastBookings.stream().map(Booking::getRide).toList();
-
-        // 3. Ένωση και Ταξινόμηση
-        List<Ride> allHistory = new java.util.ArrayList<>();
-        allHistory.addAll(drivenRides);
-        allHistory.addAll(bookedRides);
-
-        List<Ride> finalHistory = allHistory.stream().distinct()
+        List<Ride> sorted = drivenRides.stream()
                 .sorted((r1, r2) -> r2.getDepartureTime().compareTo(r1.getDepartureTime()))
                 .toList();
 
-        model.addAttribute("rides", finalHistory);
+        model.addAttribute("rides", sorted);
         return "history";
     }
 
-    @GetMapping("/ratings")
-    public String showRatingsPage(@RequestParam(value = "search", required = false) String search,
-                                  Model model,
-                                  @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+    /**
+     * ✅ Passenger-only history: completed rides you booked as a passenger.
+     * Uses existing history.html/css.
+     */
+    @GetMapping("/history/passenger")
+    public String showPassengerHistory(Model model,
+                                       @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
         if (userDetails == null) return "redirect:/login";
 
         Person currentUser = userDetails.getPerson();
-        UserType targetType = (currentUser.getUserType() == UserType.DRIVER) ? UserType.PASSENGER : UserType.DRIVER;
+
+        if (currentUser.getUserType() != UserType.PASSENGER) {
+            model.addAttribute("title", "Passenger access required");
+            model.addAttribute("message", "Please login as a passenger to view passenger ride history.");
+            model.addAttribute("ctaText", "Logout");
+            model.addAttribute("ctaHref", "/logout");
+            return "rides_not_passenger";
+        }
+
+        LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
+
+        List<Booking> pastBookings =
+                bookingRepository.findByPersonAndRide_DepartureTimeBefore(currentUser, limit);
+
+        List<Ride> bookedRides = pastBookings.stream()
+                .map(Booking::getRide)
+                .distinct()
+                .sorted((r1, r2) -> r2.getDepartureTime().compareTo(r1.getDepartureTime()))
+                .toList();
+
+        model.addAttribute("rides", bookedRides);
+        return "history";
+    }
+
+    /**
+     * Driver-only: upcoming rides offered (not completed yet)
+     */
+    @GetMapping("/offered")
+    public String showMyOfferedRides(Model model,
+                                     @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+
+        Person currentUser = userDetails.getPerson();
+
+        if (currentUser.getUserType() != UserType.DRIVER) {
+            model.addAttribute("title", "Driver access required");
+            model.addAttribute("message", "Please login as a driver to view your offered rides.");
+            model.addAttribute("ctaText", "Logout");
+            model.addAttribute("ctaHref", "/logout");
+            return "rides_not_passenger";
+        }
+
+        LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
+
+        List<Ride> upcoming = rideRepository.findByDriverAndDepartureTimeAfter(currentUser, limit);
+
+        List<Ride> sorted = upcoming.stream()
+                .sorted((r1, r2) -> r1.getDepartureTime().compareTo(r2.getDepartureTime()))
+                .toList();
+
+        model.addAttribute("rides", sorted);
+        return "offered_rides";
+    }
+
+    @GetMapping("/ratings")
+    public String ratingsRedirect(@AuthenticationPrincipal ApplicationUserDetails userDetails) {
+        if (userDetails == null) return "redirect:/login";
+
+        Person currentUser = userDetails.getPerson();
+
+        if (currentUser.getUserType() == UserType.DRIVER) {
+            return "redirect:/rides/ratings/driver";
+        }
+        return "redirect:/rides/ratings/passenger";
+    }
+
+    /**
+     * DRIVER: rate passengers
+     */
+    @GetMapping("/ratings/driver")
+    public String showRatingsAsDriver(@RequestParam(value = "search", required = false) String search,
+                                      Model model,
+                                      @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
+        if (userDetails == null) return "redirect:/login";
+
+        Person currentUser = userDetails.getPerson();
+        if (currentUser.getUserType() != UserType.DRIVER) {
+            model.addAttribute("title", "Driver access required");
+            model.addAttribute("message", "Please login as a driver to rate passengers.");
+            model.addAttribute("ctaText", "Logout");
+            model.addAttribute("ctaHref", "/logout");
+            return "rides_not_passenger";
+        }
+
+        UserType targetType = UserType.PASSENGER;
 
         List<Person> availableUsers = (search != null && !search.isBlank())
                 ? personRepository.findByFirstNameContainingIgnoreCaseAndUserType(search, targetType)
                 : personRepository.findAllByUserType(targetType);
 
+        java.util.Map<Long, Double> ratingAverages = new java.util.HashMap<>();
+        for (Person p : availableUsers) {
+            Double avg = ratingRepository.findAverageScoreForPerson(p.getId()); // may be null
+            ratingAverages.put(p.getId(), avg);
+        }
+
         model.addAttribute("users", availableUsers);
-        model.addAttribute("ratingTarget", targetType.name());
+        model.addAttribute("ratingTarget", "PASSENGER");
+        model.addAttribute("ratingAverages", ratingAverages);
+        model.addAttribute("search", search);
+
+        return "ratings";
+    }
+
+    /**
+     * PASSENGER: rate drivers
+     */
+    @GetMapping("/ratings/passenger")
+    public String showRatingsAsPassenger(@RequestParam(value = "search", required = false) String search,
+                                         Model model,
+                                         @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
+        if (userDetails == null) return "redirect:/login";
+
+        Person currentUser = userDetails.getPerson();
+        if (currentUser.getUserType() != UserType.PASSENGER) {
+            model.addAttribute("title", "Passenger access required");
+            model.addAttribute("message", "Please login as a passenger to rate drivers.");
+            model.addAttribute("ctaText", "Logout");
+            model.addAttribute("ctaHref", "/logout");
+            return "rides_not_passenger";
+        }
+
+        UserType targetType = UserType.DRIVER;
+
+        List<Person> availableUsers = (search != null && !search.isBlank())
+                ? personRepository.findByFirstNameContainingIgnoreCaseAndUserType(search, targetType)
+                : personRepository.findAllByUserType(targetType);
+
+        java.util.Map<Long, Double> ratingAverages = new java.util.HashMap<>();
+        for (Person p : availableUsers) {
+            Double avg = ratingRepository.findAverageScoreForPerson(p.getId());
+            ratingAverages.put(p.getId(), avg);
+        }
+
+        model.addAttribute("users", availableUsers);
+        model.addAttribute("ratingTarget", "DRIVER");
+        model.addAttribute("ratingAverages", ratingAverages);
+        model.addAttribute("search", search);
+
         return "ratings";
     }
 
@@ -127,6 +316,7 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_PASSENGER') or hasAuthority('ROLE_DRIVER')")
     public String submitRating(@RequestParam("userId") Long userId,
                                @RequestParam("score") int score) {
+
         Person person = personRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -152,9 +342,9 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     public String processCreateRide(@ModelAttribute("rideForm") CreateRideForm form,
                                     @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
         if (userDetails == null) return "redirect:/login";
 
-        // ✅ ΝΕΟΣ ΕΛΕΓΧΟΣ: Ημερομηνία και ώρα στο μέλλον
         LocalDateTime departureDateTime = LocalDateTime.of(form.getDate(), form.getTime());
         if (departureDateTime.isBefore(LocalDateTime.now())) {
             return "redirect:/rides/offer?error=past-date";
@@ -166,6 +356,7 @@ public class RideController {
         ride.setDepartureTime(departureDateTime);
         ride.setSeatsAvailable(form.getSeatsAvailable());
         ride.setDriver(userDetails.getPerson());
+
         rideRepository.save(ride);
         return "redirect:/profile";
     }
@@ -182,19 +373,18 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
     public String processBooking(@PathVariable Long id,
                                  @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
         if (userDetails == null) return "redirect:/login";
 
         Ride ride = rideRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid ride Id:" + id));
 
-        // ✅ ΕΛΕΓΧΟΣ 1: Έχει ήδη κάνει κράτηση σε αυτή τη διαδρομή;
         boolean alreadyBooked = bookingRepository.existsByRideAndPerson(ride, userDetails.getPerson());
         if (alreadyBooked) {
             return "redirect:/rides/search?error=already_booked";
         }
 
-        // ✅ ΕΛΕΓΧΟΣ 2: Μήπως πέρασε το χρονικό όριο (10 λεπτά πριν);
-        if (ride.getDepartureTime().isBefore(java.time.LocalDateTime.now().plusMinutes(10))) {
+        if (ride.getDepartureTime().isBefore(LocalDateTime.now().plusMinutes(10))) {
             return "redirect:/rides/search?error=too_late";
         }
 
@@ -203,12 +393,14 @@ public class RideController {
             booking.setRide(ride);
             booking.setPerson(userDetails.getPerson());
             booking.setCreatedAt(LocalDateTime.now());
+
             bookingRepository.save(booking);
 
             ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
             ride.setBookedSeats(ride.getBookedSeats() + 1);
             rideRepository.save(ride);
         }
-        return "redirect:/profile";
+
+        return "redirect:/profile-home";
     }
 }

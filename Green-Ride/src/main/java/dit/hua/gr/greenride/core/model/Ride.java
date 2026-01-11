@@ -23,23 +23,11 @@ public class Ride {
 
     public Ride() {}
 
-    // ==========================================================
-    // ✅ ALIASES ΓΙΑ THYMELEAF (Λύνουν τα σφάλματα στα HTML)
-    // ==========================================================
-
-    // Επιτρέπει στη Thymeleaf να διαβάζει το ${ride.origin}
     public String getOrigin() { return startLocation; }
 
-    // Επιτρέπει στη Thymeleaf να διαβάζει το ${ride.destination}
     public String getDestination() { return endLocation; }
 
-    // Επιτρέπει στη Thymeleaf να διαβάζει το ${ride.availableSeats}
     public int getAvailableSeats() { return seatsAvailable; }
-
-
-    // ==========================================================
-    // ✅ STANDARD GETTERS & SETTERS
-    // ==========================================================
 
     public Long getId() { return id; }
 

@@ -34,7 +34,6 @@ public class MapsApiPortImpl implements MapsApiPort {
     public RouteResult getRoute(RouteRequest request) {
         if (request == null) throw new NullPointerException("request must not be null");
 
-        // ORS expects: "lon,lat"
         String start = request.fromLon() + "," + request.fromLat();
         String end = request.toLon() + "," + request.toLat();
 
@@ -48,9 +47,7 @@ public class MapsApiPortImpl implements MapsApiPort {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", apiKey);
 
-        // ✅ FIX: ORS wants GeoJSON response type
         headers.setAccept(List.of(MediaType.parseMediaType("application/geo+json")));
-        // (safe addition)
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Void> entity = new HttpEntity<>(headers);

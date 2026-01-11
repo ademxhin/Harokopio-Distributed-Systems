@@ -59,11 +59,8 @@ public class HomepageController {
             RouteResult route = mapsApiPort.getRoute(new RouteRequest(fromLat, fromLon, toLat, toLon));
             model.addAttribute("route", route);
         } catch (MapsServiceException ex) {
-            // ✅ Αυτό είναι το πιο χρήσιμο: θα δεις στο console το status + body
             log.error("Maps API failed: {}", ex.getMessage(), ex);
 
-            // ✅ Προσωρινά: εμφανίζει και το πραγματικό μήνυμα στο UI (για debug)
-            // Μόλις το φτιάξεις, το γυρνάς πάλι σε "Maps service unavailable"
             model.addAttribute("routeError", ex.getMessage());
         }
 

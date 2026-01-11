@@ -164,12 +164,6 @@
 .gr-action-link{ font-weight: 800; text-decoration: none; color:#111114; }
 .gr-action-link:hover{ text-decoration: underline; }
 
-@media (max-width: 992px){
-    .gr-profile-layout{ grid-template-columns: 1fr; }
-    .gr-side{ position: static; }
-    .gr-actions-grid{ grid-template-columns: 1fr; }
-}
-
 /* USER HEADER (Uber-style) */
 .gr-side-user{
     display: flex;

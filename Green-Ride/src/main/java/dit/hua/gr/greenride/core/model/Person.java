@@ -28,21 +28,17 @@ public class Person {
     private int reportCount = 0;
     private boolean banned = false;
 
-    // Διαγράφει αυτόματα τις διαδρομές που οδηγούσε ο χρήστης αν διαγραφεί ο ίδιος
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ride> rides = new ArrayList<>();
 
-    // Διαγράφει αυτόματα τις κρατήσεις του χρήστη αν διαγραφεί ο ίδιος
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings = new ArrayList<>();
 
     @OneToMany(mappedBy = "ratedPerson", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Rating> ratings = new ArrayList<>();
 
-    // ✅ Κενός constructor για JPA
     public Person() {}
 
-    // ✅ Constructor με 7 παραμέτρους για το Business Logic Service
     public Person(String userId, String firstName, String lastName, String mobilePhoneNumber,
                   String emailAddress, UserType userType, String hashedPassword) {
         this.userId = userId;
@@ -79,11 +75,11 @@ public class Person {
     public boolean isAdmin() { return this.personType == PersonType.ADMIN; }
     public String getFullName() { return firstName + " " + lastName; }
 
-    // ✅ Χρειάζεται για τον PersonMapper
-    public String getAverageRating() {
-        if (ratings == null || ratings.isEmpty()) return "No rating";
+
+    public Double getAverageRating() {
+        if (ratings == null || ratings.isEmpty()) return null;
         double sum = 0;
         for (Rating r : ratings) sum += r.getScore();
-        return String.format("%.1f ★", sum / ratings.size());
+        return sum / ratings.size();
     }
 }

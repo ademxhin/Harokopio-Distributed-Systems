@@ -6,15 +6,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface RideRepository extends JpaRepository<Ride, Long> {
 
     List<Ride> findByDriver(Person driver);
-    List<Ride> findByDriverAndDepartureTimeBefore(Person driver, java.time.LocalDateTime time);
-    List<Ride> findByDepartureTimeAfter(java.time.LocalDateTime time);
 
+    List<Ride> findByDriverAndDepartureTimeBefore(Person driver, LocalDateTime time);
+
+    List<Ride> findByDriverAndDepartureTimeAfter(Person driver, LocalDateTime time);
+
+    List<Ride> findByDepartureTimeAfter(LocalDateTime time);
 
     @Query("SELECT COALESCE(AVG(CAST(r.bookedSeats AS double) / r.seatsAvailable) * 100, 0.0) " +
             "FROM Ride r WHERE r.seatsAvailable > 0")

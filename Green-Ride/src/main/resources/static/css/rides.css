@@ -1,49 +1,149 @@
-body {
-    background: #f6f7f9;
+/* ===============================
+   RIDES PAGE (Available Rides)
+================================ */
+
+/* Page wrapper */
+.gr-rides-page{
+    padding: 44px 0 56px; /* ίδιο με Ratings / Bookings */
+}
+
+/* Header */
+.gr-page-head{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+
+.gr-page-title{
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #0b0b0c;
+    letter-spacing: -0.2px;
 }
 
-.container {
-    max-width: 800px;
-    margin: 30px auto;
+/* Shared card (local to rides page) */
+.gr-card,
+.gr-ride-card{
+    background: #ffffff;
+    border: 1px solid rgba(11,11,12,0.10);
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(11,11,12,0.06);
 }
 
-h1 {
-    font-weight: 800;
+/* ===============================
+   EMPTY STATE (unified)
+================================ */
+.gr-empty{
+    max-width: 720px;
+    margin: 0 auto;
+
+    min-height: 220px;
+
+    padding: 26px 22px;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.gr-card-title{
+    margin: 0 0 8px 0;
+    font-weight: 900;
     color: #0b0b0c;
 }
 
-.empty {
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 14px;
-    border: 1px solid rgba(11,11,12,0.10);
-    text-align: center;
+.gr-muted{
+    margin: 0 0 16px 0;
     color: rgba(11,11,12,0.60);
+    font-weight: 600;
 }
 
-.reservations-list {
+/* ===============================
+   LIST LAYOUT
+================================ */
+.gr-rides-list{
+    max-width: 720px; /* ίδιο με empty */
+    margin: 0 auto;
+
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 18px;
 }
 
-.card {
-    background: #ffffff;
+/* ===============================
+   RIDE CARD
+================================ */
+.gr-ride-card{
     padding: 18px;
-    border-radius: 18px;
+}
+
+.gr-ride-top{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(11,11,12,0.08);
+}
+
+.gr-ride-title{
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 950;
+    color: #0b0b0c;
+    line-height: 1.25;
+}
+
+.gr-ride-seats{
+    text-align: right;
+    min-width: 140px;
+}
+
+.gr-ride-seats-value{
+    font-size: 1.15rem;
+    font-weight: 950;
+    color: #0b0b0c;
+}
+
+/* ===============================
+   META BLOCKS
+================================ */
+.gr-ride-meta{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.gr-ride-meta-block{
+    background: rgba(11,11,12,0.02);
     border: 1px solid rgba(11,11,12,0.10);
-    box-shadow: 0 10px 30px rgba(11,11,12,0.06);
+    border-radius: 14px;
+    padding: 10px 12px;
 }
 
-.card h3 {
-    margin-top: 0;
-    font-size: 1.2rem;
-    font-weight: 800;
+.gr-ride-meta-label{
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: rgba(11,11,12,0.55);
+    margin-bottom: 4px;
 }
 
-.card p {
-    margin: 6px 0;
-    color: rgba(11,11,12,0.75);
+.gr-ride-meta-value{
+    font-size: 0.98rem;
+    font-weight: 900;
+    color: #0b0b0c;
+}
+
+/* ===============================
+   UTILITIES
+================================ */
+.gr-btn-wide{
+    width: 100%;
 }

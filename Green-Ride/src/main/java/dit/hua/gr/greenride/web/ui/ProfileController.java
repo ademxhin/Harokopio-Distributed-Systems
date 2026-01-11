@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Controller
 public class ProfileController {
 
-    // ✅ Προσθήκη του Repository
     private final PersonRepository personRepository;
 
     public ProfileController(PersonRepository personRepository) {
@@ -34,7 +33,6 @@ public class ProfileController {
 
         final String email = principal.getName();
 
-        // ✅ Αναζήτηση του χρήστη στη βάση για να πάρουμε το τηλέφωνο
         Person person = personRepository.findByEmailAddress(email)
                 .orElse(null);
 
@@ -62,12 +60,10 @@ public class ProfileController {
             roleLabel = "User";
         }
 
-        // ✅ Δυναμικά δεδομένα από το αντικείμενο person
         model.addAttribute("activeTab", tab);
         model.addAttribute("fullName", person != null ? person.getFullName() : buildDisplayName(email));
         model.addAttribute("emailAddress", email);
 
-        // ✅ ΕΔΩ ΕΙΝΑΙ Η ΔΙΟΡΘΩΣΗ: Παίρνουμε το τηλέφωνο από τη βάση
         model.addAttribute("mobilePhoneNumber", (person != null && person.getMobilePhoneNumber() != null)
                 ? person.getMobilePhoneNumber()
                 : "Not provided");
