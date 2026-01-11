@@ -1,6 +1,5 @@
 package dit.hua.gr.greenride.web.ui;
 
-import dit.hua.gr.greenride.core.model.Person;
 import dit.hua.gr.greenride.core.repository.PersonRepository;
 import dit.hua.gr.greenride.service.AdminService;
 import org.springframework.stereotype.Controller;

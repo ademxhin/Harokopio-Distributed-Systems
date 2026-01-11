@@ -1,6 +1,6 @@
 package dit.hua.gr.greenride.service.model;
 
-import dit.hua.gr.greenride.core.model.UserType;
+import dit.hua.gr.greenride.core.model.PersonType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
@@ -33,7 +33,7 @@ public record CreatePersonRequest(
         @Size(min = 6, max = 50)
         String confirmRawPassword,
 
-        // ✅ PASSENGER / DRIVER / BOTH
         @NotNull(message = "Please select a role")
-        UserType userType
+        PersonType personType
+
 ) { }

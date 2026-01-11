@@ -2,12 +2,10 @@ package dit.hua.gr.greenride.service.impl;
 
 import dit.hua.gr.greenride.core.model.Person;
 import dit.hua.gr.greenride.core.model.PersonType;
-import dit.hua.gr.greenride.core.model.UserType;
 import dit.hua.gr.greenride.core.port.PhoneNumberPort;
-import dit.hua.gr.greenride.core.port.SmsNotificationPort;
 import dit.hua.gr.greenride.core.port.impl.dto.PhoneNumberValidationResult;
 import dit.hua.gr.greenride.core.repository.PersonRepository;
-import dit.hua.gr.greenride.service.PersonBusinessLogicService;
+import dit.hua.gr.greenride.service.PersonService;
 import dit.hua.gr.greenride.service.mapper.PersonMapper;
 import dit.hua.gr.greenride.service.model.CreatePersonRequest;
 import dit.hua.gr.greenride.service.model.CreatePersonResult;
@@ -26,30 +24,27 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
-public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicService {
+public class PersonServiceImpl implements PersonService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PersonBusinessLogicServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonServiceImpl.class);
 
     private final Validator validator;
     private final PasswordEncoder passwordEncoder;
     private final PersonRepository personRepository;
     private final PersonMapper personMapper;
     private final PhoneNumberPort phoneNumberPort;
-    private final SmsNotificationPort smsNotificationPort;
 
-    public PersonBusinessLogicServiceImpl(final Validator validator,
-                                          final PasswordEncoder passwordEncoder,
-                                          final PersonRepository personRepository,
-                                          final PersonMapper personMapper,
-                                          final PhoneNumberPort phoneNumberPort,
-                                          final SmsNotificationPort smsNotificationPort) {
+    public PersonServiceImpl(final Validator validator,
+                             final PasswordEncoder passwordEncoder,
+                             final PersonRepository personRepository,
+                             final PersonMapper personMapper,
+                             final PhoneNumberPort phoneNumberPort) {
 
         this.validator = validator;
         this.passwordEncoder = passwordEncoder;
         this.personRepository = personRepository;
         this.personMapper = personMapper;
         this.phoneNumberPort = phoneNumberPort;
-        this.smsNotificationPort = smsNotificationPort;
     }
 
     @Transactional
@@ -80,9 +75,15 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
         final String rawPassword = createPersonRequest.rawPassword();
         final String confirmRawPassword = createPersonRequest.confirmRawPassword();
 
-        final UserType userType = createPersonRequest.userType();
-        if (userType == null) {
+        // ✅ ONE ROLE ONLY (PersonType)
+        final PersonType personType = createPersonRequest.personType();
+        if (personType == null) {
             return CreatePersonResult.fail("Please select a role");
+        }
+
+        // IMPORTANT: Do NOT allow ADMIN registration from public endpoint
+        if (personType == PersonType.ADMIN) {
+            return CreatePersonResult.fail("Admin registration is not allowed");
         }
 
         // Confirm password check (business rule)
@@ -96,8 +97,6 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
             phoneResult = this.phoneNumberPort.validate(mobilePhoneNumber);
         } catch (RestClientException ex) {
             throw new ExternalServiceUnavailableException("NOC phone validation service is unavailable", ex);
-        } catch (RuntimeException ex) {
-            throw ex;
         }
 
         if (!phoneResult.isValidMobile()) {
@@ -120,18 +119,16 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
         // Hash password
         final String hashedPassword = this.passwordEncoder.encode(rawPassword);
 
+        // ✅ Person constructor now takes PersonType (not UserType)
         Person person = new Person(
                 userId,
                 firstName,
                 lastName,
                 mobilePhoneNumber,
                 emailAddress,
-                userType,
+                personType,
                 hashedPassword
         );
-
-        // Ensure system role is USER (optional if constructor already sets it)
-        person.setPersonType(PersonType.USER);
 
         // Validate Person entity
         final Set<ConstraintViolation<Person>> personViolations = this.validator.validate(person);
@@ -141,17 +138,6 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
 
         // Persist
         person = this.personRepository.save(person);
-
-        // Notify via SMS if required
-        if (notify) {
-            final String content = String.format(
-                    "You have successfully registered for the GreenRide application. " +
-                            "Use your email (%s) to log in.", emailAddress);
-            final boolean sent = this.smsNotificationPort.sendSms(mobilePhoneNumber, content);
-            if (!sent) {
-                LOGGER.warn("SMS send to {} failed!", mobilePhoneNumber);
-            }
-        }
 
         // Map to PersonView
         final PersonView personView = this.personMapper.convertPersonToPersonView(person);

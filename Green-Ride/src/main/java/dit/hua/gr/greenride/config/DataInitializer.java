@@ -1,38 +1,230 @@
 package dit.hua.gr.greenride.config;
 
-import dit.hua.gr.greenride.core.model.Person;
-import dit.hua.gr.greenride.core.repository.PersonRepository;
+import dit.hua.gr.greenride.core.model.*;
+import dit.hua.gr.greenride.core.repository.*;
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import jakarta.annotation.PostConstruct;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 @Configuration
 public class DataInitializer {
 
     private final PersonRepository personRepository;
+    private final RideRepository rideRepository;
+    private final BookingRepository bookingRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public DataInitializer(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
+    private final Random random = new Random();
+
+    public DataInitializer(PersonRepository personRepository,
+                           RideRepository rideRepository,
+                           BookingRepository bookingRepository,
+                           PasswordEncoder passwordEncoder) {
         this.personRepository = personRepository;
+        this.rideRepository = rideRepository;
+        this.bookingRepository = bookingRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @PostConstruct
     public void init() {
-        if (personRepository.findByEmailAddress("admin@example.com").isEmpty()) {
+
+        // =========================
+        // ADMIN
+        // =========================
+        personRepository.findByEmailAddress("admin@example.com").orElseGet(() -> {
             Person admin = new Person();
             admin.setUserId("admin001");
             admin.setFirstName("Admin");
             admin.setLastName("User");
-            admin.setEmailAddress("admin@example.com");
-            admin.setHashedPassword(passwordEncoder.encode("adminpass"));
-            admin.setMobilePhoneNumber("6900000000");
-            admin.setPersonType(dit.hua.gr.greenride.core.model.PersonType.ADMIN);
+            admin.setEmailAddress("admin");
+            admin.setMobilePhoneNumber(randomGreekMobile());
+            admin.setHashedPassword(passwordEncoder.encode("password"));
+            admin.setPersonType(PersonType.ADMIN);
+            admin.setBanned(false);
+            admin.setReportCount(0);
 
-            personRepository.save(admin);
-            System.out.println("✔ Admin created successfully");
+            System.out.println("✔ Admin created");
+            return personRepository.save(admin);
+        });
+
+        long existingNonAdmin = personRepository.findAll().stream()
+                .filter(p -> p.getPersonType() != PersonType.ADMIN)
+                .count();
+
+        if (existingNonAdmin > 0) {
+            System.out.println("ℹ Dummy data already exists (non-admin users found). Skipping.");
+            return;
         }
+
+        // =========================
+        // DRIVERS & PASSENGERS
+        // =========================
+        List<Person> drivers = createDrivers();
+        List<Person> passengers = createPassengers();
+
+        // =========================
+        // RIDES (for drivers)
+        // Each driver: 2 completed (past) + 2 pending (future)
+        // =========================
+        List<Ride> createdRides = new ArrayList<>();
+
+        for (Person driver : drivers) {
+
+            // 2 completed rides (past)
+            for (int i = 0; i < 2; i++) {
+                Ride pastRide = createRide(
+                        driver,
+                        LocalDateTime.now().minusDays(10 + i),
+                        0,   // seatsAvailable (0 => full or just "completed")
+                        3    // bookedSeats
+                );
+                createdRides.add(rideRepository.save(pastRide));
+            }
+
+            // 2 pending rides (future)
+            for (int i = 0; i < 2; i++) {
+                Ride futureRide = createRide(
+                        driver,
+                        LocalDateTime.now().plusDays(3 + i),
+                        3,   // seatsAvailable
+                        0    // bookedSeats
+                );
+                createdRides.add(rideRepository.save(futureRide));
+            }
+        }
+
+        // =========================
+        // BOOKINGS (for passengers)
+        // Each passenger: 2 completed bookings + 2 pending bookings
+        // (we attach bookings onto already created rides)
+        // =========================
+
+        List<Ride> pastRides = createdRides.stream()
+                .filter(r -> r.getDepartureTime().isBefore(LocalDateTime.now()))
+                .toList();
+
+        List<Ride> futureRides = createdRides.stream()
+                .filter(r -> r.getDepartureTime().isAfter(LocalDateTime.now()))
+                .toList();
+
+        for (Person passenger : passengers) {
+
+            // 2 completed bookings (on past rides)
+            pastRides.stream()
+                    .limit(2)
+                    .forEach(ride -> bookingRepository.save(createBooking(passenger, ride)));
+
+            // 2 pending bookings (on future rides)
+            futureRides.stream()
+                    .limit(2)
+                    .forEach(ride -> bookingRepository.save(createBooking(passenger, ride)));
+        }
+
+        System.out.println("✔ Dummy data initialized successfully");
     }
 
+    // =========================================================
+    // Helpers
+    // =========================================================
+
+    private List<Person> createDrivers() {
+        String[][] names = {
+                {"Giorgos", "Papadopoulos"},
+                {"Nikos", "Ioannou"},
+                {"Kostas", "Nikolaidis"},
+                {"Dimitris", "Karagiannis"},
+                {"Panagiotis", "Vasiliou"}
+        };
+
+        return createPeople(names, PersonType.DRIVER);
+    }
+
+    private List<Person> createPassengers() {
+        String[][] names = {
+                {"Maria", "Georgiou"},
+                {"Eleni", "Katsouli"},
+                {"Anna", "Papadaki"},
+                {"Katerina", "Stavrou"},
+                {"Sofia", "Dimitriou"}
+        };
+
+        return createPeople(names, PersonType.PASSENGER);
+    }
+
+    private List<Person> createPeople(String[][] names, PersonType personType) {
+        List<Person> created = new ArrayList<>();
+
+        for (String[] n : names) {
+            String first = n[0];
+            String last = n[1];
+
+            Person p = new Person();
+            p.setUserId("gr-" + first.toLowerCase() + random.nextInt(10000));
+            p.setFirstName(first);
+            p.setLastName(last);
+            p.setEmailAddress((first + "." + last).toLowerCase() + "@example.com");
+            p.setHashedPassword(passwordEncoder.encode("password"));
+            p.setMobilePhoneNumber(randomGreekMobile());
+            p.setPersonType(personType);
+            p.setBanned(false);
+            p.setReportCount(0);
+
+            created.add(personRepository.save(p));
+        }
+
+        return created;
+    }
+
+    private Ride createRide(Person driver, LocalDateTime departure,
+                            int seatsAvailable, int bookedSeats) {
+
+        Ride ride = new Ride();
+        ride.setDriver(driver);
+
+        ride.setStartLocation(randomOrigin());
+        ride.setEndLocation(randomDestination());
+        ride.setDepartureTime(departure);
+
+        ride.setSeatsAvailable(seatsAvailable);
+        ride.setBookedSeats(bookedSeats);
+
+        return ride;
+    }
+
+    private Booking createBooking(Person passenger, Ride ride) {
+        Booking b = new Booking();
+        b.setPerson(passenger);
+        b.setRide(ride);
+        b.setCreatedAt(LocalDateTime.now());
+
+        if (ride.getDepartureTime().isAfter(LocalDateTime.now())) {
+            if (ride.getSeatsAvailable() > 0) {
+                ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
+                ride.setBookedSeats(ride.getBookedSeats() + 1);
+                rideRepository.save(ride);
+            }
+        }
+
+        return b;
+    }
+
+    private String randomGreekMobile() {
+        return "69" + (10000000 + random.nextInt(90000000));
+    }
+
+    private String randomOrigin() {
+        String[] origins = {"Athens", "Piraeus", "Marousi", "Kifisia", "Glyfada"};
+        return origins[random.nextInt(origins.length)];
+    }
+
+    private String randomDestination() {
+        String[] dest = {"Thessaloniki", "Patras", "Larisa", "Volos", "Ioannina"};
+        return dest[random.nextInt(dest.length)];
+    }
 }

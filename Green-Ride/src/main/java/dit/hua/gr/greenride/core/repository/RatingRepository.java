@@ -11,6 +11,5 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     @Query("select avg(r.score) from Rating r where r.ratedPerson.id = :personId")
     Double findAverageScoreForPerson(@Param("personId") Long personId);
 
-    // ✅ Αυτό θα δουλέψει τώρα που κάναμε import την Person
     boolean existsByRaterAndRatedPerson(Person rater, Person ratedPerson);
 }

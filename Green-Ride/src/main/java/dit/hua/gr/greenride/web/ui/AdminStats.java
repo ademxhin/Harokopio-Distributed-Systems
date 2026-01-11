@@ -7,7 +7,6 @@ public class AdminStats {
     private long activeDrivers;
     private long activePassengers;
 
-    // Constructor με 5 παραμέτρους για να δέχεται όλα τα στατιστικά
     public AdminStats(long totalUsers, double averageOccupancy, long totalRides, long activeDrivers, long activePassengers) {
         this.totalUsers = totalUsers;
         this.averageOccupancy = averageOccupancy;

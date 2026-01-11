@@ -2,7 +2,6 @@ package dit.hua.gr.greenride.service;
 
 import dit.hua.gr.greenride.core.model.Person;
 import dit.hua.gr.greenride.core.model.PersonType;
-import dit.hua.gr.greenride.core.model.UserType;
 import dit.hua.gr.greenride.core.repository.PersonRepository;
 import dit.hua.gr.greenride.core.repository.RideRepository;
 import dit.hua.gr.greenride.web.ui.AdminStats;
@@ -29,8 +28,8 @@ public class AdminService {
         Double avgOccupancy = rideRepository.calculateAverageOccupancy();
         long totalUsers = personRepository.count();
 
-        long drivers = personRepository.countByUserType(UserType.DRIVER);
-        long passengers = personRepository.countByUserType(UserType.PASSENGER);
+        long drivers = personRepository.countByPersonType(PersonType.DRIVER);
+        long passengers = personRepository.countByPersonType(PersonType.PASSENGER);
 
         return new AdminStats(
                 totalUsers,

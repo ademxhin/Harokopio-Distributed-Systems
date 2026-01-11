@@ -42,7 +42,7 @@ public class SecurityConfig {
                         // Swagger / OpenAPI
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                        // ✅ PUBLIC AUTH ENDPOINTS
+                        // PUBLIC AUTH ENDPOINTS
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
 
                         // (keep if you need it)

@@ -1,6 +1,6 @@
 package dit.hua.gr.greenride.web.rest.api;
 
-import dit.hua.gr.greenride.service.PersonBusinessLogicService;
+import dit.hua.gr.greenride.service.PersonService;
 import dit.hua.gr.greenride.service.model.CreatePersonRequest;
 import dit.hua.gr.greenride.service.model.CreatePersonResult;
 import dit.hua.gr.greenride.web.ui.exceptions.ExternalServiceUnavailableException;
@@ -18,10 +18,10 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/auth")
 public class RegistrationRestController {
 
-    private final PersonBusinessLogicService personBusinessLogicService;
+    private final PersonService personService;
 
-    public RegistrationRestController(final PersonBusinessLogicService personBusinessLogicService) {
-        this.personBusinessLogicService = personBusinessLogicService;
+    public RegistrationRestController(final PersonService personService) {
+        this.personService = personService;
     }
 
     public record RegisterResponse(
@@ -51,7 +51,7 @@ public class RegistrationRestController {
         }
 
         try {
-            CreatePersonResult result = personBusinessLogicService.createPerson(request, true);
+            CreatePersonResult result = personService.createPerson(request, true);
 
             if (!result.created()) {
                 // business failure => 400 with reason

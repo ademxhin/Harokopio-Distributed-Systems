@@ -123,14 +123,14 @@
 
                                 <select id="role"
                                         class="gr-control"
-                                        th:field="*{userType}"
+                                        th:field="*{personType}"
                                         required>
                                     <option value="" disabled selected>Select a role</option>
                                     <option value="PASSENGER">Passenger</option>
                                     <option value="DRIVER">Driver</option>
                                 </select>
 
-                                <div class="gr-error" th:errors="*{userType}"></div>
+                                <div class="gr-error" th:errors="*{personType}"></div>
                             </div>
 
                         </div>

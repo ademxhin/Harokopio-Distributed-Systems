@@ -13,10 +13,9 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ✅ Συγχωνευμένη δήλωση του ride (μία φορά μόνο)
     @ManyToOne
     @JoinColumn(name = "ride_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE) // Για να σβήνεται το booking αν σβηστεί το ride
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Ride ride;
 
     @ManyToOne

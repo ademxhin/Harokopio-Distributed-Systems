@@ -1,6 +1,7 @@
 package dit.hua.gr.greenride.core.model;
 
 public enum PersonType {
-    USER,
-    ADMIN
+    ADMIN,
+    DRIVER,
+    PASSENGER
 }

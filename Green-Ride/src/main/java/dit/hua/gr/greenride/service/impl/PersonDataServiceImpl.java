@@ -1,6 +1,5 @@
 package dit.hua.gr.greenride.service.impl;
 
-import dit.hua.gr.greenride.core.model.Person;
 import dit.hua.gr.greenride.core.repository.PersonRepository;
 import dit.hua.gr.greenride.service.model.PersonDataService;
 import dit.hua.gr.greenride.service.mapper.PersonMapper;

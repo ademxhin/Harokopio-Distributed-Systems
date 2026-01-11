@@ -16,9 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-/**
- * REST API endpoints for Admin operations (based on existing UI logic).
- */
 @Tag(name = "Admin", description = "Admin dashboard and moderation endpoints")
 @RestController
 @RequestMapping("/api/admin")
@@ -34,13 +31,40 @@ public class AdminRestController {
     }
 
     // =========================
+    // DTO for REST (SAFE - no lazy relations)
+    // =========================
+    public record AdminUserView(
+            Long id,
+            String email,
+            String fullName,
+            String personType
+    ) {}
+
+    private AdminUserView toView(Person p) {
+        // Προσαρμόζεις αν τα getters σου διαφέρουν
+        String email = safe(p.getEmailAddress());
+        String fullName = safe(p.getFullName());
+        String personType = (p.getPersonType() != null) ? p.getPersonType().name() : null;
+
+        return new AdminUserView(
+                p.getId(),
+                email,
+                fullName,
+                personType
+        );
+    }
+
+    private static String safe(String s) {
+        return (s == null || s.isBlank()) ? null : s;
+    }
+
+    // =========================
     // Dashboard
     // =========================
-
     public record AdminDashboardResponse(
             AdminStats stats,
             List<String> flaggedUsers,
-            List<Person> allUsers,
+            List<AdminUserView> allUsers,
             List<String> kickedUserNames
     ) {}
 
@@ -55,7 +79,12 @@ public class AdminRestController {
 
         AdminStats stats = adminService.getSystemStatistics();
         List<String> flaggedUsers = adminService.getFlaggedUsers();
-        List<Person> allUsers = adminService.getAllUsersExcludingAdmins();
+
+        List<AdminUserView> allUsers = adminService.getAllUsersExcludingAdmins()
+                .stream()
+                .map(this::toView)
+                .toList();
+
         List<String> kickedUserNames = adminService.getKickedUserNames();
 
         return new AdminDashboardResponse(stats, flaggedUsers, allUsers, kickedUserNames);
@@ -64,7 +93,6 @@ public class AdminRestController {
     // =========================
     // Kick user
     // =========================
-
     @Operation(summary = "Kick a user (delete user and log kicked user full name)")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "User kicked (deleted)"),
@@ -91,8 +119,11 @@ public class AdminRestController {
             @ApiResponse(responseCode = "403", description = "Not authorized (not ADMIN)")
     })
     @GetMapping("/users")
-    public List<Person> allUsers() {
-        return adminService.getAllUsersExcludingAdmins();
+    public List<AdminUserView> allUsers() {
+        return adminService.getAllUsersExcludingAdmins()
+                .stream()
+                .map(this::toView)
+                .toList();
     }
 
     @Operation(summary = "Get flagged users (as names/identifiers)")

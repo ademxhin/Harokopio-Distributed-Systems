@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -18,6 +19,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByPersonAndRide_DepartureTimeBefore(Person person, LocalDateTime time);
 
     List<Booking> findByRide(Ride ride);
+
+    Optional<Booking> findByIdAndPerson(Long id, Person person);
 
     boolean existsByRideAndPerson(Ride ride, Person person);
 }

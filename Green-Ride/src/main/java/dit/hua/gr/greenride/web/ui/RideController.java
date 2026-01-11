@@ -32,21 +32,20 @@ public class RideController {
         this.ratingRepository = ratingRepository;
     }
 
-    /**
-     * Passenger: Search available rides
-     * Driver: friendly message
-     */
+    // =========================================================
+    // Passenger: Search available rides
+    // Driver: friendly message
+    // =========================================================
+
     @GetMapping("/search")
     public String showAvailableRides(Model model,
                                      @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
-        if (userDetails == null) {
-            return "redirect:/login";
-        }
+        if (userDetails == null) return "redirect:/login";
 
         Person currentUser = userDetails.getPerson();
 
-        if (currentUser.getUserType() == UserType.DRIVER) {
+        if (currentUser.getPersonType() == PersonType.DRIVER) {
             model.addAttribute("title", "Passenger access required");
             model.addAttribute("message", "Please login as a passenger to search rides.");
             model.addAttribute("ctaText", "Logout");
@@ -71,21 +70,20 @@ public class RideController {
         return "rides";
     }
 
-    /**
-     * Passenger bookings page
-     * Driver: friendly message
-     */
+    // =========================================================
+    // Passenger bookings page
+    // Driver: friendly message
+    // =========================================================
+
     @GetMapping("/bookings")
     public String showMyBookings(Model model,
                                  @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
-        if (userDetails == null) {
-            return "redirect:/login";
-        }
+        if (userDetails == null) return "redirect:/login";
 
         Person currentUser = userDetails.getPerson();
 
-        if (currentUser.getUserType() == UserType.DRIVER) {
+        if (currentUser.getPersonType() == PersonType.DRIVER) {
             model.addAttribute("title", "Passenger access required");
             model.addAttribute("message", "Please login as a passenger to view bookings.");
             model.addAttribute("ctaText", "Logout");
@@ -105,10 +103,10 @@ public class RideController {
         return "bookings";
     }
 
-    /**
-     * ✅ NO combined history.
-     * /rides/history redirects based on the current user's UserType.
-     */
+    // =========================================================
+    // History redirect based on current user's PersonType
+    // =========================================================
+
     @GetMapping("/history")
     public String historyRedirect(@AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
@@ -116,16 +114,16 @@ public class RideController {
 
         Person currentUser = userDetails.getPerson();
 
-        if (currentUser.getUserType() == UserType.DRIVER) {
+        if (currentUser.getPersonType() == PersonType.DRIVER) {
             return "redirect:/rides/history/driver";
         }
         return "redirect:/rides/history/passenger";
     }
 
-    /**
-     * Driver-only history: completed rides you offered as a driver.
-     * Uses existing history.html/css.
-     */
+    // =========================================================
+    // Driver-only history: completed rides you offered
+    // =========================================================
+
     @GetMapping("/history/driver")
     public String showDriverHistory(Model model,
                                     @AuthenticationPrincipal ApplicationUserDetails userDetails) {
@@ -134,7 +132,7 @@ public class RideController {
 
         Person currentUser = userDetails.getPerson();
 
-        if (currentUser.getUserType() != UserType.DRIVER) {
+        if (currentUser.getPersonType() != PersonType.DRIVER) {
             model.addAttribute("title", "Driver access required");
             model.addAttribute("message", "Please login as a driver to view driver ride history.");
             model.addAttribute("ctaText", "Logout");
@@ -154,10 +152,10 @@ public class RideController {
         return "history";
     }
 
-    /**
-     * ✅ Passenger-only history: completed rides you booked as a passenger.
-     * Uses existing history.html/css.
-     */
+    // =========================================================
+    // Passenger-only history: completed booked rides
+    // =========================================================
+
     @GetMapping("/history/passenger")
     public String showPassengerHistory(Model model,
                                        @AuthenticationPrincipal ApplicationUserDetails userDetails) {
@@ -166,7 +164,7 @@ public class RideController {
 
         Person currentUser = userDetails.getPerson();
 
-        if (currentUser.getUserType() != UserType.PASSENGER) {
+        if (currentUser.getPersonType() != PersonType.PASSENGER) {
             model.addAttribute("title", "Passenger access required");
             model.addAttribute("message", "Please login as a passenger to view passenger ride history.");
             model.addAttribute("ctaText", "Logout");
@@ -189,20 +187,19 @@ public class RideController {
         return "history";
     }
 
-    /**
-     * Driver-only: upcoming rides offered (not completed yet)
-     */
+    // =========================================================
+    // Driver-only: upcoming rides offered
+    // =========================================================
+
     @GetMapping("/offered")
     public String showMyOfferedRides(Model model,
                                      @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
-        if (userDetails == null) {
-            return "redirect:/login";
-        }
+        if (userDetails == null) return "redirect:/login";
 
         Person currentUser = userDetails.getPerson();
 
-        if (currentUser.getUserType() != UserType.DRIVER) {
+        if (currentUser.getPersonType() != PersonType.DRIVER) {
             model.addAttribute("title", "Driver access required");
             model.addAttribute("message", "Please login as a driver to view your offered rides.");
             model.addAttribute("ctaText", "Logout");
@@ -222,33 +219,48 @@ public class RideController {
         return "offered_rides";
     }
 
+    // =========================================================
+    // Ratings redirect
+    // =========================================================
+
     @GetMapping("/ratings")
     public String ratingsRedirect(@AuthenticationPrincipal ApplicationUserDetails userDetails) {
         if (userDetails == null) return "redirect:/login";
 
         Person currentUser = userDetails.getPerson();
 
-        if (currentUser.getUserType() == UserType.DRIVER) {
+        if (currentUser.getPersonType() == PersonType.DRIVER) {
             return "redirect:/rides/ratings/driver";
         }
         return "redirect:/rides/ratings/passenger";
     }
 
-    /**
-     * DRIVER: rate passengers
-     */
+    // =========================================================
+    // DRIVER: rate passengers
+    // =========================================================
+
     @GetMapping("/ratings/driver")
     public String showRatingsAsDriver(@RequestParam(value = "search", required = false) String search,
                                       Model model,
                                       @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
         if (userDetails == null) return "redirect:/login";
+
         Person currentUser = userDetails.getPerson();
 
-        UserType targetType = UserType.PASSENGER;
+        if (currentUser.getPersonType() != PersonType.DRIVER) {
+            model.addAttribute("title", "Driver access required");
+            model.addAttribute("message", "Please login as a driver to rate passengers.");
+            model.addAttribute("ctaText", "Logout");
+            model.addAttribute("ctaHref", "/logout");
+            return "rides_not_passenger";
+        }
+
+        PersonType targetType = PersonType.PASSENGER;
+
         List<Person> availableUsers = (search != null && !search.isBlank())
-                ? personRepository.findByFirstNameContainingIgnoreCaseAndUserType(search, targetType)
-                : personRepository.findAllByUserType(targetType);
+                ? personRepository.findByFirstNameContainingIgnoreCaseAndPersonType(search, targetType)
+                : personRepository.findAllByPersonType(targetType);
 
         List<Long> alreadyRatedIds = availableUsers.stream()
                 .filter(p -> ratingRepository.existsByRaterAndRatedPerson(currentUser, p))
@@ -256,27 +268,38 @@ public class RideController {
                 .toList();
 
         model.addAttribute("users", availableUsers);
-        model.addAttribute("alreadyRatedIds", alreadyRatedIds); // ✅ Προσθήκη στο model
+        model.addAttribute("alreadyRatedIds", alreadyRatedIds);
         model.addAttribute("search", search);
 
         return "ratings";
     }
 
-    /**
-     * PASSENGER: rate drivers
-     */
+    // =========================================================
+    // PASSENGER: rate drivers
+    // =========================================================
+
     @GetMapping("/ratings/passenger")
     public String showRatingsAsPassenger(@RequestParam(value = "search", required = false) String search,
                                          Model model,
                                          @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
         if (userDetails == null) return "redirect:/login";
+
         Person currentUser = userDetails.getPerson();
 
-        UserType targetType = UserType.DRIVER;
+        if (currentUser.getPersonType() != PersonType.PASSENGER) {
+            model.addAttribute("title", "Passenger access required");
+            model.addAttribute("message", "Please login as a passenger to rate drivers.");
+            model.addAttribute("ctaText", "Logout");
+            model.addAttribute("ctaHref", "/logout");
+            return "rides_not_passenger";
+        }
+
+        PersonType targetType = PersonType.DRIVER;
+
         List<Person> availableUsers = (search != null && !search.isBlank())
-                ? personRepository.findByFirstNameContainingIgnoreCaseAndUserType(search, targetType)
-                : personRepository.findAllByUserType(targetType);
+                ? personRepository.findByFirstNameContainingIgnoreCaseAndPersonType(search, targetType)
+                : personRepository.findAllByPersonType(targetType);
 
         List<Long> alreadyRatedIds = availableUsers.stream()
                 .filter(p -> ratingRepository.existsByRaterAndRatedPerson(currentUser, p))
@@ -284,18 +307,26 @@ public class RideController {
                 .toList();
 
         model.addAttribute("users", availableUsers);
-        model.addAttribute("alreadyRatedIds", alreadyRatedIds); // ✅ Προσθήκη στο model
+        model.addAttribute("alreadyRatedIds", alreadyRatedIds);
         model.addAttribute("search", search);
 
         return "ratings";
     }
+
+    // =========================================================
+    // Submit rating (Driver or Passenger)
+    // =========================================================
+
     @PostMapping("/ratings/submit")
-    @PreAuthorize("hasAuthority('ROLE_PASSENGER') or hasAuthority('ROLE_DRIVER')")
+    @PreAuthorize("hasAnyRole('PASSENGER','DRIVER')")
     public String submitRating(@RequestParam("userId") Long userId,
                                @RequestParam("score") int score,
                                @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
+        if (userDetails == null) return "redirect:/login";
+
         Person currentUser = userDetails.getPerson();
+
         Person targetPerson = personRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -316,15 +347,19 @@ public class RideController {
         return "redirect:/rides/ratings?success";
     }
 
+    // =========================================================
+    // Driver: create ride form
+    // =========================================================
+
     @GetMapping("/offer")
-    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
+    @PreAuthorize("hasRole('DRIVER')")
     public String showCreateRideForm(Model model) {
         model.addAttribute("rideForm", new CreateRideForm());
         return "new_ride";
     }
 
     @PostMapping("/offer")
-    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
+    @PreAuthorize("hasRole('DRIVER')")
     public String processCreateRide(@ModelAttribute("rideForm") CreateRideForm form,
                                     @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
@@ -346,6 +381,10 @@ public class RideController {
         return "redirect:/profile";
     }
 
+    // =========================================================
+    // Reservation page
+    // =========================================================
+
     @GetMapping("/reservation")
     public String showReservationPage(@RequestParam("id") Long rideId, Model model) {
         Ride ride = rideRepository.findById(rideId)
@@ -354,8 +393,12 @@ public class RideController {
         return "reservation";
     }
 
+    // =========================================================
+    // Passenger: book ride
+    // =========================================================
+
     @PostMapping("/book/{id}")
-    @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
+    @PreAuthorize("hasRole('PASSENGER')")
     public String processBooking(@PathVariable Long id,
                                  @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
@@ -385,7 +428,6 @@ public class RideController {
             ride.setBookedSeats(ride.getBookedSeats() + 1);
             rideRepository.save(ride);
 
-            // ✅ ΔΙΟΡΘΩΣΗ: Ανακατεύθυνση στη σελίδα των κρατήσεων
             return "redirect:/rides/bookings?success";
         }
 

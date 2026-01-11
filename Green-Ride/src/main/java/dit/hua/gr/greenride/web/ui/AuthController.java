@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AuthController {
 
-    // USER LOGIN ONLY
     @GetMapping("/login")
     public String login(Authentication authentication, HttpServletRequest request, Model model) {
 
@@ -27,9 +26,6 @@ public class AuthController {
 
         return "login";
     }
-
-    // REMOVE adminLogin() — it caused the conflict
-    // Admin login is now handled ONLY by AdminController
 
     @GetMapping("/logged-out")
     public String loggedOut() {

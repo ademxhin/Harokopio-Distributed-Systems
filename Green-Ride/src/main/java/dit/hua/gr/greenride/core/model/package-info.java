@@ -1,1 +1,0 @@
-package dit.hua.gr.greenride.core.model;
