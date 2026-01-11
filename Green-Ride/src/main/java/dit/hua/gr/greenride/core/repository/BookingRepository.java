@@ -13,7 +13,6 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByPerson(Person person);
 
-    // ✅ Χρήσιμη μέθοδος για να βρίσκουμε ποιες διαδρομές έχει κλείσει ο χρήστης
     List<Booking> findAllByPerson(Person person);
 
     List<Booking> findByPersonAndRide_DepartureTimeBefore(Person person, LocalDateTime time);

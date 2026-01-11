@@ -21,7 +21,7 @@ public class DataInitializer {
     @PostConstruct
     public void init() {
         if (personRepository.findByEmailAddress("admin@example.com").isEmpty()) {
-            Person admin = new Person(); // ✅ Χρησιμοποιεί τον no-args constructor
+            Person admin = new Person();
             admin.setUserId("admin001");
             admin.setFirstName("Admin");
             admin.setLastName("User");

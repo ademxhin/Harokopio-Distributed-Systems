@@ -80,10 +80,8 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
         final String rawPassword = createPersonRequest.rawPassword();
         final String confirmRawPassword = createPersonRequest.confirmRawPassword();
 
-        // ✅ New: business role selection
         final UserType userType = createPersonRequest.userType();
         if (userType == null) {
-            // Normally blocked by @NotNull, but keep it safe
             return CreatePersonResult.fail("Please select a role");
         }
 
@@ -122,8 +120,6 @@ public class PersonBusinessLogicServiceImpl implements PersonBusinessLogicServic
         // Hash password
         final String hashedPassword = this.passwordEncoder.encode(rawPassword);
 
-        // ✅ Instantiate Person as USER with selected UserType
-        // IMPORTANT: this assumes your Person has a constructor that accepts UserType
         Person person = new Person(
                 userId,
                 firstName,

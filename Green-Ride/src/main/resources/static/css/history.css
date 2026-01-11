@@ -1,0 +1,26 @@
+.gr-history-page{
+    padding: 34px 0;
+}
+
+.gr-history-list{
+    max-width: 620px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.gr-history-top{
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(11,11,12,0.08);
+    margin-bottom: 12px;
+}
+
+.gr-history-title{
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 950;
+}

@@ -1,0 +1,188 @@
+/* ===============================
+   RATINGS PAGE (page-only)
+   Depends on theme.css for: .gr-btn, .gr-control, etc.
+================================ */
+
+.gr-ratings-page {
+    padding: 44px 0 56px;
+}
+
+.gr-ratings-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+/* Header */
+.gr-ratings-head {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.gr-ratings-title {
+    margin: 0;
+    font-weight: 900;
+    font-size: 2.1rem;
+    color: #0b0b0c;
+}
+
+.gr-ratings-sub {
+    margin: 8px 0 0;
+    color: rgba(11,11,12,0.62);
+    font-weight: 650;
+}
+
+/* Search row */
+.gr-search {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.gr-search .gr-control { height: 44px; }
+.gr-search .gr-btn { height: 44px; padding: 10px 16px; }
+
+/* Users grid */
+.gr-users {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+/* ✅ Profile-like cards (ONLY in ratings) */
+.gr-ratings-page .gr-box {
+    background: #ffffff;
+    border: 1px solid rgba(11,11,12,0.10);
+    border-radius: 18px;
+    box-shadow: 0 8px 18px rgba(11,11,12,0.06);
+}
+
+.gr-ratings-page .gr-box:hover {
+    box-shadow: 0 12px 24px rgba(11,11,12,0.08);
+}
+
+.gr-ratings-page .gr-box-pad {
+    padding: 18px;
+}
+
+/* User row top */
+.gr-user-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.gr-user-name {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #0b0b0c;
+}
+
+/* Average rating */
+.gr-avg-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.gr-avg-number {
+    font-weight: 900;
+    color: rgba(11,11,12,0.85);
+    font-size: 0.95rem;
+    letter-spacing: 0.2px;
+}
+
+/* Pills */
+.gr-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(11,11,12,0.14);
+    background: rgba(11,11,12,0.02);
+    color: rgba(11,11,12,0.75);
+    font-weight: 850;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+/* Rate row */
+.gr-rate-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+/* Stars (page-only, not in theme.css) */
+.gr-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    user-select: none;
+}
+
+.gr-star,
+.gr-star-btn {
+    font-size: 1.45rem;
+    line-height: 1;
+    color: rgba(11,11,12,0.22);
+    text-shadow: 0 1px 1px rgba(0,0,0,0.08);
+}
+
+.gr-star.filled,
+.gr-star-btn.filled { color: #f5c518; }
+
+.gr-star-btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: transform .08s ease, filter .12s ease;
+}
+
+.gr-star-btn:hover { transform: translateY(-1px) scale(1.08); }
+
+.gr-rate-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Empty state + actions */
+.gr-empty {
+    text-align: center;
+    padding: 30px 18px;
+}
+
+.gr-empty h3 {
+    margin: 0 0 8px;
+    font-weight: 900;
+    color: #0b0b0c;
+}
+
+.gr-empty p {
+    margin: 0;
+    color: rgba(11,11,12,0.62);
+    font-weight: 650;
+}
+
+.gr-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+}
+
+/* Mobile */
+@media (max-width: 520px) {
+    .gr-search { flex-direction: column; }
+    .gr-rate-row { flex-direction: column; align-items: stretch; }
+    .gr-rate-row .gr-btn { width: 100%; }
+    .gr-stars { justify-content: center; }
+    .gr-avg-wrap { justify-content: center; width: 100%; }
+}

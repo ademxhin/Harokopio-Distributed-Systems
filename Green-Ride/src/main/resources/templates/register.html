@@ -4,33 +4,27 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
 
-<head>
-    <th:block layout:fragment="head">
-        <title>GreenRide | Registration</title>
-        <link rel="stylesheet" th:href="@{/css/register.css}">
-    </th:block>
-</head>
+<th:block layout:fragment="head">
+    <title>GreenRide | Registration</title>
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+</th:block>
 
-<body>
-
-<main layout:fragment="main" class="register-page">
+<main layout:fragment="main" class="gr-register-page">
 
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-12 col-sm-10 col-md-7 col-lg-6">
+            <div class="col-12 col-sm-11 col-md-9 col-lg-6">
 
-                <div class="register-card">
+                <div class="gr-register-card">
 
                     <!-- Header -->
-                    <div class="register-card-header">
-                        <h1 class="register-title">Create your account</h1>
-                        <p class="register-subtitle">
-                            Join GreenRide in less than a minute.
-                        </p>
+                    <div class="gr-register-header">
+                        <h1 class="gr-register-title">Create your account</h1>
+                        <p class="gr-register-subtitle">Join GreenRide in less than a minute.</p>
                     </div>
 
-                    <!-- Business error from service -->
-                    <div class="alert alert-danger py-2"
+                    <!-- Business error -->
+                    <div class="gr-alert gr-alert-danger"
                          th:if="${errorMessage != null}"
                          th:text="${errorMessage}">
                     </div>
@@ -38,7 +32,8 @@
                     <!-- FORM -->
                     <form th:action="@{/register}"
                           method="post"
-                          th:object="${createPersonRequest}">
+                          th:object="${createPersonRequest}"
+                          class="gr-form">
 
                         <!-- CSRF -->
                         <input type="hidden"
@@ -46,134 +41,117 @@
                                th:value="${_csrf.token}"/>
 
                         <!-- Validation summary -->
-                        <div class="alert alert-danger py-2"
+                        <div class="gr-alert gr-alert-danger"
                              th:if="${#fields.hasAnyErrors()}">
-                            <ul class="m-0 ps-3">
+                            <ul class="gr-errors">
                                 <li th:each="err : ${#fields.allErrors()}"
                                     th:text="${err}">
                                 </li>
                             </ul>
                         </div>
 
-                        <div class="row g-3">
+                        <div class="gr-grid">
 
                             <!-- First name -->
-                            <div class="col-md-6">
-                                <label class="form-label">First Name</label>
+                            <div class="gr-field">
+                                <label class="gr-label">First Name</label>
                                 <input type="text"
-                                       class="form-control"
+                                       class="gr-control"
                                        th:field="*{firstName}"
                                        required>
-                                <div class="text-danger small mt-1"
-                                     th:errors="*{firstName}"></div>
+                                <div class="gr-error" th:errors="*{firstName}"></div>
                             </div>
 
                             <!-- Last name -->
-                            <div class="col-md-6">
-                                <label class="form-label">Last Name</label>
+                            <div class="gr-field">
+                                <label class="gr-label">Last Name</label>
                                 <input type="text"
-                                       class="form-control"
+                                       class="gr-control"
                                        th:field="*{lastName}"
                                        required>
-                                <div class="text-danger small mt-1"
-                                     th:errors="*{lastName}"></div>
+                                <div class="gr-error" th:errors="*{lastName}"></div>
                             </div>
 
                             <!-- Mobile -->
-                            <div class="col-12">
-                                <label class="form-label">Mobile Phone Number</label>
+                            <div class="gr-field gr-span-2">
+                                <label class="gr-label">Mobile Phone Number</label>
                                 <input type="text"
-                                       class="form-control"
+                                       class="gr-control"
                                        th:field="*{mobilePhoneNumber}"
                                        placeholder="69xxxxxxxx"
                                        required>
-                                <div class="text-danger small mt-1"
-                                     th:errors="*{mobilePhoneNumber}"></div>
+                                <div class="gr-error" th:errors="*{mobilePhoneNumber}"></div>
                             </div>
 
                             <!-- Email -->
-                            <div class="col-12">
-                                <label class="form-label">Email</label>
+                            <div class="gr-field gr-span-2">
+                                <label class="gr-label">Email</label>
                                 <input type="email"
-                                       class="form-control"
+                                       class="gr-control"
                                        th:field="*{emailAddress}"
                                        placeholder="you@example.com"
+                                       autocomplete="username"
                                        required>
-                                <div class="text-danger small mt-1"
-                                     th:errors="*{emailAddress}"></div>
+                                <div class="gr-error" th:errors="*{emailAddress}"></div>
                             </div>
 
                             <!-- Password -->
-                            <div class="col-md-6">
-                                <label class="form-label">Password</label>
+                            <div class="gr-field">
+                                <label class="gr-label">Password</label>
                                 <input type="password"
-                                       class="form-control"
+                                       class="gr-control"
                                        th:field="*{rawPassword}"
+                                       autocomplete="new-password"
                                        required>
-                                <div class="text-danger small mt-1"
-                                     th:errors="*{rawPassword}"></div>
+                                <div class="gr-error" th:errors="*{rawPassword}"></div>
                             </div>
 
                             <!-- Confirm -->
-                            <div class="col-md-6">
-                                <label class="form-label">Confirm Password</label>
+                            <div class="gr-field">
+                                <label class="gr-label">Confirm Password</label>
                                 <input type="password"
-                                       class="form-control"
+                                       class="gr-control"
                                        th:field="*{confirmRawPassword}"
+                                       autocomplete="new-password"
                                        required>
-                                <div class="text-danger small mt-1"
-                                     th:errors="*{confirmRawPassword}"></div>
+                                <div class="gr-error" th:errors="*{confirmRawPassword}"></div>
                             </div>
 
-                            <!-- ROLE SELECTION -->
-                            <div class="col-12 mt-2">
-                                <label class="form-label">Select Role</label>
+                            <!-- Role -->
+                            <div class="gr-field gr-span-2">
+                                <label class="gr-label" for="role">Select Role</label>
 
-                                <select class="form-select"
+                                <select id="role"
+                                        class="gr-control"
                                         th:field="*{userType}"
                                         required>
-                                    <option value="" disabled selected>
-                                        Select a role
-                                    </option>
-                                    <option value="PASSENGER">
-                                        Passenger
-                                    </option>
-                                    <option value="DRIVER">
-                                        Driver
-                                    </option>
-
+                                    <option value="" disabled selected>Select a role</option>
+                                    <option value="PASSENGER">Passenger</option>
+                                    <option value="DRIVER">Driver</option>
                                 </select>
 
-                                <div class="text-danger small mt-1"
-                                     th:errors="*{userType}"></div>
+                                <div class="gr-error" th:errors="*{userType}"></div>
                             </div>
 
                         </div>
 
                         <!-- Submit -->
-                        <button type="submit"
-                                class="btn btn-primary w-100 py-2 mt-3">
+                        <button type="submit" class="gr-btn gr-btn-primary w-100 mt-3">
                             Create account
                         </button>
 
                         <!-- Footer -->
-                        <p class="register-footer mt-3 mb-0">
+                        <p class="gr-register-footer">
                             Already have an account?
-                            <a th:href="@{/login}">Login</a>
+                            <a class="gr-auth-link" th:href="@{/login}">Login</a>
                         </p>
 
                     </form>
                 </div>
-
-                <p class="register-note mt-3">
-                    *Academic project UI. Registration is validated by the backend.
-                </p>
 
             </div>
         </div>
     </div>
 
 </main>
-
-</body>
 </html>

@@ -30,7 +30,6 @@ public class RegistrationController {
             return "redirect:/profile";
         }
 
-        // ✅ CreatePersonRequest now expects UserType (not String)
         model.addAttribute("createPersonRequest",
                 new CreatePersonRequest(
                         "", "", "", "", "", "",

@@ -1,73 +1,105 @@
-body {
-    background: #f6f7f9;
+.gr-res-page{
+    padding: 34px 0 34px 0;
+}
+
+.gr-page-head{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+
+.gr-page-title{
     margin: 0;
-    font-family: Arial, sans-serif;
-}
-
-h1, h2 {
+    font-size: 2rem;
+    font-weight: 900;
     color: #0b0b0c;
-    font-weight: 800;
+    letter-spacing: -0.2px;
 }
 
-.container {
-    max-width: 800px;
-    margin: 30px auto;
-}
-
-.gr-box {
+/* Card */
+.gr-res-card{
+    max-width: 620px;
+    margin: 0 auto;
     background: #ffffff;
-    padding: 18px;
-    border-radius: 18px;
     border: 1px solid rgba(11,11,12,0.10);
-    box-shadow: 0 10px 30px rgba(11,11,12,0.06);
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(11,11,12,0.06);
+    padding: 18px 18px;
 }
 
-.search-form .form-row {
+/* Top row */
+.gr-res-top{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(11,11,12,0.08);
     margin-bottom: 12px;
 }
 
-.search-form label {
-    font-weight: 700;
+.gr-res-title{
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 950;
+    color: #0b0b0c;
+    line-height: 1.25;
+}
+
+.gr-res-seats{
+    text-align: right;
+    min-width: 160px;
+}
+
+.gr-meta-label{
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: rgba(11,11,12,0.55);
+    margin-bottom: 4px;
+}
+
+.gr-seats-value{
+    font-size: 1.15rem;
+    font-weight: 950;
     color: #0b0b0c;
 }
 
-.search-form input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(11,11,12,0.15);
+/* Details grid */
+.gr-res-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
 }
 
-.empty {
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 14px;
+.gr-meta-box{
+    background: rgba(11,11,12,0.02);
     border: 1px solid rgba(11,11,12,0.10);
-    text-align: center;
-    color: rgba(11,11,12,0.60);
+    border-radius: 14px;
+    padding: 10px 12px;
 }
 
-.reservations-list {
+.gr-meta-value{
+    font-size: 0.98rem;
+    font-weight: 900;
+    color: #0b0b0c;
+}
+
+/* No seats left box */
+.gr-meta-alert{
+    border-color: rgba(220, 53, 69, 0.25);
+    background: rgba(220, 53, 69, 0.06);
+}
+
+/* Actions */
+.gr-res-actions{
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
 }
 
-.card {
-    background: #ffffff;
-    padding: 18px;
-    border-radius: 18px;
-    border: 1px solid rgba(11,11,12,0.10);
-    box-shadow: 0 10px 30px rgba(11,11,12,0.06);
-}
-
-.card h3 {
-    margin-top: 0;
-    font-size: 1.2rem;
-    font-weight: 800;
-}
-
-.card p {
-    margin: 6px 0;
-    color: rgba(11,11,12,0.75);
+.gr-btn-wide{
+    width: 100%;
 }

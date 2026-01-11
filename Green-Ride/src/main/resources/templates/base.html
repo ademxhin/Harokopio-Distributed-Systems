@@ -45,18 +45,20 @@
             <!-- ============================= -->
             <div sec:authorize="isAuthenticated()" class="d-inline-flex align-items-center gap-2">
 
-                <a class="gr-link" th:href="@{/profile}">Profile</a>
+                <!-- Profile like Login (ghost button) -->
+                <a class="gr-btn gr-btn-ghost" th:href="@{/profile}">Profile</a>
 
-                <!-- ✅ REAL LOGOUT (POST) -->
+                <!-- Logout like Sign Up (solid button) -->
                 <form th:action="@{/logout}" method="post" class="d-inline">
                     <input type="hidden"
                            th:name="${_csrf.parameterName}"
                            th:value="${_csrf.token}"/>
 
-                    <button type="submit" class="gr-btn gr-btn-ghost">
+                    <button type="submit" class="gr-btn gr-btn-solid">
                         Logout
                     </button>
                 </form>
+
             </div>
 
         </div>
@@ -68,6 +70,13 @@
 
 <!-- Main content -->
 <main layout:fragment="main"></main>
+
+<!-- GLOBAL FOOTER -->
+<footer class="gr-footer">
+    <div class="container gr-footer-inner">
+        <span>*Academic project UI. Credentials are validated by the backend.</span>
+    </div>
+</footer>
 
 <!-- Page-specific scripts -->
 <th:block layout:fragment="scripts"></th:block>

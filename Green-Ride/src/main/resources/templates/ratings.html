@@ -4,61 +4,279 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
 
-<main layout:fragment="main" class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-8 text-center">
-            <h1 class="mb-2 gr-h1">Ratings</h1>
-            <p class="text-muted mb-5">Evaluate your experience with other users</p>
+<th:block layout:fragment="head">
+    <title>GreenRide | Ratings</title>
 
-            <div class="gr-box p-4 shadow-sm mb-5 text-start">
-                <form th:action="@{/rides/ratings}" method="get" class="row g-2">
-                    <div class="col-8 col-md-9">
-                        <input type="text" name="search" class="form-control" placeholder="Search by name...">
-                    </div>
-                    <div class="col-4 col-md-3">
-                        <button type="submit" class="btn btn-primary w-100 fw-bold">Search</button>
-                    </div>
+    <style>
+        .gr-ratings-page { padding: 44px 0 56px; }
+        .gr-ratings-head { text-align: center; margin-bottom: 20px; }
+        .gr-ratings-title { margin: 0; font-weight: 900; font-size: 2.1rem; color: #0b0b0c; }
+        .gr-ratings-sub { margin: 8px 0 0; color: rgba(11,11,12,0.62); font-weight: 650; }
+
+        .gr-ratings-wrap { max-width: 760px; margin: 0 auto; }
+
+        .gr-search { display: flex; gap: 10px; align-items: center; }
+        .gr-search .gr-control { height: 44px; }
+        .gr-search .gr-btn { height: 44px; padding: 10px 16px; border-radius: 14px; }
+
+        .gr-users { display: grid; gap: 14px; margin-top: 18px; }
+
+        .gr-user-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .gr-user-name {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #0b0b0c;
+        }
+
+        .gr-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(11,11,12,0.14);
+            background: rgba(11,11,12,0.02);
+            color: rgba(11,11,12,0.75);
+            font-weight: 850;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        /* ===============================
+           Average rating (read-only)
+        ================================ */
+        .gr-avg-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .gr-avg-number {
+            font-weight: 900;
+            color: rgba(11,11,12,0.85);
+            font-size: 0.95rem;
+            letter-spacing: 0.2px;
+        }
+
+        /* ===============================
+           Stars (shared look)
+        ================================ */
+        .gr-stars {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            user-select: none;
+        }
+
+        /* empty star */
+        .gr-star,
+        .gr-star-btn {
+            font-size: 1.45rem;
+            line-height: 1;
+            color: rgba(11,11,12,0.22);
+            text-shadow: 0 1px 1px rgba(0,0,0,0.08);
+        }
+
+        /* filled star */
+        .gr-star.filled,
+        .gr-star-btn.filled {
+            color: #f5c518; /* yellow */
+        }
+
+        /* clickable */
+        .gr-star-btn {
+            appearance: none;
+            border: 0;
+            background: transparent;
+            padding: 0;
+            cursor: pointer;
+            transition: transform .08s ease, filter .12s ease;
+        }
+
+        .gr-star-btn:hover { transform: translateY(-1px) scale(1.08); }
+
+        /* ===============================
+           Rate row layout (stars + button)
+        ================================ */
+        .gr-rate-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .gr-rate-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .gr-empty { text-align: center; padding: 30px 18px; }
+        .gr-empty h3 { margin: 0 0 8px; font-weight: 900; color: #0b0b0c; }
+        .gr-empty p { margin: 0; color: rgba(11,11,12,0.62); font-weight: 650; }
+
+        .gr-actions { display: flex; justify-content: center; margin-top: 18px; }
+
+        /* Mobile */
+        @media (max-width: 520px) {
+            .gr-search { flex-direction: column; }
+            .gr-rate-row { flex-direction: column; align-items: stretch; }
+            .gr-rate-row .gr-btn { width: 100%; }
+            .gr-stars { justify-content: center; }
+            .gr-avg-wrap { justify-content: center; width: 100%; }
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="main">
+    <section class="gr-ratings-page">
+        <div class="container gr-ratings-wrap">
+
+            <!-- Header -->
+            <header class="gr-ratings-head">
+                <h1 class="gr-ratings-title">Ratings</h1>
+                <p class="gr-ratings-sub">Evaluate your experience with other users</p>
+            </header>
+
+            <!-- Search -->
+            <div class="gr-box gr-box-pad">
+                <form th:action="@{/rides/ratings}" method="get" class="gr-search">
+                    <input type="text"
+                           name="search"
+                           class="gr-control"
+                           placeholder="Search by name..."
+                           th:value="${param.search}" />
+
+                    <button type="submit" class="gr-btn gr-btn-primary">
+                        Search
+                    </button>
                 </form>
             </div>
 
-            <div th:if="${#lists.isEmpty(users)}" class="gr-box p-5 shadow-sm">
-                <h3 class="mt-3">No Users Found</h3>
-                <p class="text-muted">Try a different name or check back later.</p>
-                <div class="mt-4">
-                    <a th:href="@{/profile}" class="btn btn-outline-dark px-5">← Back to Profile</a>
+            <!-- Empty state -->
+            <div th:if="${#lists.isEmpty(users)}"
+                 class="gr-box shadow-sm gr-empty"
+                 style="margin-top: 14px;">
+                <h3>No Users Found</h3>
+                <p>Try a different name or check back later.</p>
+
+                <div class="gr-actions">
+                    <a th:href="@{/profile}" class="gr-btn gr-btn-secondary">← Back to Profile</a>
                 </div>
             </div>
 
-            <div class="row justify-content-center" th:if="${not #lists.isEmpty(users)}">
-                <div class="col-12 col-md-10 col-lg-8 mb-4" th:each="user : ${users}">
-                    <article class="gr-box p-4 shadow-sm text-start">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="gr-h3 mb-0" th:text="${user.firstName} + ' ' + ${user.lastName}">Name</h3>
-                            <span class="badge bg-light text-dark border px-3 py-2" th:text="${user.getAverageRating()}">4.5 ★</span>
+            <!-- Users list -->
+            <div th:if="${not #lists.isEmpty(users)}" class="gr-users">
+
+                <article th:each="user : ${users}" class="gr-box gr-box-pad">
+
+                    <!-- Top row: name + average rating -->
+                    <div class="gr-user-top">
+                        <h3 class="gr-user-name"
+                            th:text="${user.firstName + ' ' + user.lastName}">
+                            Name
+                        </h3>
+
+                        <!-- ⭐ Average rating (read-only) -->
+                        <div class="gr-avg-wrap" th:with="avg=${user.averageRating}">
+                            <div class="gr-stars" aria-label="Average rating">
+                                <span class="gr-star" th:classappend="${avg >= 1} ? ' filled'">★</span>
+                                <span class="gr-star" th:classappend="${avg >= 2} ? ' filled'">★</span>
+                                <span class="gr-star" th:classappend="${avg >= 3} ? ' filled'">★</span>
+                                <span class="gr-star" th:classappend="${avg >= 4} ? ' filled'">★</span>
+                                <span class="gr-star" th:classappend="${avg >= 5} ? ' filled'">★</span>
+                            </div>
+
+                            <span class="gr-avg-number"
+                                  th:text="${avg != null and avg > 0} ? ${#numbers.formatDecimal(avg,1,1)} : 'No rating'">
+                                4.2
+                            </span>
                         </div>
-                        <form th:action="@{/rides/ratings/submit}" method="post" class="row g-2 align-items-center">
-                            <input type="hidden" name="userId" th:value="${user.id}" />
-                            <div class="col-7">
-                                <select name="score" class="form-select form-select-sm" required>
-                                    <option value="" disabled selected>Select Rating</option>
-                                    <option value="5">5 - Excellent</option>
-                                    <option value="4">4 - Very Good</option>
-                                    <option value="3">3 - Good</option>
-                                    <option value="2">2 - Poor</option>
-                                    <option value="1">1 - Terrible</option>
-                                </select>
-                            </div>
-                            <div class="col-5">
-                                <button type="submit" class="btn btn-outline-dark btn-sm w-100 fw-bold">Rate</button>
-                            </div>
-                        </form>
-                    </article>
-                </div>
-                <div class="col-12 mt-4">
-                    <a th:href="@{/profile}" class="btn btn-outline-dark px-5">← Back to Profile</a>
+                    </div>
+
+                    <!-- Rate with clickable stars -->
+                    <form th:action="@{/rides/ratings/submit}"
+                          method="post"
+                          class="gr-rate-row gr-rate-stars-form">
+
+                        <input type="hidden" name="userId" th:value="${user.id}" />
+                        <input type="hidden" name="score" class="gr-score-input" value="" />
+
+                        <div class="gr-stars gr-stars-picker" role="radiogroup" aria-label="Choose rating">
+                            <button type="button" class="gr-star-btn" data-value="1" aria-label="1 star">★</button>
+                            <button type="button" class="gr-star-btn" data-value="2" aria-label="2 stars">★</button>
+                            <button type="button" class="gr-star-btn" data-value="3" aria-label="3 stars">★</button>
+                            <button type="button" class="gr-star-btn" data-value="4" aria-label="4 stars">★</button>
+                            <button type="button" class="gr-star-btn" data-value="5" aria-label="5 stars">★</button>
+
+                            <span class="gr-pill gr-picked-label" style="margin-left:10px;">Pick a rating</span>
+                        </div>
+
+                        <button type="submit" class="gr-btn gr-btn-secondary gr-rate-submit" disabled>
+                            Rate
+                        </button>
+                    </form>
+
+                </article>
+
+                <div class="gr-actions" style="margin-top: 6px;">
+                    <a th:href="@{/profile}" class="gr-btn gr-btn-secondary">← Back to Profile</a>
                 </div>
             </div>
+
         </div>
-    </div>
+    </section>
+
+    <script>
+        function fillStars(container, value) {
+            container.querySelectorAll(".gr-star-btn").forEach(btn => {
+                const v = Number(btn.dataset.value);
+                btn.classList.toggle("filled", v <= value);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".gr-rate-stars-form").forEach(form => {
+                const stars = form.querySelector(".gr-stars-picker");
+                const scoreInput = form.querySelector(".gr-score-input");
+                const submitBtn = form.querySelector(".gr-rate-submit");
+                const label = form.querySelector(".gr-picked-label");
+
+                let selected = 0;
+
+                stars.querySelectorAll(".gr-star-btn").forEach(btn => {
+                    const value = Number(btn.dataset.value);
+
+                    // hover preview
+                    btn.addEventListener("mouseenter", () => fillStars(stars, value));
+                    btn.addEventListener("mouseleave", () => fillStars(stars, selected));
+
+                    // click select
+                    btn.addEventListener("click", () => {
+                        selected = value;
+                        scoreInput.value = String(value);
+                        fillStars(stars, selected);
+
+                        submitBtn.disabled = false;
+                        label.textContent = value + " / 5";
+                    });
+                });
+
+                // safety: prevent submit without selection
+                form.addEventListener("submit", (e) => {
+                    if (!scoreInput.value) e.preventDefault();
+                });
+            });
+        });
+    </script>
 </main>
 </html>

@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ Επιτρέπουμε τα API Docs και το Swagger UI
+
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/v1/auth/client-tokens").permitAll()
                         .requestMatchers("/api/v1/**").authenticated()
@@ -63,10 +63,9 @@ public class SecurityConfig {
         http
                 .securityMatcher("/**")
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ ΕΠΙΤΡΕΠΟΥΜΕ ΤΟ SWAGGER ΚΑΙ ΣΤΟ UI CHAIN
+
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                        // ✅ ΕΠΙΤΡΕΠΟΥΜΕ STATIC RESOURCES (CSS/JS)
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
 
                         // Public pages

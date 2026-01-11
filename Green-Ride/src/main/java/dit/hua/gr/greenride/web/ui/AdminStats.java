@@ -16,14 +16,12 @@ public class AdminStats {
         this.activePassengers = activePassengers;
     }
 
-    // Getters - Απαραίτητοι για να μπορεί η Thymeleaf να διαβάσει τις τιμές
     public long getTotalUsers() { return totalUsers; }
     public double getAverageOccupancy() { return averageOccupancy; }
     public long getTotalRides() { return totalRides; }
     public long getActiveDrivers() { return activeDrivers; }
     public long getActivePassengers() { return activePassengers; }
 
-    // Setters (Προαιρετικοί αλλά καλό είναι να υπάρχουν)
     public void setTotalUsers(long totalUsers) { this.totalUsers = totalUsers; }
     public void setAverageOccupancy(double averageOccupancy) { this.averageOccupancy = averageOccupancy; }
     public void setTotalRides(long totalRides) { this.totalRides = totalRides; }

@@ -1,8 +1,26 @@
 /* ===============================
-   Page background
-================================ */
+   GLOBAL: No scroll everywhere
+   =============================== */
+html, body { height: 100%; }
+
 body {
+    margin: 0;
     background: #f6f7f9;
+
+    /* no scroll anywhere */
+    overflow: hidden;
+
+    /* layout */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* main takes remaining space so footer stays at bottom */
+main {
+    flex: 1;
+    overflow: auto;          /* scroll only in main */
+    -webkit-overflow-scrolling: touch;
 }
 
 /* ===============================
@@ -20,7 +38,6 @@ body {
     padding: 14px 0;
 }
 
-/* Brand */
 .gr-brand {
     color: #ffffff;
     font-weight: 800;
@@ -28,7 +45,6 @@ body {
     letter-spacing: 0.3px;
 }
 
-/* Right side */
 .gr-nav-links {
     display: flex;
     align-items: center;
@@ -36,7 +52,7 @@ body {
 }
 
 /* ===============================
-   NAV LINKS (Driver / User / Admin)
+   NAV LINKS
 ================================ */
 .gr-link {
     color: rgba(255,255,255,0.85);
@@ -48,23 +64,19 @@ body {
     transition: background .15s ease, color .15s ease;
 }
 
-/* hover */
 .gr-link:hover {
     color: #ffffff;
     background: rgba(255,255,255,0.08);
 }
 
-/* ✅ ACTIVE TAB */
 .gr-link.is-active {
     color: #ffffff;
     background: rgba(255,255,255,0.16);
 }
 
 /* ===============================
-   BUTTONS (Login / Sign Up)
+   BUTTONS
 ================================ */
-
-/* Base button (used everywhere) */
 .gr-btn {
     display: inline-flex;
     align-items: center;
@@ -76,11 +88,12 @@ body {
     text-decoration: none;
     cursor: pointer;
     border: 1px solid transparent;
-    white-space: nowrap; /* ✅ prevents text wrapping */
-    transition: background .15s ease, border-color .15s ease, color .15s ease;
+    white-space: nowrap;
+    transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
 }
 
-/* Ghost button (Login) */
+.gr-btn:active { transform: translateY(1px); }
+
 .gr-btn-ghost {
     color: #ffffff;
     background: transparent;
@@ -92,7 +105,6 @@ body {
     color: #ffffff;
 }
 
-/* Solid button (Sign Up) */
 .gr-btn-solid {
     color: #0b0b0c;
     background: #ffffff;
@@ -104,16 +116,16 @@ body {
     color: #0b0b0c;
 }
 
-/* Primary */
+/* Primary (main CTA everywhere) */
 .gr-btn-primary {
-    background: #212529;
+    background: #0b0b0c;
     color: #ffffff;
-    border-color: #212529;
+    border-color: #0b0b0c;
 }
 
 .gr-btn-primary:hover {
-    background: #000000;
-    border-color: #000000;
+    filter: brightness(1.05);
+    color: #ffffff;
 }
 
 /* Secondary */
@@ -127,27 +139,64 @@ body {
     background: #e6e8eb;
 }
 
-/* ---------- SELECT (TIME DROPDOWN) THEME ---------- */
-.gr-control select,
+/* Optional: normalize <button class="gr-btn ..."> rendering */
+button.gr-btn {
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* ===============================
+   CONTROLS (inputs/select/textarea)
+   Use class="gr-control" everywhere
+================================ */
+.gr-control,
+input.gr-control,
+textarea.gr-control,
+select.gr-control {
+    width: 100%;
+    height: 42px;
+
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(11,11,12,0.14);
+
+    background: rgba(11,11,12,0.02);
+    color: #0b0b0c;
+
+    font-weight: 600;
+    font-size: 0.95rem;
+
+    outline: none;
+    transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+/* textarea sizing */
+textarea.gr-control {
+    height: auto;
+    min-height: 92px;
+    resize: none;
+}
+
+/* placeholder */
+.gr-control::placeholder {
+    color: rgba(11,11,12,0.45);
+}
+
+/* focus */
+.gr-control:focus {
+    background: #ffffff;
+    border-color: rgba(11,11,12,0.28);
+    box-shadow: 0 0 0 4px rgba(11,11,12,0.06);
+}
+
+/* Select arrow (homepage look) */
 select.gr-control {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
 
-    background-color: rgba(11,11,12,0.02);
-    border: 1px solid rgba(11,11,12,0.14);
-    border-radius: 14px;
+    padding-right: 42px;
 
-    padding: 10px 42px 10px 12px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: #0b0b0c;
-
-    cursor: pointer;
-}
-
-/* custom arrow */
-select.gr-control {
     background-image:
             linear-gradient(45deg, transparent 50%, rgba(11,11,12,0.6) 50%),
             linear-gradient(135deg, rgba(11,11,12,0.6) 50%, transparent 50%);
@@ -158,10 +207,42 @@ select.gr-control {
     background-repeat: no-repeat;
 }
 
-/* focus */
-select.gr-control:focus {
-    outline: none;
-    background-color: #ffffff;
-    border-color: rgba(11,11,12,0.28);
-    box-shadow: 0 0 0 4px rgba(11,11,12,0.06);
+/* ===============================
+   LABELS (optional utility)
+================================ */
+.gr-label {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: rgba(11,11,12,0.75);
+}
+
+/* ===============================
+   AUTH LINKS (Sign Up / Forgot / Login)
+================================ */
+.gr-auth-link {
+    font-weight: 800;
+    text-decoration: none;
+    color: #0d6efd;
+}
+
+.gr-auth-link:hover {
+    text-decoration: underline;
+}
+
+/* ===============================
+   FOOTER (same bg as page)
+================================ */
+.gr-footer {
+    background: #f6f7f9;
+    padding: 14px 0;
+    border-top: 1px solid rgba(11,11,12,0.06);
+}
+
+.gr-footer-inner {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(11,11,12,0.55);
+    font-weight: 600;
 }

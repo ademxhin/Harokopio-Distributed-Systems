@@ -29,8 +29,6 @@ public class AdminService {
         Double avgOccupancy = rideRepository.calculateAverageOccupancy();
         long totalUsers = personRepository.count();
 
-        // ✅ ΑΠΛΟΠΟΙΗΣΗ: Μετράμε απευθείας ανά τύπο χρήστη
-        // Χρησιμοποιούμε τη μέθοδο countByUserType που προσθέσαμε στο PersonRepository
         long drivers = personRepository.countByUserType(UserType.DRIVER);
         long passengers = personRepository.countByUserType(UserType.PASSENGER);
 
