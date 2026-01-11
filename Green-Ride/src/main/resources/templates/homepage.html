@@ -86,7 +86,7 @@
                                 </div>
                             </div>
 
-                            <form class="gr-search-form" th:action="@{/driver}" method="get">
+                            <form class="gr-search-form" th:action="@{/rides/search}" method="get">
 
                                 <div class="gr-search-grid">
                                     <!-- FROM -->
@@ -206,50 +206,6 @@
                                 // Optional: if user changes date to today, you can also force time >= now+step, but not needed for default
                             });
                         </script>
-
-                        <!-- BOX 2: Roles + buttons -->
-                        <div class="gr-subbox">
-                            <div class="gr-choose-title">Choose how you want to use GreenRide</div>
-                            <div class="gr-choose-sub">Select a role to continue.</div>
-
-                            <div class="gr-role-grid">
-                                <a class="gr-role-card" th:href="@{/driver}">
-                                    <div class="gr-role-top">
-                                        <span class="gr-role-icon">🚗</span>
-                                        <span class="gr-role-name">Driver</span>
-                                    </div>
-                                    <div class="gr-role-desc">
-                                        Create rides, manage seats and share your route.
-                                    </div>
-                                    <div class="gr-role-cta">Continue →</div>
-                                </a>
-
-                                <a class="gr-role-card" th:href="@{/user}">
-                                    <div class="gr-role-top">
-                                        <span class="gr-role-icon">🧍</span>
-                                        <span class="gr-role-name">Passenger</span>
-                                    </div>
-                                    <div class="gr-role-desc">
-                                        Find rides, request a seat and track your trip.
-                                    </div>
-                                    <div class="gr-role-cta">Continue →</div>
-                                </a>
-                            </div>
-
-                            <div class="gr-divider"></div>
-
-                            <div class="gr-home-actions">
-                                <!-- Secondary -->
-                                <a class="gr-btn gr-btn-secondary" th:href="@{/login}">
-                                    Login
-                                </a>
-                                <!-- Primary -->
-                                <a class="gr-btn gr-btn-primary" th:href="@{/register}">
-                                    Create account
-                                </a>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 

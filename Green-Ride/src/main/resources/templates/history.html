@@ -11,52 +11,60 @@
 
 <main layout:fragment="main" class="gr-history-page">
     <div class="container">
+        <div class="gr-history-wrap">
 
-        <div class="gr-page-head">
-            <h1 class="gr-page-title">Ride History</h1>
-        </div>
+            <!-- Header -->
+            <div class="gr-history-head">
+                <h1 class="gr-history-title">Ride History</h1>
+                <p class="gr-history-sub">Your completed rides</p>
+            </div>
 
-        <!-- EMPTY -->
-        <section th:if="${#lists.isEmpty(rides)}" class="gr-history-card gr-empty">
-            <h3 class="gr-card-title">No History Found</h3>
-            <p class="gr-muted">You haven't participated in any rides yet.</p>
+            <!-- EMPTY -->
+            <section th:if="${#lists.isEmpty(rides)}" class="gr-history-card gr-empty">
+                <h3 class="gr-card-title">No History Found</h3>
+                <p class="gr-muted">You haven't participated in any rides yet.</p>
 
-            <a th:href="@{/profile}" class="gr-btn gr-btn-secondary gr-btn-wide">
-                ← Back to Profile
-            </a>
-        </section>
-
-        <!-- LIST -->
-        <section th:if="${not #lists.isEmpty(rides)}" class="gr-history-list">
-
-            <article class="gr-history-card"
-                     th:each="ride : ${rides}">
-                <div class="gr-history-top">
-                    <h3 class="gr-history-title"
-                        th:text="${ride.startLocation} + ' → ' + ${ride.endLocation}">
-                    </h3>
-
-                    <span class="gr-pill">COMPLETED</span>
+                <div class="gr-actions">
+                    <a th:href="@{/profile}" class="gr-btn gr-btn-secondary">
+                        ← Back to Profile
+                    </a>
                 </div>
+            </section>
 
-                <div class="gr-history-meta">
-                    <div class="gr-meta-box">
-                        <div class="gr-meta-label">Completed on</div>
-                        <div class="gr-meta-value">
-                            <span th:text="${#temporals.format(ride.departureTime, 'dd-MM-yyyy')}"></span>
-                            <span class="gr-dot">•</span>
-                            <span th:text="${#temporals.format(ride.departureTime, 'HH:mm')}"></span>
+            <!-- LIST -->
+            <section th:if="${not #lists.isEmpty(rides)}" class="gr-history-list">
+
+                <article class="gr-history-card"
+                         th:each="ride : ${rides}">
+                    <div class="gr-history-top">
+                        <h3 class="gr-ride-title"
+                            th:text="${ride.startLocation} + ' → ' + ${ride.endLocation}">
+                        </h3>
+
+                        <span class="gr-pill">COMPLETED</span>
+                    </div>
+
+                    <div class="gr-history-meta">
+                        <div class="gr-meta-box">
+                            <div class="gr-meta-label">Completed on</div>
+                            <div class="gr-meta-value">
+                                <span th:text="${#temporals.format(ride.departureTime, 'dd-MM-yyyy')}"></span>
+                                <span class="gr-dot">•</span>
+                                <span th:text="${#temporals.format(ride.departureTime, 'HH:mm')}"></span>
+                            </div>
                         </div>
                     </div>
+                </article>
+
+                <div class="gr-actions">
+                    <a th:href="@{/profile}" class="gr-btn gr-btn-secondary">
+                        ← Back to Profile
+                    </a>
                 </div>
-            </article>
 
-            <a th:href="@{/profile}" class="gr-btn gr-btn-secondary gr-btn-wide gr-back">
-                ← Back to Profile
-            </a>
+            </section>
 
-        </section>
-
+        </div>
     </div>
 </main>
 </html>

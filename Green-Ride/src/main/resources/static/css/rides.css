@@ -1,6 +1,10 @@
+/* ===============================
+   RIDES PAGE (Available Rides)
+================================ */
+
 /* Page wrapper */
 .gr-rides-page{
-    padding: 34px 0 34px 0;
+    padding: 44px 0 56px; /* ίδιο με Ratings / Bookings */
 }
 
 /* Header */
@@ -27,12 +31,21 @@
     box-shadow: 0 12px 32px rgba(11,11,12,0.06);
 }
 
-/* Empty state */
+/* ===============================
+   EMPTY STATE (unified)
+================================ */
 .gr-empty{
-    max-width: 620px;
+    max-width: 720px;
     margin: 0 auto;
+
+    min-height: 220px;
+
     padding: 26px 22px;
     text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .gr-card-title{
@@ -47,18 +60,23 @@
     font-weight: 600;
 }
 
-/* List layout */
+/* ===============================
+   LIST LAYOUT
+================================ */
 .gr-rides-list{
-    max-width: 620px;
+    max-width: 720px; /* ίδιο με empty */
     margin: 0 auto;
+
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
 
-/* Ride card */
+/* ===============================
+   RIDE CARD
+================================ */
 .gr-ride-card{
-    padding: 18px 18px;
+    padding: 18px;
 }
 
 .gr-ride-top{
@@ -66,9 +84,10 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 14px;
+
     padding-bottom: 12px;
-    border-bottom: 1px solid rgba(11,11,12,0.08);
     margin-bottom: 12px;
+    border-bottom: 1px solid rgba(11,11,12,0.08);
 }
 
 .gr-ride-title{
@@ -90,7 +109,9 @@
     color: #0b0b0c;
 }
 
-/* Meta blocks */
+/* ===============================
+   META BLOCKS
+================================ */
 .gr-ride-meta{
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -120,7 +141,9 @@
     color: #0b0b0c;
 }
 
-/* Make theme buttons span width when needed */
+/* ===============================
+   UTILITIES
+================================ */
 .gr-btn-wide{
     width: 100%;
 }

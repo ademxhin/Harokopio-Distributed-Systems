@@ -1049,3 +1049,15 @@ create global temporary table HTE_person(banned boolean, report_count integer, r
 2026-01-11 02:34:23.858893+02:00 jdbc[264]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
 create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','USER'), user_type enum ('DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-11 12:08:28.985293+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','USER'), user_type enum ('DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-11 12:08:34.443748+02:00 jdbc[17]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','USER'), user_type enum ('DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-11 12:55:05.059140+02:00 jdbc[37]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','USER'), user_type enum ('DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-11 12:58:30.290544+02:00 jdbc[47]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','USER'), user_type enum ('DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]

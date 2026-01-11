@@ -3,7 +3,6 @@ package dit.hua.gr.greenride.config;
 import dit.hua.gr.greenride.core.security.JwtAuthenticationFilter;
 import dit.hua.gr.greenride.web.rest.RestApiAccessDeniedHandler;
 import dit.hua.gr.greenride.web.rest.RestApiAuthenticationEntryPoint;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -33,20 +32,30 @@ public class SecurityConfig {
                                         final RestApiAccessDeniedHandler restApiAccessDeniedHandler) throws Exception {
 
         http
-                .securityMatcher("/api/v1/**")
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
+                .securityMatcher("/api/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
 
+                .csrf(AbstractHttpConfigurer::disable)
+
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
+                        .requestMatchers("/api/auth/login").permitAll()
+
                         .requestMatchers("/api/v1/auth/client-tokens").permitAll()
-                        .requestMatchers("/api/v1/**").authenticated()
+
+                        .requestMatchers("/api/**").authenticated()
                 )
+
                 .exceptionHandling(exh -> exh
                         .authenticationEntryPoint(restApiAuthenticationEntryPoint)
                         .accessDeniedHandler(restApiAccessDeniedHandler)
                 )
+
+                // JWT filter πριν το UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable);
 
@@ -79,7 +88,6 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
 
-                // Unified login handler for both users & admins
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
@@ -98,7 +106,6 @@ public class SecurityConfig {
                         .permitAll()
                 )
 
-                // Logout
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/logged-out")

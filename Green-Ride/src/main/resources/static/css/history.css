@@ -1,26 +1,144 @@
-.gr-history-page{
-    padding: 34px 0;
+/* ===============================
+   RIDE HISTORY (page-only)
+   Depends on theme.css for: .gr-btn, .gr-pill, etc.
+================================ */
+
+.gr-history-page {
+    padding: 44px 0 56px;   /* SAME as ratings */
 }
 
-.gr-history-list{
-    max-width: 620px;
+.gr-history-wrap {
+    max-width: 760px;       /* SAME feel as ratings */
     margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
 }
 
-.gr-history-top{
-    display: flex;
-    justify-content: space-between;
+/* Header (like ratings) */
+.gr-history-head {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.gr-history-title {
+    margin: 0;
+    font-weight: 900;
+    font-size: 2.1rem;
+    color: #0b0b0c;
+}
+
+.gr-history-sub {
+    margin: 8px 0 0;
+    color: rgba(11,11,12,0.62);
+    font-weight: 650;
+}
+
+/* Cards */
+.gr-history-card {
+    background: #ffffff;
+    border: 1px solid rgba(11,11,12,0.10);
+    border-radius: 18px;
+    box-shadow: 0 8px 18px rgba(11,11,12,0.06);
+}
+
+.gr-history-card:hover {
+    box-shadow: 0 12px 24px rgba(11,11,12,0.08);
+}
+
+/* List spacing */
+.gr-history-list {
+    display: grid;
     gap: 14px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(11,11,12,0.08);
-    margin-bottom: 12px;
 }
 
-.gr-history-title{
+/* Top row */
+.gr-history-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 18px 12px;
+}
+
+.gr-ride-title {
     margin: 0;
     font-size: 1.15rem;
-    font-weight: 950;
+    font-weight: 900;
+    color: #0b0b0c;
+}
+
+/* Meta */
+.gr-history-meta {
+    padding: 0 18px 18px;
+}
+
+.gr-meta-box {
+    border: 1px solid rgba(11,11,12,0.10);
+    background: rgba(11,11,12,0.02);
+    border-radius: 16px;
+    padding: 12px 14px;
+}
+
+.gr-meta-label {
+    font-weight: 850;
+    font-size: 0.85rem;
+    color: rgba(11,11,12,0.62);
+    margin-bottom: 4px;
+}
+
+.gr-meta-value {
+    font-weight: 850;
+    color: rgba(11,11,12,0.88);
+}
+
+.gr-dot {
+    margin: 0 6px;
+    color: rgba(11,11,12,0.35);
+}
+
+/* Empty state */
+.gr-empty {
+    text-align: center;
+    padding: 30px 18px;
+}
+
+.gr-card-title {
+    margin: 0 0 8px 0;
+    font-weight: 900;
+    color: #0b0b0c;
+}
+
+.gr-muted {
+    margin: 0;
+    color: rgba(11,11,12,0.62);
+    font-weight: 650;
+}
+
+/* Actions (Back button centered like ratings) */
+.gr-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+}
+
+/* ===============================
+   Back to Profile button (ONLY this change)
+================================ */
+
+/* Full-width soft button like Bookings */
+.gr-history-page .gr-actions .gr-btn {
+    width: 100%;
+    height: 48px;
+
+    border-radius: 14px;
+    font-weight: 900;
+
+    background: rgba(11,11,12,0.02);
+    border: 1px solid rgba(11,11,12,0.22);
+    color: #0b0b0c;
+
+    justify-content: center;
+}
+
+/* Hover effect */
+.gr-history-page .gr-actions .gr-btn:hover {
+    background: rgba(11,11,12,0.06);
 }

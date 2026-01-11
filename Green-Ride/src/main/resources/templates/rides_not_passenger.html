@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+
+<th:block layout:fragment="head">
+    <title>GreenRide | Passenger required</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</th:block>
+
+<main layout:fragment="main" class="container py-5" style="max-width: 760px;">
+    <h1 class="mb-2" th:text="${title}">Passenger access required</h1>
+    <p class="text-muted" th:text="${message}">
+        Please login as a passenger to search rides.
+    </p>
+
+    <div class="mt-4 d-flex gap-2">
+        <a class="gr-btn gr-btn-secondary" th:href="@{/}">Back to home</a>
+        <a class="gr-btn gr-btn-primary" th:href="@{/logout}">Logout</a>
+    </div>
+</main>
+
+</html>

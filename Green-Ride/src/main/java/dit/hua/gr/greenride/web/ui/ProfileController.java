@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Controller
 public class ProfileController {
 
-    // ✅ Προσθήκη του Repository
     private final PersonRepository personRepository;
 
     public ProfileController(PersonRepository personRepository) {

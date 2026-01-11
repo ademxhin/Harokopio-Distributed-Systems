@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -32,12 +33,32 @@ public class RideController {
         this.ratingRepository = ratingRepository;
     }
 
+    /**
+     * Search rides page:
+     * - If not logged in -> redirect to /login (Spring Security should save request and redirect back)
+     * - If logged in but DRIVER -> show message "login as passenger"
+     * - If PASSENGER -> show available rides
+     */
     @GetMapping("/search")
-    @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
-    public String showAvailableRides(Model model, @AuthenticationPrincipal ApplicationUserDetails userDetails) {
-        if (userDetails == null) return "redirect:/login";
+    public String showAvailableRides(Model model,
+                                     @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
 
         Person currentUser = userDetails.getPerson();
+
+        // If driver tries to access passenger search -> show info page/message (not 403)
+        if (currentUser.getUserType() == UserType.DRIVER) {
+            model.addAttribute("title", "Passenger access required");
+            model.addAttribute("message", "Please login as a passenger to search rides.");
+            model.addAttribute("ctaText", "Logout");
+            model.addAttribute("ctaHref", "/logout");
+            return "rides_not_passenger";
+        }
+
+        // Passenger flow
         LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
 
         List<Ride> allUpcomingRides = rideRepository.findByDepartureTimeAfter(limit);
@@ -52,17 +73,34 @@ public class RideController {
                 .toList();
 
         model.addAttribute("rides", filteredRides);
-        return "rides";
+        return "rides"; // your template name
     }
 
+    /**
+     * Passenger bookings page.
+     * Same idea as /search: let driver see a friendly message, not 403.
+     */
     @GetMapping("/bookings")
-    @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
-    public String showMyBookings(Model model, @AuthenticationPrincipal ApplicationUserDetails userDetails) {
-        if (userDetails == null) return "redirect:/login";
+    public String showMyBookings(Model model,
+                                 @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
-        java.time.LocalDateTime limit = java.time.LocalDateTime.now().plusMinutes(10);
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
 
-        List<Booking> allBookings = bookingRepository.findByPerson(userDetails.getPerson());
+        Person currentUser = userDetails.getPerson();
+
+        if (currentUser.getUserType() == UserType.DRIVER) {
+            model.addAttribute("title", "Passenger access required");
+            model.addAttribute("message", "Please login as a passenger to view bookings.");
+            model.addAttribute("ctaText", "Logout");
+            model.addAttribute("ctaHref", "/logout");
+            return "rides_not_passenger";
+        }
+
+        LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
+
+        List<Booking> allBookings = bookingRepository.findByPerson(currentUser);
 
         List<Booking> activeBookings = allBookings.stream()
                 .filter(b -> b.getRide().getDepartureTime().isAfter(limit))
@@ -73,22 +111,25 @@ public class RideController {
     }
 
     @GetMapping("/history")
-    public String showRideHistory(Model model, @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+    public String showRideHistory(Model model,
+                                  @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
         if (userDetails == null) return "redirect:/login";
 
         Person currentUser = userDetails.getPerson();
-        java.time.LocalDateTime limit = java.time.LocalDateTime.now().plusMinutes(10);
+        LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
 
         List<Ride> drivenRides = rideRepository.findByDriverAndDepartureTimeBefore(currentUser, limit);
 
         List<Booking> pastBookings = bookingRepository.findByPersonAndRide_DepartureTimeBefore(currentUser, limit);
         List<Ride> bookedRides = pastBookings.stream().map(Booking::getRide).toList();
 
-        List<Ride> allHistory = new java.util.ArrayList<>();
+        List<Ride> allHistory = new ArrayList<>();
         allHistory.addAll(drivenRides);
         allHistory.addAll(bookedRides);
 
-        List<Ride> finalHistory = allHistory.stream().distinct()
+        List<Ride> finalHistory = allHistory.stream()
+                .distinct()
                 .sorted((r1, r2) -> r2.getDepartureTime().compareTo(r1.getDepartureTime()))
                 .toList();
 
@@ -100,6 +141,7 @@ public class RideController {
     public String showRatingsPage(@RequestParam(value = "search", required = false) String search,
                                   Model model,
                                   @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
         if (userDetails == null) return "redirect:/login";
 
         Person currentUser = userDetails.getPerson();
@@ -112,7 +154,7 @@ public class RideController {
         // averages per userId
         java.util.Map<Long, Double> ratingAverages = new java.util.HashMap<>();
         for (Person p : availableUsers) {
-            Double avg = ratingRepository.findAverageScoreForPerson(p.getId()); // μπορεί να είναι null
+            Double avg = ratingRepository.findAverageScoreForPerson(p.getId()); // may be null
             ratingAverages.put(p.getId(), avg);
         }
 
@@ -123,11 +165,11 @@ public class RideController {
         return "ratings";
     }
 
-
     @PostMapping("/ratings/submit")
     @PreAuthorize("hasAuthority('ROLE_PASSENGER') or hasAuthority('ROLE_DRIVER')")
     public String submitRating(@RequestParam("userId") Long userId,
                                @RequestParam("score") int score) {
+
         Person person = personRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -153,6 +195,7 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     public String processCreateRide(@ModelAttribute("rideForm") CreateRideForm form,
                                     @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
         if (userDetails == null) return "redirect:/login";
 
         LocalDateTime departureDateTime = LocalDateTime.of(form.getDate(), form.getTime());
@@ -166,6 +209,7 @@ public class RideController {
         ride.setDepartureTime(departureDateTime);
         ride.setSeatsAvailable(form.getSeatsAvailable());
         ride.setDriver(userDetails.getPerson());
+
         rideRepository.save(ride);
         return "redirect:/profile";
     }
@@ -182,6 +226,7 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
     public String processBooking(@PathVariable Long id,
                                  @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
         if (userDetails == null) return "redirect:/login";
 
         Ride ride = rideRepository.findById(id)
@@ -192,7 +237,7 @@ public class RideController {
             return "redirect:/rides/search?error=already_booked";
         }
 
-        if (ride.getDepartureTime().isBefore(java.time.LocalDateTime.now().plusMinutes(10))) {
+        if (ride.getDepartureTime().isBefore(LocalDateTime.now().plusMinutes(10))) {
             return "redirect:/rides/search?error=too_late";
         }
 
@@ -201,12 +246,14 @@ public class RideController {
             booking.setRide(ride);
             booking.setPerson(userDetails.getPerson());
             booking.setCreatedAt(LocalDateTime.now());
+
             bookingRepository.save(booking);
 
             ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
             ride.setBookedSeats(ride.getBookedSeats() + 1);
             rideRepository.save(ride);
         }
-        return "redirect:/profile";
+
+        return "redirect:/profile-home";
     }
 }

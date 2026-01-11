@@ -48,7 +48,7 @@
     margin-top: 18px;
 }
 
-/* ✅ Profile-like cards (ONLY in ratings) */
+/* Profile-like cards (ONLY in ratings) */
 .gr-ratings-page .gr-box {
     background: #ffffff;
     border: 1px solid rgba(11,11,12,0.10);
@@ -176,13 +176,4 @@
     display: flex;
     justify-content: center;
     margin-top: 18px;
-}
-
-/* Mobile */
-@media (max-width: 520px) {
-    .gr-search { flex-direction: column; }
-    .gr-rate-row { flex-direction: column; align-items: stretch; }
-    .gr-rate-row .gr-btn { width: 100%; }
-    .gr-stars { justify-content: center; }
-    .gr-avg-wrap { justify-content: center; width: 100%; }
 }

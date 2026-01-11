@@ -64,7 +64,7 @@
 
                 <!-- PASSENGER ACTION: Search rides -->
                 <div class="gr-action-card" th:if="${passengerEnabled}">
-                    <div class="gr-action-title">Search rides (Passenger)</div>
+                    <div class="gr-action-title">Search rides</div>
                     <div class="gr-action-sub">
                         Browse available rides and request a seat.
                     </div>
@@ -80,28 +80,50 @@
                     <a class="gr-action-link" th:href="@{/rides/bookings}">Continue →</a>
                 </div>
 
-                <!-- BOTH: Ride history -->
-                <div class="gr-action-card" th:if="${passengerEnabled or driverEnabled}">
-                    <div class="gr-action-title">Ride history</div>
+                <!-- PASSENGER: Ride History -->
+                <div class="gr-action-card" th:if="${passengerEnabled}">
+                    <div class="gr-action-title">My Ride History</div>
                     <div class="gr-action-sub">
-                        View your completed rides history (as driver or passenger).
+                        View rides you have joined as a passenger.
                     </div>
-                    <a class="gr-action-link" th:href="@{/rides/history}">Continue →</a>
+                    <a class="gr-action-link" th:href="@{/rides/history/passenger}">
+                        Continue →
+                    </a>
                 </div>
 
-                <!-- BOTH: Ratings -->
-                <div class="gr-action-card" th:if="${passengerEnabled or driverEnabled}">
-                    <div class="gr-action-title">Ratings</div>
+                <!-- PASSENGER: Ratings -->
+                <div class="gr-action-card" th:if="${passengerEnabled}">
+                    <div class="gr-action-title">Rate Drivers</div>
                     <div class="gr-action-sub">
-                        Basic rating for drivers and passengers after a ride.
+                        Rate drivers after completing a ride.
                     </div>
-                    <a class="gr-action-link" th:href="@{/rides/ratings}">Continue →</a>
-
+                    <a class="gr-action-link" th:href="@{/rides/ratings/passenger}">
+                        Continue →
+                    </a>
                 </div>
 
+                <!-- DRIVER: Manage Offered Rides (upcoming/active) -->
+                <div class="gr-action-card" th:if="${driverEnabled}">
+                    <div class="gr-action-title">My Offered Rides</div>
+                    <div class="gr-action-sub">Manage your upcoming rides (edit, cancel, view passengers).</div>
+                    <a class="gr-action-link" th:href="@{/rides/offered}">Continue →</a>
+                </div>
+
+                <!-- DRIVER: Ride History (completed) -->
+                <div class="gr-action-card" th:if="${driverEnabled}">
+                    <div class="gr-action-title">Ride History</div>
+                    <div class="gr-action-sub">View rides you have completed as a driver.</div>
+                    <a class="gr-action-link" th:href="@{/rides/history/driver}">Continue →</a>
+                </div>
+
+                <!-- DRIVER: Ratings -->
+                <div class="gr-action-card" th:if="${driverEnabled}">
+                    <div class="gr-action-title">Rate Passengers</div>
+                    <div class="gr-action-sub">Rate passengers after a completed ride.</div>
+                    <a class="gr-action-link" th:href="@{/rides/ratings/driver}">Continue →</a>
+                </div>
             </div>
         </section>
-
     </div>
 </main>
 </html>
