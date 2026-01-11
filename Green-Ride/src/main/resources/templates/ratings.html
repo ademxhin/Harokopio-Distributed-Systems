@@ -6,8 +6,6 @@
 
 <th:block layout:fragment="head">
     <title>GreenRide | Ratings</title>
-
-    <!-- Page-specific CSS -->
     <link rel="stylesheet" th:href="@{/css/ratings.css}">
 </th:block>
 
@@ -15,13 +13,11 @@
     <section class="gr-ratings-page">
         <div class="container gr-ratings-wrap">
 
-            <!-- Header -->
             <header class="gr-ratings-head">
                 <h1 class="gr-ratings-title">Ratings</h1>
                 <p class="gr-ratings-sub">Evaluate your experience with other users</p>
             </header>
 
-            <!-- Search -->
             <div class="gr-box gr-box-pad gr-ratings-card">
                 <form th:action="@{/rides/ratings}" method="get" class="gr-search">
                     <input type="text"
@@ -36,7 +32,6 @@
                 </form>
             </div>
 
-            <!-- Empty state -->
             <div th:if="${#lists.isEmpty(users)}"
                  class="gr-box gr-box-pad gr-ratings-card gr-empty"
                  style="margin-top: 14px;">
@@ -48,37 +43,32 @@
                 </div>
             </div>
 
-            <!-- Users list -->
             <div th:if="${not #lists.isEmpty(users)}" class="gr-users">
 
                 <article th:each="user : ${users}" class="gr-box gr-box-pad gr-ratings-card">
 
-                    <!-- Top row: name + average rating -->
                     <div class="gr-user-top">
                         <h3 class="gr-user-name"
                             th:text="${user.firstName + ' ' + user.lastName}">
                             Name
                         </h3>
 
-                        <!-- ⭐ Average rating (read-only) -->
-                        <div class="gr-avg-wrap" th:with="avg=${user.averageRating}">
-                            <div class="gr-stars" aria-label="Average rating">
-                                <span class="gr-star" th:classappend="${avg >= 1} ? ' filled'">★</span>
-                                <span class="gr-star" th:classappend="${avg >= 2} ? ' filled'">★</span>
-                                <span class="gr-star" th:classappend="${avg >= 3} ? ' filled'">★</span>
-                                <span class="gr-star" th:classappend="${avg >= 4} ? ' filled'">★</span>
-                                <span class="gr-star" th:classappend="${avg >= 5} ? ' filled'">★</span>
-                            </div>
-
+                        <div class="gr-avg-wrap">
                             <span class="gr-avg-number"
-                                  th:text="${avg != null and avg > 0} ? ${#numbers.formatDecimal(avg,1,1)} : 'No rating'">
+                                  th:text="${user.averageRating != null} ? ${user.averageRating} : 'No rating'">
                                 4.2
                             </span>
                         </div>
                     </div>
 
-                    <!-- Rate with clickable stars -->
-                    <form th:action="@{/rides/ratings/submit}"
+                    <div th:if="${#lists.contains(alreadyRatedIds, user.id)}" class="gr-already-rated mt-3">
+                        <div style="background: #f8f9fa; border: 1px dashed #ccc; padding: 15px; border-radius: 12px; text-align: center; color: #666;">
+                            <span style="font-weight: bold; color: #28a745;">✓</span> You have already rated this user
+                        </div>
+                    </div>
+
+                    <form th:unless="${#lists.contains(alreadyRatedIds, user.id)}"
+                          th:action="@{/rides/ratings/submit}"
                           method="post"
                           class="gr-rate-row gr-rate-stars-form">
 
@@ -102,7 +92,7 @@
 
                 </article>
 
-                <div class="gr-actions" style="margin-top: 6px;">
+                <div class="gr-actions" style="margin-top: 20px; text-align: center;">
                     <a th:href="@{/profile}" class="gr-btn gr-btn-secondary">← Back to Profile</a>
                 </div>
             </div>
@@ -130,11 +120,9 @@
                 stars.querySelectorAll(".gr-star-btn").forEach(btn => {
                     const value = Number(btn.dataset.value);
 
-                    // hover preview
                     btn.addEventListener("mouseenter", () => fillStars(stars, value));
                     btn.addEventListener("mouseleave", () => fillStars(stars, selected));
 
-                    // click select
                     btn.addEventListener("click", () => {
                         selected = value;
                         scoreInput.value = String(value);
@@ -145,7 +133,6 @@
                     });
                 });
 
-                // safety: prevent submit without selection
                 form.addEventListener("submit", (e) => {
                     if (!scoreInput.value) e.preventDefault();
                 });

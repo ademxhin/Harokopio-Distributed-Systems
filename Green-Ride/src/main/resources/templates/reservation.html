@@ -11,26 +11,23 @@
 
 <main layout:fragment="main" class="gr-res-page">
     <div class="container">
-
         <div class="gr-page-head">
             <h1 class="gr-page-title">Confirm Your Booking</h1>
         </div>
 
         <section class="gr-res-card">
-
             <div class="gr-res-top">
                 <h3 class="gr-res-title" th:text="${ride.origin} + ' → ' + ${ride.destination}"></h3>
-
                 <div class="gr-res-seats">
                     <div class="gr-meta-label">Available seats</div>
-                    <div class="gr-seats-value" th:text="${ride.availableSeats}">2</div>
+                    <div class="gr-seats-value" th:text="${ride.availableSeats}"></div>
                 </div>
             </div>
 
             <div class="gr-res-grid">
                 <div class="gr-meta-box">
                     <div class="gr-meta-label">Driver</div>
-                    <div class="gr-meta-value" th:text="${ride.driver.fullName}">Driver Name</div>
+                    <div class="gr-meta-value" th:text="${ride.driver.fullName}"></div>
                 </div>
 
                 <div class="gr-meta-box">
@@ -42,31 +39,15 @@
                     <div class="gr-meta-label">Time</div>
                     <div class="gr-meta-value" th:text="${#temporals.format(ride.departureTime, 'HH:mm')}"></div>
                 </div>
-
-                <div class="gr-meta-box gr-meta-alert" th:if="${ride.availableSeats <= 0}">
-                    <div class="gr-meta-label">Status</div>
-                    <div class="gr-meta-value">No seats left</div>
-                </div>
             </div>
 
-            <form class="gr-res-actions"
-                  th:action="@{/rides/book/{id}(id=${ride.id})}"
-                  method="post">
-
-                <button type="submit"
-                        class="gr-btn gr-btn-primary gr-btn-wide"
-                        th:disabled="${ride.availableSeats <= 0}">
+            <form class="gr-res-actions" th:action="@{/rides/book/{id}(id=${ride.id})}" method="post">
+                <button type="submit" class="gr-btn gr-btn-primary gr-btn-wide" th:disabled="${ride.availableSeats <= 0}">
                     Confirm &amp; Book Now
                 </button>
-
-                <a th:href="@{/rides/search}"
-                   class="gr-btn gr-btn-secondary gr-btn-wide">
-                    Back to Search
-                </a>
+                <a th:href="@{/rides/search}" class="gr-btn gr-btn-secondary gr-btn-wide">Back to Search</a>
             </form>
-
         </section>
-
     </div>
 </main>
 </html>

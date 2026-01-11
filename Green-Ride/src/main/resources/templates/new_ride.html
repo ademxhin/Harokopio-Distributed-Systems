@@ -13,88 +13,44 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-sm-11 col-md-8 col-lg-6">
-
                 <div class="gr-ride-card">
-
-                    <!-- Header -->
                     <div class="gr-ride-header">
                         <h2 class="gr-ride-title">Create Ride</h2>
                     </div>
 
-                    <!-- FORM -->
-                    <form th:action="@{/rides/offer}"
-                          th:object="${rideForm}"
-                          method="post"
-                          class="gr-ride-form">
-
-                        <!-- Origin -->
+                    <form th:action="@{/rides/offer}" th:object="${rideForm}" method="post" class="gr-ride-form">
                         <div class="gr-field">
                             <label class="gr-label">Origin</label>
-                            <input type="text"
-                                   class="gr-control"
-                                   th:field="*{origin}"
-                                   placeholder="Enter origin"
-                                   required>
+                            <input type="text" class="gr-control" th:field="*{origin}" required>
                         </div>
 
-                        <!-- Destination -->
                         <div class="gr-field">
                             <label class="gr-label">Destination</label>
-                            <input type="text"
-                                   class="gr-control"
-                                   th:field="*{destination}"
-                                   placeholder="Enter destination"
-                                   required>
+                            <input type="text" class="gr-control" th:field="*{destination}" required>
                         </div>
 
-                        <!-- Date & Time -->
                         <div class="gr-grid-2">
-
-                            <!-- DATE -->
                             <div class="gr-field">
                                 <label class="gr-label" for="date">Date</label>
-                                <input class="gr-control"
-                                       id="date"
-                                       type="date"
-                                       th:field="*{date}"
-                                       required>
+                                <input class="gr-control" id="date" type="date" th:field="*{date}" required>
                             </div>
 
-                            <!-- TIME -->
                             <div class="gr-field">
                                 <label class="gr-label" for="time">Time</label>
-                                <select class="gr-control"
-                                        id="time"
-                                        th:field="*{time}"
-                                        required>
-                                    <!-- Filled by JS -->
+                                <select class="gr-control" id="time" th:field="*{time}" required>
                                 </select>
                             </div>
-
                         </div>
 
-                        <!-- Seats -->
                         <div class="gr-field">
                             <label class="gr-label">Available Seats (1–4)</label>
-                            <input type="number"
-                                   class="gr-control"
-                                   th:field="*{seatsAvailable}"
-                                   min="1"
-                                   max="4"
-                                   required>
+                            <input type="number" class="gr-control" th:field="*{seatsAvailable}" min="1" max="4" required>
                         </div>
 
-                        <!-- Submit -->
-                        <button type="submit" class="gr-btn gr-btn-primary w-100">
-                            Publish Ride
-                        </button>
-
+                        <button type="submit" class="gr-btn gr-btn-primary w-100">Publish Ride</button>
                     </form>
                 </div>
 
-                <!-- ========================= -->
-                <!-- Date & Time logic (same as homepage) -->
-                <!-- ========================= -->
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         const dateEl = document.getElementById("date");
@@ -103,54 +59,51 @@
 
                         function pad2(n){ return String(n).padStart(2, "0"); }
 
-                        // ---------- Build time dropdown (AM/PM labels, HH:mm values) ----------
-                        const stepMinutes = 15;
-                        timeEl.innerHTML = "";
+                        function updateTimeOptions() {
+                            const now = new Date();
+                            const selectedDate = dateEl.value;
+                            const todayStr = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
 
-                        for (let h = 0; h < 24; h++) {
-                            for (let m = 0; m < 60; m += stepMinutes) {
-                                const isPM = h >= 12;
-                                let h12 = h % 12;
-                                if (h12 === 0) h12 = 12;
+                            // Ελάχιστο όριο: Τώρα + 60 λεπτά
+                            const minTimeLimit = new Date(now.getTime() + 60 * 60 * 1000);
 
-                                const label = `${pad2(h12)}:${pad2(m)} ${isPM ? "PM" : "AM"}`; // visible
-                                const value = `${pad2(h)}:${pad2(m)}`;                        // backend LocalTime
+                            const previousValue = timeEl.value;
+                            timeEl.innerHTML = "";
+                            const stepMinutes = 15;
 
-                                const opt = document.createElement("option");
-                                opt.value = value;
-                                opt.textContent = label;
-                                timeEl.appendChild(opt);
+                            for (let h = 0; h < 24; h++) {
+                                for (let m = 0; m < 60; m += stepMinutes) {
+                                    const value = `${pad2(h)}:${pad2(m)}`;
+                                    const isPM = h >= 12;
+                                    let h12 = h % 12 || 12;
+                                    const label = `${pad2(h12)}:${pad2(m)} ${isPM ? "PM" : "AM"}`;
+
+                                    if (selectedDate === todayStr) {
+                                        const optionTime = new Date(now.getTime());
+                                        optionTime.setHours(h, m, 0, 0);
+                                        if (optionTime < minTimeLimit) continue;
+                                    }
+
+                                    const opt = document.createElement("option");
+                                    opt.value = value;
+                                    opt.textContent = label;
+                                    timeEl.appendChild(opt);
+                                }
                             }
+                            if (previousValue) timeEl.value = previousValue;
                         }
 
-                        // ---------- Today (min date) ----------
                         const now = new Date();
                         const todayStr = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
                         dateEl.min = todayStr;
+                        if (!dateEl.value) dateEl.value = todayStr;
 
-                        // ---------- Default = now + 30 minutes (rounded, with rollover day fix) ----------
-                        const plus30 = new Date(now.getTime() + 30 * 60 * 1000);
-
-                        const rounded = Math.ceil(plus30.getMinutes() / stepMinutes) * stepMinutes;
-                        if (rounded === 60) {
-                            plus30.setHours(plus30.getHours() + 1);
-                            plus30.setMinutes(0, 0, 0);
-                        } else {
-                            plus30.setMinutes(rounded, 0, 0);
-                        }
-
-                        // default date may be tomorrow
-                        const defaultDate = `${plus30.getFullYear()}-${pad2(plus30.getMonth() + 1)}-${pad2(plus30.getDate())}`;
-                        if (!dateEl.value) dateEl.value = defaultDate;
-
-                        // default time is HH:mm (matches option values)
-                        const defaultTime = `${pad2(plus30.getHours())}:${pad2(plus30.getMinutes())}`;
-                        timeEl.value = defaultTime;
+                        dateEl.addEventListener("change", updateTimeOptions);
+                        updateTimeOptions();
                     });
                 </script>
             </div>
         </div>
     </div>
 </main>
-
 </html>

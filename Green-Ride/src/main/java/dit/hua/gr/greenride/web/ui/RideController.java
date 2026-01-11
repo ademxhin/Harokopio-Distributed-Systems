@@ -243,31 +243,21 @@ public class RideController {
                                       @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
         if (userDetails == null) return "redirect:/login";
-
         Person currentUser = userDetails.getPerson();
-        if (currentUser.getUserType() != UserType.DRIVER) {
-            model.addAttribute("title", "Driver access required");
-            model.addAttribute("message", "Please login as a driver to rate passengers.");
-            model.addAttribute("ctaText", "Logout");
-            model.addAttribute("ctaHref", "/logout");
-            return "rides_not_passenger";
-        }
 
         UserType targetType = UserType.PASSENGER;
-
         List<Person> availableUsers = (search != null && !search.isBlank())
                 ? personRepository.findByFirstNameContainingIgnoreCaseAndUserType(search, targetType)
                 : personRepository.findAllByUserType(targetType);
 
-        java.util.Map<Long, Double> ratingAverages = new java.util.HashMap<>();
-        for (Person p : availableUsers) {
-            Double avg = ratingRepository.findAverageScoreForPerson(p.getId()); // may be null
-            ratingAverages.put(p.getId(), avg);
-        }
+        // ✅ Υπολογισμός των IDs που έχουν ήδη βαθμολογηθεί
+        List<Long> alreadyRatedIds = availableUsers.stream()
+                .filter(p -> ratingRepository.existsByRaterAndRatedPerson(currentUser, p))
+                .map(Person::getId)
+                .toList();
 
         model.addAttribute("users", availableUsers);
-        model.addAttribute("ratingTarget", "PASSENGER");
-        model.addAttribute("ratingAverages", ratingAverages);
+        model.addAttribute("alreadyRatedIds", alreadyRatedIds); // ✅ Προσθήκη στο model
         model.addAttribute("search", search);
 
         return "ratings";
@@ -282,51 +272,50 @@ public class RideController {
                                          @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
         if (userDetails == null) return "redirect:/login";
-
         Person currentUser = userDetails.getPerson();
-        if (currentUser.getUserType() != UserType.PASSENGER) {
-            model.addAttribute("title", "Passenger access required");
-            model.addAttribute("message", "Please login as a passenger to rate drivers.");
-            model.addAttribute("ctaText", "Logout");
-            model.addAttribute("ctaHref", "/logout");
-            return "rides_not_passenger";
-        }
 
         UserType targetType = UserType.DRIVER;
-
         List<Person> availableUsers = (search != null && !search.isBlank())
                 ? personRepository.findByFirstNameContainingIgnoreCaseAndUserType(search, targetType)
                 : personRepository.findAllByUserType(targetType);
 
-        java.util.Map<Long, Double> ratingAverages = new java.util.HashMap<>();
-        for (Person p : availableUsers) {
-            Double avg = ratingRepository.findAverageScoreForPerson(p.getId());
-            ratingAverages.put(p.getId(), avg);
-        }
+        // ✅ Υπολογισμός των IDs που έχουν ήδη βαθμολογηθεί
+        List<Long> alreadyRatedIds = availableUsers.stream()
+                .filter(p -> ratingRepository.existsByRaterAndRatedPerson(currentUser, p))
+                .map(Person::getId)
+                .toList();
 
         model.addAttribute("users", availableUsers);
-        model.addAttribute("ratingTarget", "DRIVER");
-        model.addAttribute("ratingAverages", ratingAverages);
+        model.addAttribute("alreadyRatedIds", alreadyRatedIds); // ✅ Προσθήκη στο model
         model.addAttribute("search", search);
 
         return "ratings";
     }
-
     @PostMapping("/ratings/submit")
     @PreAuthorize("hasAuthority('ROLE_PASSENGER') or hasAuthority('ROLE_DRIVER')")
     public String submitRating(@RequestParam("userId") Long userId,
-                               @RequestParam("score") int score) {
+                               @RequestParam("score") int score,
+                               @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
-        Person person = personRepository.findById(userId)
+        Person currentUser = userDetails.getPerson();
+        Person targetPerson = personRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // ✅ Έλεγχος ασφαλείας: Μην αφήνεις διπλή βαθμολογία
+        if (ratingRepository.existsByRaterAndRatedPerson(currentUser, targetPerson)) {
+            return "redirect:/rides/ratings?error=already_rated";
+        }
+
         Rating rating = new Rating();
-        rating.setRatedPerson(person);
+        rating.setRater(currentUser); // ✅ Αποθήκευση του rater
+        rating.setRatedPerson(targetPerson);
         rating.setScore(score);
 
         ratingRepository.save(rating);
-        person.getRatings().add(rating);
-        personRepository.save(person);
+
+        // Ενημέρωση της λίστας του targetPerson
+        targetPerson.getRatings().add(rating);
+        personRepository.save(targetPerson);
 
         return "redirect:/rides/ratings?success";
     }
@@ -399,8 +388,11 @@ public class RideController {
             ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
             ride.setBookedSeats(ride.getBookedSeats() + 1);
             rideRepository.save(ride);
+
+            // ✅ ΔΙΟΡΘΩΣΗ: Ανακατεύθυνση στη σελίδα των κρατήσεων
+            return "redirect:/rides/bookings?success";
         }
 
-        return "redirect:/profile-home";
+        return "redirect:/rides/search?error=no_seats";
     }
 }

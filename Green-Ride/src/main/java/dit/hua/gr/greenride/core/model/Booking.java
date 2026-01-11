@@ -1,6 +1,8 @@
 package dit.hua.gr.greenride.core.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,8 +13,10 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // ✅ Συγχωνευμένη δήλωση του ride (μία φορά μόνο)
     @ManyToOne
     @JoinColumn(name = "ride_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE) // Για να σβήνεται το booking αν σβηστεί το ride
     private Ride ride;
 
     @ManyToOne
@@ -24,6 +28,7 @@ public class Booking {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    // --- Getters & Setters ---
     public Long getId() { return id; }
 
     public Ride getRide() { return ride; }

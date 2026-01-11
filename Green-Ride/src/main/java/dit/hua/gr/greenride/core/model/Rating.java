@@ -2,6 +2,8 @@ package dit.hua.gr.greenride.core.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "rating")
@@ -14,10 +16,20 @@ public class Rating {
     private int score; // 1-5
 
     @ManyToOne
-    @JoinColumn(name = "rated_person_id")
-    private Person ratedPerson; // Ποιος βαθμολογείται
+    @JoinColumn(name = "rater_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Person rater;
 
+    @ManyToOne
+    @JoinColumn(name = "rated_person_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Person ratedPerson;
+
+    // Getters/Setters (Αν δεν χρησιμοποιείς Lombok)
+    public Person getRater() { return rater; }
+    public void setRater(Person rater) { this.rater = rater; }
+    public Person getRatedPerson() { return ratedPerson; }
+    public void setRatedPerson(Person ratedPerson) { this.ratedPerson = ratedPerson; }
     public int getScore() { return score; }
     public void setScore(int score) { this.score = score; }
-    public void setRatedPerson(Person person) { this.ratedPerson = person; }
 }
