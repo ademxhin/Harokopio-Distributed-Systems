@@ -34,15 +34,12 @@ app:
   noc:
     base-url: "http://localhost:8081"
 
-  sms:
-    base-url: "http://localhost:8081"
-
   weather:
     base-url: "https://api.open-meteo.com"
 
   maps:
     base-url: "https://api.openrouteservice.org"
-    api-key: ${ORS_API_KEY:eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjVhMTg3NzdjNzA0MjQwZWJhYzYxNDUzYTMyNTNhMWM3IiwiaCI6Im11cm11cjY0In0=}
+    api-key: ${ORS_API_KEY:}
 
 springdoc:
   api-docs:
