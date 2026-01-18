@@ -1,171 +1,46 @@
+/* ==============================
+   GreenRide | profile.css (CLEAN)
+   - No Security tab styles
+   - Single divider line (no double separators)
+   - Sticky sidebar that works with main { overflow:auto }
+   - Desktop-first, simple responsive
+================================= */
+
+/* Page */
 .gr-profile-page {
     background: #f6f7f9;
     min-height: calc(100vh - 64px);
     padding: 22px 0 40px;
 }
 
-.gr-profile-layout{
+/* Layout */
+.gr-profile-layout {
     display: grid;
     grid-template-columns: 260px 1fr;
     gap: 24px;
     align-items: start;
 }
 
-.gr-side{
+/* ==============================
+   Sidebar (sticky)
+================================= */
+.gr-side {
     background: #fff;
     border: 1px solid rgba(15, 15, 18, 0.08);
     border-radius: 16px;
     padding: 16px;
+
     position: sticky;
     top: 86px;
+    align-self: start;
+
+    /* important: scroll inside sidebar if content grows */
+    max-height: calc(100vh - 86px - 24px);
+    overflow: auto;
 }
 
-.gr-side-brand{
-    font-weight: 800;
-    font-size: .95rem;
-    margin: 2px 2px 12px;
-    color: #111114;
-}
-
-.gr-side-nav{
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.gr-side-link{
-    display: block;
-    padding: 10px 12px;
-    border-radius: 12px;
-    text-decoration: none;
-    color: rgba(17,17,20,.85);
-    font-weight: 700;
-}
-
-.gr-side-link:hover{ background: rgba(17,17,20,.05); }
-.gr-side-link.is-active{
-    background: rgba(17,17,20,.08);
-    color: #111114;
-}
-
-.gr-content{ min-width: 0; }
-
-.gr-content-header{ margin: 2px 0 12px; }
-
-.gr-h1{
-    font-size: 1.75rem;
-    line-height: 1.1;
-    margin: 0;
-    font-weight: 800;
-    color: #111114;
-}
-
-.gr-sub{
-    margin: 6px 0 0;
-    color: rgba(17,17,20,.65);
-}
-
-.gr-card{
-    background: #fff;
-    border: 1px solid rgba(15, 15, 18, 0.08);
-    border-radius: 16px;
-    overflow: hidden;
-}
-
-.gr-card-top{
-    display: grid;
-    grid-template-columns: 64px 1fr;
-    gap: 14px;
-    padding: 18px 18px 14px;
-    align-items: center;
-}
-
-.gr-card-meta{ min-width: 0; }
-.gr-meta-name{ font-weight: 800; font-size: 1.05rem; color:#111114; }
-.gr-meta-sub{
-    margin-top: 2px;
-    color: rgba(17,17,20,.65);
-    font-size: .95rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.gr-avatar{
-    width: 58px; height: 58px;
-    border-radius: 999px;
-    background: rgba(17,17,20,.08);
-    display: grid;
-    place-items: center;
-    position: relative;
-    user-select: none;
-}
-
-.gr-avatar-initials{ font-weight: 900; color: rgba(17,17,20,.70); }
-
-.gr-avatar-edit{
-    position: absolute;
-    right: -2px; bottom: -2px;
-    width: 26px; height: 26px;
-    border-radius: 999px;
-    background: #111114;
-    color: #fff;
-    display: grid;
-    place-items: center;
-    font-size: .85rem;
-    text-decoration: none;
-    border: 2px solid #fff;
-}
-
-.gr-divider{ height:1px; background: rgba(15,15,18,.08); }
-
-.gr-rows{ display:flex; flex-direction:column; }
-.gr-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:14px 18px;
-    gap:12px;
-}
-
-.gr-row + .gr-row{ border-top: 1px solid rgba(15,15,18,.08); }
-
-.gr-row-left{ min-width:0; }
-.gr-row-label{ font-size:.85rem; font-weight:700; color: rgba(17,17,20,.60); }
-.gr-row-value{
-    margin-top:2px;
-    font-weight:700;
-    color:#111114;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-}
-
-.gr-row-right{ font-size:1.25rem; color: rgba(17,17,20,.35); }
-.gr-muted{ color: rgba(17,17,20,.35); }
-
-/* Home actions */
-.gr-actions-grid{
-    margin-top: 12px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-}
-
-.gr-action-card{
-    background:#fff;
-    border: 1px solid rgba(15,15,18,.08);
-    border-radius: 16px;
-    padding: 16px;
-}
-
-.gr-action-title{ font-weight: 900; margin: 0 0 6px; color:#111114; }
-.gr-action-sub{ margin:0 0 10px; color: rgba(17,17,20,.65); font-size: .95rem; }
-.gr-action-link{ font-weight: 800; text-decoration: none; color:#111114; }
-.gr-action-link:hover{ text-decoration: underline; }
-
-/* USER HEADER (Uber-style) */
-.gr-side-user{
+/* User header (sidebar) */
+.gr-side-user {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -173,35 +48,296 @@
     margin-bottom: 10px;
 }
 
-.gr-side-avatar{
+.gr-side-avatar {
     width: 44px;
     height: 44px;
     border-radius: 999px;
-    background: rgba(17,17,20,0.10);
+    background: rgba(17, 17, 20, 0.10);
     display: grid;
     place-items: center;
     font-weight: 900;
-    color: rgba(17,17,20,0.65);
+    color: rgba(17, 17, 20, 0.65);
     font-size: 1rem;
     flex-shrink: 0;
 }
 
-.gr-side-user-meta{
-    min-width: 0;
-}
+.gr-side-user-meta { min-width: 0; }
 
-.gr-side-user-name{
+.gr-side-user-name {
     font-weight: 800;
     font-size: 0.95rem;
     color: #111114;
     line-height: 1.1;
 }
 
-.gr-side-user-email{
+.gr-side-user-email {
     font-size: 0.85rem;
-    color: rgba(17,17,20,0.60);
+    color: rgba(17, 17, 20, 0.60);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 160px;
+}
+
+/* Sidebar nav */
+.gr-side-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.gr-side-link {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: rgba(17, 17, 20, 0.85);
+    font-weight: 800;
+}
+
+.gr-side-link:hover { background: rgba(17, 17, 20, 0.05); }
+
+.gr-side-link.is-active {
+    background: rgba(17, 17, 20, 0.08);
+    color: #111114;
+}
+
+/* ==============================
+   Content header
+================================= */
+.gr-content { min-width: 0; }
+
+.gr-content-header { margin: 2px 0 12px; }
+
+.gr-h1 {
+    font-size: 1.75rem;
+    line-height: 1.1;
+    margin: 0;
+    font-weight: 900;
+    color: #111114;
+}
+
+.gr-sub {
+    margin: 6px 0 0;
+    color: rgba(17, 17, 20, 0.65);
+}
+
+/* Single divider line under title/subtitle */
+.gr-header-divider {
+    margin-top: 14px;
+    height: 0;
+    border-top: 1px solid rgba(15, 15, 18, 0.08);
+    background: none;
+}
+
+/* ==============================
+   Cards (generic)
+================================= */
+.gr-card {
+    background: #fff;
+    border: 1px solid rgba(15, 15, 18, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.gr-card-pad { padding: 18px; }
+
+/* Personal card top */
+.gr-card-top {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 14px;
+    padding: 18px 18px 14px;
+    align-items: center;
+}
+
+.gr-card-meta { min-width: 0; }
+
+.gr-meta-name {
+    font-weight: 900;
+    font-size: 1.05rem;
+    color: #111114;
+}
+
+.gr-meta-sub {
+    margin-top: 2px;
+    color: rgba(17, 17, 20, 0.65);
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gr-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 999px;
+    background: rgba(17, 17, 20, 0.08);
+    display: grid;
+    place-items: center;
+    user-select: none;
+}
+
+.gr-avatar-initials {
+    font-weight: 900;
+    color: rgba(17, 17, 20, 0.70);
+}
+
+.gr-divider {
+    height: 1px;
+    background: rgba(15, 15, 18, 0.08);
+}
+
+/* Personal rows */
+.gr-rows { display: flex; flex-direction: column; }
+
+.gr-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    gap: 12px;
+}
+
+.gr-row + .gr-row { border-top: 1px solid rgba(15, 15, 18, 0.08); }
+
+.gr-row-left { min-width: 0; }
+
+.gr-row-label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: rgba(17, 17, 20, 0.60);
+}
+
+.gr-row-value {
+    margin-top: 2px;
+    font-weight: 780;
+    color: #111114;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gr-row-right { font-size: 1.25rem; color: rgba(17, 17, 20, 0.35); }
+
+.gr-muted { color: rgba(17, 17, 20, 0.35); }
+
+/* ==============================
+   Home actions grid
+================================= */
+.gr-actions-grid {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    align-items: stretch;
+}
+
+.gr-action-card {
+    background: #fff;
+    border: 1px solid rgba(15, 15, 18, 0.08);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 1px 0 rgba(15, 15, 18, 0.02);
+}
+
+.gr-action-title {
+    font-weight: 900;
+    margin: 0 0 6px;
+    color: #111114;
+}
+
+.gr-action-sub {
+    margin: 0 0 10px;
+    color: rgba(17, 17, 20, 0.65);
+    font-size: 0.95rem;
+}
+
+.gr-action-link {
+    font-weight: 900;
+    text-decoration: none;
+    color: #111114;
+}
+
+.gr-action-link:hover { text-decoration: underline; }
+
+/* ==============================
+   Admin section (inside Home)
+   NOTE: no extra separator line to avoid “double divider”
+================================= */
+.gr-admin-sep {
+    margin-top: 18px; /* spacing only */
+}
+
+/* Key-values inside admin stats */
+.gr-kv { margin: 6px 0; }
+
+.gr-plain-list {
+    margin: 10px 0 0 18px;
+    padding: 0;
+    color: rgba(17, 17, 20, 0.80);
+}
+
+.gr-plain-list li { margin: 6px 0; }
+
+/* Table */
+.gr-table-wrap {
+    overflow: auto;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 15, 18, 0.08);
+    background: #fff;
+}
+
+.gr-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.gr-table thead th {
+    text-align: left;
+    padding: 12px 12px;
+    font-weight: 900;
+    color: rgba(17, 17, 20, 0.75);
+    border-bottom: 1px solid rgba(15, 15, 18, 0.10);
+    background: rgba(15, 15, 18, 0.03);
+    white-space: nowrap;
+}
+
+.gr-table tbody td {
+    padding: 14px 12px;
+    color: rgba(17, 17, 20, 0.80);
+    border-bottom: 1px solid rgba(15, 15, 18, 0.06);
+    vertical-align: middle;
+}
+
+.gr-table tbody tr:hover { background: rgba(15, 15, 18, 0.03); }
+
+.gr-table tbody tr:last-child td { border-bottom: none; }
+
+.gr-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 0.80rem;
+    border: 1px solid rgba(15, 15, 18, 0.10);
+    color: #111114;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.gr-badge-success { background: rgba(40, 167, 69, 0.14); }
+.gr-badge-danger  { background: rgba(217, 83, 79, 0.14); }
+
+.gr-mt-12 { margin-top: 12px; }
+.gr-mt-14 { margin-top: 14px; }
+.gr-mb-6  { margin-bottom: 6px; }
+.gr-fw-800{ font-weight: 800; }
+
+.gr-btn-sm {
+    padding: 8px 12px;
+    font-size: 0.90rem;
 }

@@ -34,22 +34,19 @@ public class DataInitializer {
     @PostConstruct
     public void init() {
 
-        // =========================
-        // ADMIN
-        // =========================
-        personRepository.findByEmailAddress("admin@example.com").orElseGet(() -> {
+        personRepository.findByEmailAddress("admin@greenride.com").orElseGet(() -> {
             Person admin = new Person();
             admin.setUserId("admin001");
             admin.setFirstName("Admin");
-            admin.setLastName("User");
-            admin.setEmailAddress("admin@example.com");
+            admin.setLastName("GreenRide");
+            admin.setEmailAddress("admin@greenride.com");
             admin.setMobilePhoneNumber(randomGreekMobile());
-            admin.setHashedPassword(passwordEncoder.encode("password"));
+            admin.setHashedPassword(passwordEncoder.encode("GreenRide2026"));
             admin.setPersonType(PersonType.ADMIN);
             admin.setBanned(false);
             admin.setReportCount(0);
 
-            System.out.println("✔ Admin created");
+            System.out.println("Admin created");
             return personRepository.save(admin);
         });
 
@@ -62,48 +59,23 @@ public class DataInitializer {
             return;
         }
 
-        // =========================
-        // DRIVERS & PASSENGERS
-        // =========================
         List<Person> drivers = createDrivers();
         List<Person> passengers = createPassengers();
 
-        // =========================
-        // RIDES (for drivers)
-        // Each driver: 2 completed (past) + 2 pending (future)
-        // =========================
         List<Ride> createdRides = new ArrayList<>();
 
         for (Person driver : drivers) {
 
-            // 2 completed rides (past)
             for (int i = 0; i < 2; i++) {
-                Ride pastRide = createRide(
-                        driver,
-                        LocalDateTime.now().minusDays(10 + i),
-                        0,   // seatsAvailable (0 => full or just "completed")
-                        3    // bookedSeats
-                );
+                Ride pastRide = createRide(driver, LocalDateTime.now().minusDays(10 + i),0,3);
                 createdRides.add(rideRepository.save(pastRide));
             }
 
-            // 2 pending rides (future)
             for (int i = 0; i < 2; i++) {
-                Ride futureRide = createRide(
-                        driver,
-                        LocalDateTime.now().plusDays(3 + i),
-                        3,   // seatsAvailable
-                        0    // bookedSeats
-                );
+                Ride futureRide = createRide(driver, LocalDateTime.now().plusDays(3 + i),3,0);
                 createdRides.add(rideRepository.save(futureRide));
             }
         }
-
-        // =========================
-        // BOOKINGS (for passengers)
-        // Each passenger: 2 completed bookings + 2 pending bookings
-        // (we attach bookings onto already created rides)
-        // =========================
 
         List<Ride> pastRides = createdRides.stream()
                 .filter(r -> r.getDepartureTime().isBefore(LocalDateTime.now()))
@@ -115,23 +87,17 @@ public class DataInitializer {
 
         for (Person passenger : passengers) {
 
-            // 2 completed bookings (on past rides)
             pastRides.stream()
                     .limit(2)
                     .forEach(ride -> bookingRepository.save(createBooking(passenger, ride)));
 
-            // 2 pending bookings (on future rides)
             futureRides.stream()
                     .limit(2)
                     .forEach(ride -> bookingRepository.save(createBooking(passenger, ride)));
         }
 
-        System.out.println("✔ Dummy data initialized successfully");
+        System.out.println("Dummy data initialized successfully");
     }
-
-    // =========================================================
-    // Helpers
-    // =========================================================
 
     private List<Person> createDrivers() {
         String[][] names = {

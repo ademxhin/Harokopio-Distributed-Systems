@@ -20,77 +20,81 @@ public class RegistrationController {
     private final PersonService personService;
 
     public RegistrationController(final PersonService personService) {
-        if (personService == null) throw new NullPointerException("personService is null");
         this.personService = personService;
     }
 
     @GetMapping("/register")
-    public String showRegistrationForm(final Authentication authentication, final Model model) {
+    public String showRegistrationForm(Authentication authentication, Model model) {
         if (AuthUtils.isAuthenticated(authentication)) {
             return "redirect:/profile";
         }
 
         model.addAttribute("createPersonRequest",
-                new CreatePersonRequest(
-                        "", "", "", "", "", "",
-                        PersonType.PASSENGER // default selection
-                )
+                new CreatePersonRequest("", "", "", "", "", "",
+                        PersonType.PASSENGER)
         );
 
-        // (Optional) for dropdown options in Thymeleaf
-        model.addAttribute("personTypes", new PersonType[]{PersonType.PASSENGER, PersonType.DRIVER});
+        model.addAttribute("personTypes",
+                new PersonType[]{PersonType.PASSENGER, PersonType.DRIVER});
 
         return "register";
     }
 
     @PostMapping("/register")
     public String handleFormSubmission(
-            final Authentication authentication,
-            @Valid @ModelAttribute("createPersonRequest") final CreatePersonRequest createPersonRequest,
-            final BindingResult bindingResult,
-            final Model model
+            Authentication authentication,
+            @Valid @ModelAttribute("createPersonRequest") CreatePersonRequest createPersonRequest,
+            BindingResult bindingResult,
+            Model model
     ) {
         if (AuthUtils.isAuthenticated(authentication)) {
             return "redirect:/profile";
         }
 
-        // 1) Bean validation errors (includes personType @NotNull)
         if (bindingResult.hasErrors()) {
-            model.addAttribute("personTypes", new PersonType[]{PersonType.PASSENGER, PersonType.DRIVER});
+            model.addAttribute("personTypes",
+                    new PersonType[]{PersonType.PASSENGER, PersonType.DRIVER});
             return "register";
         }
 
-        // 2) Password must match confirm
-        if (!createPersonRequest.rawPassword().equals(createPersonRequest.confirmRawPassword())) {
+        if (!createPersonRequest.rawPassword()
+                .equals(createPersonRequest.confirmRawPassword())) {
+
             bindingResult.rejectValue(
                     "confirmRawPassword",
                     "password.mismatch",
                     "Password and Confirm Password do not match"
             );
-            model.addAttribute("personTypes", new PersonType[]{PersonType.PASSENGER, PersonType.DRIVER});
+
+            model.addAttribute("personTypes",
+                    new PersonType[]{PersonType.PASSENGER, PersonType.DRIVER});
             return "register";
         }
 
         try {
-            final CreatePersonResult createPersonResult =
-                    this.personService.createPerson(createPersonRequest, true);
+            CreatePersonResult result =
+                    personService.createPerson(createPersonRequest, true);
 
-            if (createPersonResult.created()) {
-                return "redirect:/login";
+            if (result.created()) {
+                model.addAttribute("signupSuccess", true);
+                model.addAttribute("personTypes",
+                        new PersonType[]{PersonType.PASSENGER, PersonType.DRIVER});
+                return "register";
             }
 
-            // business failure (duplicate email, invalid phone, etc.)
-            model.addAttribute("errorMessage", createPersonResult.reason());
-            model.addAttribute("personTypes", new PersonType[]{PersonType.PASSENGER, PersonType.DRIVER});
+            model.addAttribute("errorMessage", result.reason());
+            model.addAttribute("personTypes",
+                    new PersonType[]{PersonType.PASSENGER, PersonType.DRIVER});
             return "register";
 
         } catch (ExternalServiceUnavailableException ex) {
             bindingResult.rejectValue(
                     "mobilePhoneNumber",
                     "noc.down",
-                    "Phone validation service is currently unavailable. Please try again later."
+                    "Phone validation service is currently unavailable."
             );
-            model.addAttribute("personTypes", new PersonType[]{PersonType.PASSENGER, PersonType.DRIVER});
+            model.addAttribute("personTypes",
+                    new PersonType[]{PersonType.PASSENGER, PersonType.DRIVER});
             return "register";
         }
     }

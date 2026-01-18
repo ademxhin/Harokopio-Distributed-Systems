@@ -97,7 +97,6 @@ public class Person {
     public List<Rating> getRatings() { return ratings; }
     public List<Rating> getRatingsGiven() { return ratingsGiven; }
 
-    // --- HELPER METHODS ---
     public boolean isAdmin() { return this.personType == PersonType.ADMIN; }
     public boolean isDriver() { return this.personType == PersonType.DRIVER; }
     public boolean isPassenger() { return this.personType == PersonType.PASSENGER; }

@@ -2,6 +2,7 @@ package dit.hua.gr.greenride.web.ui;
 
 import dit.hua.gr.greenride.core.model.Person;
 import dit.hua.gr.greenride.core.repository.PersonRepository;
+import dit.hua.gr.greenride.service.AdminService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,9 +19,11 @@ import java.util.stream.Collectors;
 public class ProfileController {
 
     private final PersonRepository personRepository;
+    private final AdminService adminService;
 
-    public ProfileController(PersonRepository personRepository) {
+    public ProfileController(PersonRepository personRepository, AdminService adminService) {
         this.personRepository = personRepository;
+        this.adminService = adminService;
     }
 
     @GetMapping("/profile")
@@ -32,9 +35,7 @@ public class ProfileController {
         if (principal == null) return "redirect:/login";
 
         final String email = principal.getName();
-
-        Person person = personRepository.findByEmailAddress(email)
-                .orElse(null);
+        final Person person = personRepository.findByEmailAddress(email).orElse(null);
 
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final Set<String> roles = (auth != null)
@@ -47,49 +48,63 @@ public class ProfileController {
         final boolean passengerEnabled = hasAnyRoleLike(roles, "PASSENGER");
         final boolean driverEnabled = hasAnyRoleLike(roles, "DRIVER");
 
-        String roleLabel;
-        if (isAdmin) {
-            roleLabel = "Administrator";
-        } else if (passengerEnabled && driverEnabled) {
-            roleLabel = "Passenger & Driver";
-        } else if (driverEnabled) {
-            roleLabel = "Driver";
-        } else if (passengerEnabled) {
-            roleLabel = "Passenger";
-        } else {
-            roleLabel = "User";
-        }
+        final String roleLabel = resolveRoleLabel(isAdmin, passengerEnabled, driverEnabled);
 
-        model.addAttribute("activeTab", tab);
+        final String normalizedTab = normalizeTab(tab);
+
+        model.addAttribute("activeTab", normalizedTab);
         model.addAttribute("fullName", person != null ? person.getFullName() : buildDisplayName(email));
         model.addAttribute("emailAddress", email);
-
-        model.addAttribute("mobilePhoneNumber", (person != null && person.getMobilePhoneNumber() != null)
-                ? person.getMobilePhoneNumber()
-                : "Not provided");
+        model.addAttribute("mobilePhoneNumber",
+                (person != null && person.getMobilePhoneNumber() != null)
+                        ? person.getMobilePhoneNumber()
+                        : "Not provided"
+        );
 
         model.addAttribute("roleLabel", roleLabel);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("passengerEnabled", passengerEnabled);
         model.addAttribute("driverEnabled", driverEnabled);
 
-        return switch (tab.toLowerCase()) {
-            case "personal" -> "profile-personal";
-            case "security" -> "profile-security";
-            default -> "profile-home";
+        if (isAdmin && "home".equals(normalizedTab)) {
+            model.addAttribute("stats", adminService.getSystemStatistics());
+            model.addAttribute("allUsers", adminService.getAllUsersExcludingAdmins());
+            model.addAttribute("kickedUserNames", adminService.getKickedUserNames());
+            model.addAttribute("flaggedUsers", adminService.getFlaggedUsers());
+        }
+
+        return "profile";
+    }
+
+    private static String normalizeTab(String tab) {
+        if (tab == null) return "home";
+        final String t = tab.trim().toLowerCase();
+        return switch (t) {
+            case "home", "personal", "security" -> t;
+            default -> "home";
         };
+    }
+
+    private static String resolveRoleLabel(boolean isAdmin, boolean passengerEnabled, boolean driverEnabled) {
+        if (isAdmin) return "Administrator";
+        if (passengerEnabled && driverEnabled) return "Passenger & Driver";
+        if (driverEnabled) return "Driver";
+        if (passengerEnabled) return "Passenger";
+        return "User";
     }
 
     private static boolean hasAnyRoleLike(final Set<String> roles, final String needle) {
         if (roles == null || roles.isEmpty()) return false;
         final String n = needle.toUpperCase();
         return roles.stream()
+                .filter(r -> r != null)
                 .anyMatch(r -> r.toUpperCase().contains(n));
     }
 
     private static String buildDisplayName(final String username) {
         if (username == null || username.isBlank()) return "User";
         String base = username.contains("@") ? username.substring(0, username.indexOf('@')) : username;
+        if (base.isBlank()) return "User";
         return base.substring(0, 1).toUpperCase() + base.substring(1);
     }
 }

@@ -29,7 +29,6 @@ public class AuthController {
 
     @GetMapping("/forgot-password")
     public String forgotPassword(Authentication authentication) {
-        // optional: αν είναι ήδη logged in, στείλ'τον profile ή home
         if (AuthUtils.isAuthenticated(authentication)) {
             return "redirect:/profile";
         }

@@ -6,26 +6,18 @@ html, body { height: 100%; }
 body {
     margin: 0;
     background: #f6f7f9;
-
-    /* no scroll anywhere */
     overflow: hidden;
-
-    /* layout */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
-/* main takes remaining space so footer stays at bottom */
 main {
     flex: 1;
-    overflow: auto;          /* scroll only in main */
+    overflow: auto;
     -webkit-overflow-scrolling: touch;
 }
 
-/* ===============================
-   NAV
-================================ */
 .gr-nav {
     background: #0b0b0c;
     border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -51,9 +43,6 @@ main {
     gap: 12px;
 }
 
-/* ===============================
-   NAV LINKS
-================================ */
 .gr-link {
     color: rgba(255,255,255,0.85);
     text-decoration: none;

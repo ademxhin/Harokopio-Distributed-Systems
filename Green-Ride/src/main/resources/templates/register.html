@@ -153,5 +153,28 @@
         </div>
     </div>
 
+    <!-- SUCCESS POPUP (after signup) -->
+    <div id="signupSuccessModal"
+         class="gr-success-modal"
+         th:if="${signupSuccess}">
+        <div class="gr-success-box">
+            <div class="gr-success-icon">✓</div>
+            <h3>Successful sign up!</h3>
+        </div>
+    </div>
+
+    <script th:if="${signupSuccess}">
+        setTimeout(() => {
+            const modal = document.getElementById('signupSuccessModal');
+            if (modal) {
+                modal.style.opacity = '0';
+                modal.style.transition = 'opacity 0.1s ease';
+            }
+
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 320);
+        }, 1200);
+    </script>
 </main>
 </html>

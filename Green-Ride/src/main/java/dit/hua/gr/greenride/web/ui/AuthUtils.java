@@ -13,13 +13,4 @@ public final class AuthUtils {
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken);
     }
-
-    public static boolean isAnonymous(Authentication authentication) {
-        return authentication == null
-                || authentication instanceof AnonymousAuthenticationToken;
-    }
-
-    public static Authentication currentAuthentication() {
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
 }

@@ -21,9 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    // ============================
-    // API SECURITY CHAIN (JWT)
-    // ============================
     @Bean
     @Order(1)
     public SecurityFilterChain apiChain(final HttpSecurity http,
@@ -33,22 +30,12 @@ public class SecurityConfig {
 
         http
                 .securityMatcher("/api/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
-
                 .csrf(AbstractHttpConfigurer::disable)
-
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                 .authorizeHttpRequests(auth -> auth
-                        // Swagger / OpenAPI
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-
-                        // PUBLIC AUTH ENDPOINTS
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
-
-                        // (keep if you need it)
                         .requestMatchers("/api/v1/auth/client-tokens").permitAll()
-
-                        // Everything else under /api requires JWT
                         .requestMatchers("/api/**").authenticated()
                 )
 
@@ -57,55 +44,37 @@ public class SecurityConfig {
                         .accessDeniedHandler(restApiAccessDeniedHandler)
                 )
 
-                // JWT filter before UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
 
-    // ============================
-    // UI SECURITY CHAIN (FORMS)
-    // ============================
     @Bean
     @Order(2)
     public SecurityFilterChain uiChain(final HttpSecurity http) throws Exception {
 
         http
                 .securityMatcher("/**")
+
                 .authorizeHttpRequests(auth -> auth
-
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-
-                        // Public pages
                         .requestMatchers("/", "/login", "/register", "/logged-out").permitAll()
-                        .requestMatchers("/admin/login").permitAll()
-
-                        // Admin & User restrictions
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/profile/**", "/rides/**").authenticated()
-
+                        .requestMatchers("/profile", "/profile/**", "/rides/**").authenticated()
                         .anyRequest().permitAll()
                 )
 
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .successHandler((request, response, authentication) -> {
 
-                            boolean isAdmin = authentication.getAuthorities().stream()
-                                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                        .successHandler((request, response, authentication) ->
+                                response.sendRedirect("/profile?tab=home")
+                        )
 
-                            if (isAdmin) {
-                                response.sendRedirect("/admin/dashboard");
-                            } else {
-                                response.sendRedirect("/profile?tab=home");
-                            }
-                        })
                         .failureUrl("/login?error")
                         .permitAll()
                 )
@@ -124,17 +93,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ============================
-    // PASSWORD ENCODER
-    // ============================
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ============================
-    // AUTH MANAGER
-    // ============================
     @Bean
     public AuthenticationManager authenticationManager(final AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

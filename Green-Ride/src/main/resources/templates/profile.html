@@ -9,138 +9,229 @@
     <link rel="stylesheet" th:href="@{/css/profile.css}">
 </th:block>
 
-<main layout:fragment="main" class="gr-page"
-      th:with="
-        isAdmin=${#authorization.expression('hasAuthority(''ADMIN'')')},
-        isDriver=${#authorization.expression('hasAuthority(''ROLE_DRIVER'')')},
-        isPassenger=${#authorization.expression('hasAuthority(''ROLE_PASSENGER'')')}
-      ">
+<main layout:fragment="main" class="gr-profile-page">
+    <div class="container gr-profile-layout">
 
-    <section class="container gr-profile-wrap">
+        <aside class="gr-side">
+            <div class="gr-side-user">
+                <div class="gr-side-avatar">
+                    <span th:text="${#strings.substring(fullName,0,1)}">A</span>
+                </div>
 
-        <div class="gr-box gr-profile-card">
-            <div class="gr-profile-head">
-                <div>
-                    <h1 class="gr-title-sm">Profile</h1>
-                    <div class="gr-muted" th:text="${username != null ? username : 'Guest'}">email@example.com</div>
-                    <div class="gr-muted mt-4">
-                        Role:
-                        <span th:if="${isAdmin}">Administrator</span>
-                        <span th:if="${isPassenger and !isDriver and !isAdmin}">Passenger</span>
-                        <span th:if="${isDriver and !isPassenger and !isAdmin}">Driver</span>
-                        <span th:if="${!isPassenger and !isDriver and !isAdmin}">User</span>
+                <div class="gr-side-user-meta">
+                    <div class="gr-side-user-name" th:text="${fullName}">User</div>
+                    <div class="gr-side-user-email" th:text="${emailAddress}">user@mail.com</div>
+                </div>
+            </div>
+
+            <nav class="gr-side-nav">
+                <a class="gr-side-link"
+                   th:classappend="${activeTab == 'home'} ? ' is-active' : ''"
+                   th:href="@{/profile(tab='home')}">Home</a>
+
+                <a class="gr-side-link"
+                   th:classappend="${activeTab == 'personal'} ? ' is-active' : ''"
+                   th:href="@{/profile(tab='personal')}">Personal info</a>
+
+            </nav>
+        </aside>
+
+        <section class="gr-content">
+
+            <th:block th:if="${activeTab == 'home'}">
+
+                <header class="gr-content-header">
+                    <h1 class="gr-h1"
+                        th:text="${isAdmin ? 'Administrator Dashboard' : 'Home'}">Home</h1>
+
+                    <p class="gr-sub"
+                       th:text="${isAdmin ? 'Platform overview and moderation tools.' : 'Quick actions based on your role.'}">
+                        Quick actions based on your role.
+                    </p>
+
+                    <div class="gr-header-divider"></div>
+                </header>
+
+                <div class="gr-actions-grid">
+
+                    <div class="gr-action-card" th:if="${driverEnabled}">
+                        <div class="gr-action-title">Create ride</div>
+                        <div class="gr-action-sub">Create a new ride with origin, destination, time and available seats.</div>
+                        <a class="gr-action-link" th:href="@{/rides/offer}">Continue →</a>
+                    </div>
+
+                    <div class="gr-action-card" th:if="${passengerEnabled}">
+                        <div class="gr-action-title">Search rides</div>
+                        <div class="gr-action-sub">Browse available rides and request a seat.</div>
+                        <a class="gr-action-link" th:href="@{/rides/search}">Continue →</a>
+                    </div>
+
+                    <div class="gr-action-card" th:if="${passengerEnabled}">
+                        <div class="gr-action-title">My bookings</div>
+                        <div class="gr-action-sub">View your bookings, cancel a request, and track status.</div>
+                        <a class="gr-action-link" th:href="@{/rides/bookings}">Continue →</a>
+                    </div>
+
+                    <div class="gr-action-card" th:if="${passengerEnabled}">
+                        <div class="gr-action-title">My Ride History</div>
+                        <div class="gr-action-sub">View rides you have joined as a passenger.</div>
+                        <a class="gr-action-link" th:href="@{/rides/history/passenger}">Continue →</a>
+                    </div>
+
+                    <div class="gr-action-card" th:if="${passengerEnabled}">
+                        <div class="gr-action-title">Rate Drivers</div>
+                        <div class="gr-action-sub">Rate drivers after completing a ride.</div>
+                        <a class="gr-action-link" th:href="@{/rides/ratings/passenger}">Continue →</a>
+                    </div>
+
+                    <div class="gr-action-card" th:if="${driverEnabled}">
+                        <div class="gr-action-title">My Offered Rides</div>
+                        <div class="gr-action-sub">Manage your upcoming rides (edit, cancel, view passengers).</div>
+                        <a class="gr-action-link" th:href="@{/rides/offered}">Continue →</a>
+                    </div>
+
+                    <div class="gr-action-card" th:if="${driverEnabled}">
+                        <div class="gr-action-title">Ride History</div>
+                        <div class="gr-action-sub">View rides you have completed as a driver.</div>
+                        <a class="gr-action-link" th:href="@{/rides/history/driver}">Continue →</a>
+                    </div>
+
+                    <div class="gr-action-card" th:if="${driverEnabled}">
+                        <div class="gr-action-title">Rate Passengers</div>
+                        <div class="gr-action-sub">Rate passengers after a completed ride.</div>
+                        <a class="gr-action-link" th:href="@{/rides/ratings/driver}">Continue →</a>
                     </div>
                 </div>
 
-                <div class="gr-profile-cta">
-                    <form th:action="@{/logout}" method="post" style="display:inline;">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        <button type="submit" class="gr-btn gr-btn-ghost gr-btn-danger">Logout</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+                <th:block th:if="${isAdmin}">
 
-        <section class="gr-box mt-16" th:if="${isAdmin}">
-            <div class="gr-section-head">
-                <h2 class="gr-h2">Administration</h2>
-                <p class="gr-muted">Access system-wide statistics and management tools.</p>
-            </div>
-            <div class="gr-role-grid">
-                <div class="gr-role-card">
-                    <div class="gr-role-top">
-                        <div class="gr-role-icon">📊</div>
-                        <div class="gr-role-meta">
-                            <div class="gr-role-title">Admin Dashboard</div>
-                            <div class="gr-role-desc">Monitor rides, active users and manage the platform.</div>
+                    <div class="gr-admin-sep"></div>
+
+                    <div class="gr-actions-grid gr-admin-grid">
+
+                        <div class="gr-action-card">
+                            <div class="gr-action-title">System Statistics</div>
+                            <div class="gr-action-sub gr-sub-compact">
+                                <div class="gr-kv">Total rides: <strong th:text="${stats.totalRides}">0</strong></div>
+                                <div class="gr-kv">Active drivers: <strong th:text="${stats.activeDrivers}">0</strong></div>
+                                <div class="gr-kv">Active passengers: <strong th:text="${stats.activePassengers}">0</strong></div>
+                            </div>
+                        </div>
+
+                        <div class="gr-action-card">
+                            <div class="gr-action-title">Flagged Users</div>
+
+                            <div th:if="${#lists.isEmpty(kickedUserNames)}" class="gr-action-sub gr-sub-compact">
+                                No flagged users found.
+                            </div>
+
+                            <ul th:if="${!#lists.isEmpty(kickedUserNames)}" class="gr-plain-list">
+                                <li th:each="name : ${kickedUserNames}" th:text="${name}">User Name</li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="gr-role-actions">
-                        <a class="gr-btn gr-btn-solid" th:href="@{/admin/dashboard}">Go to Dashboard →</a>
+
+                    <div class="gr-card gr-mt-14">
+                        <div class="gr-card-pad">
+                            <div class="gr-section-title gr-mb-6">User Management</div>
+                            <div class="gr-section-sub">Kick users (removes rides/bookings).</div>
+
+                            <div class="gr-table-wrap gr-mt-12">
+                                <table class="gr-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th style="width:140px;">Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="u : ${allUsers}">
+                                        <td th:text="${u.fullName}" class="gr-fw-800">User Name</td>
+                                        <td th:text="${u.emailAddress}">email@example.com</td>
+                                        <td>
+                                            <span class="gr-badge gr-badge-danger"
+                                                  th:if="${kickedUserNames != null and kickedUserNames.contains(u.fullName)}">Flagged</span>
+                                            <span class="gr-badge gr-badge-success"
+                                                  th:if="${kickedUserNames == null or !kickedUserNames.contains(u.fullName)}">Active</span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{'/admin/kick/' + ${u.id}}"
+                                               class="gr-btn gr-btn-ghost gr-btn-sm"
+                                               onclick="return confirm('Kick this user? This will also remove their rides/bookings.');">
+                                                Kick
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </th:block>
+            </th:block>
+
+            <th:block th:if="${activeTab == 'personal'}">
+                <header class="gr-content-header">
+                    <h1 class="gr-h1">Personal info</h1>
+                    <p class="gr-sub">Your personal account information.</p>
+                    <div class="gr-header-divider"></div>
+                </header>
+
+                <div class="gr-card">
+                    <div class="gr-card-top">
+                        <div class="gr-avatar">
+                            <span class="gr-avatar-initials"
+                                  th:text="${#strings.substring(fullName,0,1)}">U</span>
+                        </div>
+
+                        <div class="gr-card-meta">
+                            <div class="gr-meta-name" th:text="${fullName}">User</div>
+                            <div class="gr-meta-sub" th:text="${emailAddress}">user@mail.com</div>
+                        </div>
+                    </div>
+
+                    <div class="gr-divider"></div>
+
+                    <div class="gr-rows">
+                        <div class="gr-row gr-row-static">
+                            <div class="gr-row-left">
+                                <div class="gr-row-label">Name</div>
+                                <div class="gr-row-value" th:text="${fullName}">User</div>
+                            </div>
+                            <div class="gr-row-right gr-muted">•</div>
+                        </div>
+
+                        <div class="gr-row gr-row-static">
+                            <div class="gr-row-left">
+                                <div class="gr-row-label">Phone number</div>
+                                <div class="gr-row-value" th:text="${mobilePhoneNumber}">—</div>
+                            </div>
+                            <div class="gr-row-right gr-muted">•</div>
+                        </div>
+
+                        <div class="gr-row gr-row-static">
+                            <div class="gr-row-left">
+                                <div class="gr-row-label">Email</div>
+                                <div class="gr-row-value" th:text="${emailAddress}">user@mail.com</div>
+                            </div>
+                            <div class="gr-row-right gr-muted">•</div>
+                        </div>
+
+                        <div class="gr-row gr-row-static">
+                            <div class="gr-row-left">
+                                <div class="gr-row-label">Role</div>
+                                <div class="gr-row-value" th:text="${roleLabel}">Passenger</div>
+                            </div>
+                            <div class="gr-row-right gr-muted">•</div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </th:block>
         </section>
-
-        <section class="gr-box mt-16" th:if="${isPassenger}">
-            <div class="gr-section-head">
-                <h2 class="gr-h2">Passenger</h2>
-                <p class="gr-muted">Find rides, request a seat and track your trip.</p>
-            </div>
-            <div class="gr-role-grid">
-                <div class="gr-role-card">
-                    <div class="gr-role-top">
-                        <div class="gr-role-icon">🧍</div>
-                        <div class="gr-role-meta">
-                            <div class="gr-role-title">Search rides</div>
-                            <div class="gr-role-desc">Browse available rides based on your route and time.</div>
-                        </div>
-                    </div>
-                    <div class="gr-role-actions">
-                        <a class="gr-btn gr-btn-solid" th:href="@{/reservation}">Continue →</a>
-                    </div>
-                </div>
-                <div class="gr-role-card">
-                    <div class="gr-role-top">
-                        <div class="gr-role-icon">🎫</div>
-                        <div class="gr-role-meta">
-                            <div class="gr-role-title">My bookings</div>
-                            <div class="gr-role-desc">See your requests, bookings status and history.</div>
-                        </div>
-                    </div>
-                    <div class="gr-role-actions">
-                        <a class="gr-btn gr-btn-ghost" th:href="@{/bookings}">Continue →</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="gr-box mt-16" th:if="${isDriver}">
-            <div class="gr-section-head">
-                <h2 class="gr-h2">Driver</h2>
-                <p class="gr-muted">Create rides, manage seats and share your route.</p>
-            </div>
-            <div class="gr-role-grid">
-                <div class="gr-role-card">
-                    <div class="gr-role-top">
-                        <div class="gr-role-icon">🚗</div>
-                        <div class="gr-role-meta">
-                            <div class="gr-role-title">Offer a ride</div>
-                            <div class="gr-role-desc">Create a new ride and define pickup, destination and seats.</div>
-                        </div>
-                    </div>
-                    <div class="gr-role-actions">
-                        <a class="gr-btn gr-btn-solid" th:href="@{/new_ride}">Continue →</a>
-                    </div>
-                </div>
-                <div class="gr-role-card">
-                    <div class="gr-role-top">
-                        <div class="gr-role-icon">📋</div>
-                        <div class="gr-role-meta">
-                            <div class="gr-role-title">My offered rides</div>
-                            <div class="gr-role-desc">Manage your rides, passengers and ride status.</div>
-                        </div>
-                    </div>
-                    <div class="gr-role-actions">
-                        <a class="gr-btn gr-btn-ghost" th:href="@{/rides}">Continue →</a>
-                    </div>
-                </div>
-                <div class="gr-role-card">
-                    <div class="gr-role-top">
-                        <div class="gr-role-icon">⭐</div>
-                        <div class="gr-role-meta">
-                            <div class="gr-role-title">Ratings</div>
-                            <div class="gr-role-desc">Basic rating for drivers and passengers after a ride.</div>
-                        </div>
-                    </div>
-                    <div class="gr-role-actions">
-                        <a class="gr-btn gr-btn-ghost" th:href="@{/rides/ratings}">Continue →</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </section>
+    </div>
 </main>
-</body>
 </html>
