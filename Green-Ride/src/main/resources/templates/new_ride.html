@@ -65,11 +65,11 @@
                             const todayStr = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
 
                             // Ελάχιστο όριο: Τώρα + 60 λεπτά
-                            const minTimeLimit = new Date(now.getTime() + 60 * 60 * 1000);
+                            const minTimeLimit = new Date(now.getTime() + 10 * 60 * 1000);
 
                             const previousValue = timeEl.value;
                             timeEl.innerHTML = "";
-                            const stepMinutes = 15;
+                            const stepMinutes = 10;
 
                             for (let h = 0; h < 24; h++) {
                                 for (let m = 0; m < 60; m += stepMinutes) {

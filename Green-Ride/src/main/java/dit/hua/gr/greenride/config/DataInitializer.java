@@ -34,6 +34,9 @@ public class DataInitializer {
     @PostConstruct
     public void init() {
 
+        /* =========================
+           ADMIN
+        ========================= */
         personRepository.findByEmailAddress("admin@greenride.com").orElseGet(() -> {
             Person admin = new Person();
             admin.setUserId("admin001");
@@ -55,45 +58,32 @@ public class DataInitializer {
                 .count();
 
         if (existingNonAdmin > 0) {
-            System.out.println("ℹ Dummy data already exists (non-admin users found). Skipping.");
+            System.out.println("Dummy data already exists. Skipping initialization.");
             return;
         }
 
         List<Person> drivers = createDrivers();
         List<Person> passengers = createPassengers();
 
-        List<Ride> createdRides = new ArrayList<>();
+        List<Ride> rides = new ArrayList<>();
 
         for (Person driver : drivers) {
-
             for (int i = 0; i < 2; i++) {
-                Ride pastRide = createRide(driver, LocalDateTime.now().minusDays(10 + i),0,3);
-                createdRides.add(rideRepository.save(pastRide));
-            }
-
-            for (int i = 0; i < 2; i++) {
-                Ride futureRide = createRide(driver, LocalDateTime.now().plusDays(3 + i),3,0);
-                createdRides.add(rideRepository.save(futureRide));
+                Ride ride = createRide(
+                        driver,
+                        randomDepartureBetween5And120Minutes(),
+                        3
+                );
+                rides.add(rideRepository.save(ride));
             }
         }
 
-        List<Ride> pastRides = createdRides.stream()
-                .filter(r -> r.getDepartureTime().isBefore(LocalDateTime.now()))
-                .toList();
-
-        List<Ride> futureRides = createdRides.stream()
-                .filter(r -> r.getDepartureTime().isAfter(LocalDateTime.now()))
-                .toList();
-
         for (Person passenger : passengers) {
-
-            pastRides.stream()
+            rides.stream()
                     .limit(2)
-                    .forEach(ride -> bookingRepository.save(createBooking(passenger, ride)));
-
-            futureRides.stream()
-                    .limit(2)
-                    .forEach(ride -> bookingRepository.save(createBooking(passenger, ride)));
+                    .forEach(ride -> bookingRepository.save(
+                            createBooking(passenger, ride)
+                    ));
         }
 
         System.out.println("Dummy data initialized successfully");
@@ -107,7 +97,6 @@ public class DataInitializer {
                 {"Dimitris", "Karagiannis"},
                 {"Panagiotis", "Vasiliou"}
         };
-
         return createPeople(names, PersonType.DRIVER);
     }
 
@@ -119,47 +108,37 @@ public class DataInitializer {
                 {"Katerina", "Stavrou"},
                 {"Sofia", "Dimitriou"}
         };
-
         return createPeople(names, PersonType.PASSENGER);
     }
 
-    private List<Person> createPeople(String[][] names, PersonType personType) {
+    private List<Person> createPeople(String[][] names, PersonType type) {
         List<Person> created = new ArrayList<>();
 
         for (String[] n : names) {
-            String first = n[0];
-            String last = n[1];
-
             Person p = new Person();
-            p.setUserId("gr-" + first.toLowerCase() + random.nextInt(10000));
-            p.setFirstName(first);
-            p.setLastName(last);
-            p.setEmailAddress((first + "." + last).toLowerCase() + "@example.com");
+            p.setUserId("gr-" + n[0].toLowerCase() + random.nextInt(10_000));
+            p.setFirstName(n[0]);
+            p.setLastName(n[1]);
+            p.setEmailAddress((n[0] + "." + n[1]).toLowerCase() + "@greenride.com");
             p.setHashedPassword(passwordEncoder.encode("password"));
             p.setMobilePhoneNumber(randomGreekMobile());
-            p.setPersonType(personType);
+            p.setPersonType(type);
             p.setBanned(false);
             p.setReportCount(0);
 
             created.add(personRepository.save(p));
         }
-
         return created;
     }
 
-    private Ride createRide(Person driver, LocalDateTime departure,
-                            int seatsAvailable, int bookedSeats) {
-
+    private Ride createRide(Person driver, LocalDateTime departure, int seats) {
         Ride ride = new Ride();
         ride.setDriver(driver);
-
-        ride.setStartLocation(randomOrigin());
-        ride.setEndLocation(randomDestination());
+        ride.setStartLocation(randomAthensLocation());
+        ride.setEndLocation(randomAthensLocationDifferent(ride.getStartLocation()));
         ride.setDepartureTime(departure);
-
-        ride.setSeatsAvailable(seatsAvailable);
-        ride.setBookedSeats(bookedSeats);
-
+        ride.setSeatsAvailable(seats);
+        ride.setBookedSeats(0);
         return ride;
     }
 
@@ -169,28 +148,56 @@ public class DataInitializer {
         b.setRide(ride);
         b.setCreatedAt(LocalDateTime.now());
 
-        if (ride.getDepartureTime().isAfter(LocalDateTime.now())) {
-            if (ride.getSeatsAvailable() > 0) {
-                ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
-                ride.setBookedSeats(ride.getBookedSeats() + 1);
-                rideRepository.save(ride);
-            }
+        if (ride.getSeatsAvailable() > 1) {
+            ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
+            ride.setBookedSeats(ride.getBookedSeats() + 1);
+            rideRepository.save(ride);
         }
 
         return b;
+    }
+
+    private LocalDateTime randomDepartureBetween5And120Minutes() {
+        int minutes = 5 + random.nextInt(116); // 5–120
+        return LocalDateTime.now().plusMinutes(minutes);
     }
 
     private String randomGreekMobile() {
         return "69" + (10000000 + random.nextInt(90000000));
     }
 
-    private String randomOrigin() {
-        String[] origins = {"Athens", "Piraeus", "Marousi", "Kifisia", "Glyfada"};
-        return origins[random.nextInt(origins.length)];
+    private static final String[] ATHENS_LOCATIONS = {
+            "Syntagma",
+            "Omonia",
+            "Monastiraki",
+            "Kolonaki",
+            "Exarchia",
+            "Kifisia",
+            "Marousi",
+            "Chalandri",
+            "Peristeri",
+            "Ilion",
+            "Nea Smyrni",
+            "Palaio Faliro",
+            "Glyfada",
+            "Voula",
+            "Alimos",
+            "Zografou",
+            "Kaisariani",
+            "Vyronas",
+            "Petralona",
+            "Piraeus"
+    };
+
+    private String randomAthensLocation() {
+        return ATHENS_LOCATIONS[random.nextInt(ATHENS_LOCATIONS.length)];
     }
 
-    private String randomDestination() {
-        String[] dest = {"Thessaloniki", "Patras", "Larisa", "Volos", "Ioannina"};
-        return dest[random.nextInt(dest.length)];
+    private String randomAthensLocationDifferent(String from) {
+        String to;
+        do {
+            to = randomAthensLocation();
+        } while (to.equals(from));
+        return to;
     }
 }

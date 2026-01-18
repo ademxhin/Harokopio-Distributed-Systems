@@ -19,45 +19,69 @@ public class GlobalErrorHandlerControllerAdvice {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalErrorHandlerControllerAdvice.class);
 
-    @ExceptionHandler(Exception.class)
-    public String handleAnyError(final Exception exception,
-                                 final HttpServletRequest httpServletRequest,
-                                 final HttpServletResponse httpServletResponse,
-                                 final Model model) {
+    /**
+     * 404 for missing static resources.
+     * Special-case Chrome DevTools well-known request to avoid log spam.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public String handleNoResourceFound(final NoResourceFoundException exception,
+                                        final HttpServletRequest request,
+                                        final HttpServletResponse response,
+                                        final Model model) {
 
-        LOGGER.warn("Handling exception {} {}", exception.getClass(), exception.getMessage());
+        String uri = request.getRequestURI();
 
-        model.addAttribute("message", exception.getMessage());
-        model.addAttribute("path", httpServletRequest.getRequestURI());
-
-        // 404 - Not Found
-        if (exception instanceof NoResourceFoundException) {
-            httpServletResponse.setStatus(404);
+        // ✅ Chrome/DevTools noise: don't warn-log it
+        if ("/.well-known/appspecific/com.chrome.devtools.json".equals(uri)) {
+            response.setStatus(404);
             return "error/404";
         }
 
+        // For other static 404s, you can log at DEBUG (or keep WARN if you want)
+        LOGGER.debug("Static resource not found: {}", uri);
+
+        model.addAttribute("message", "Not Found");
+        model.addAttribute("path", uri);
+
+        response.setStatus(404);
+        return "error/404";
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String handleAnyError(final Exception exception,
+                                 final HttpServletRequest request,
+                                 final HttpServletResponse response,
+                                 final Model model) {
+
+        // ✅ do not warn for exceptions that have their own handler
+        // (NoResourceFoundException is handled above)
+        LOGGER.warn("Handling exception {} {}", exception.getClass(), exception.getMessage());
+
+        model.addAttribute("message", exception.getMessage());
+        model.addAttribute("path", request.getRequestURI());
+
         // 401 - Unauthorized (authentication failure)
         if (exception instanceof AuthenticationException) {
-            httpServletResponse.setStatus(401);
+            response.setStatus(401);
             return "error/error";
         }
 
         // 403 - Forbidden (access denied)
         if (exception instanceof AccessDeniedException) {
-            httpServletResponse.setStatus(403);
+            response.setStatus(403);
             return "error/error";
         }
 
         // ResponseStatusException (e.g. 404)
-        if (exception instanceof ResponseStatusException responseStatusException) {
-            if (responseStatusException.getStatusCode().value() == 404) {
-                httpServletResponse.setStatus(404);
+        if (exception instanceof ResponseStatusException rse) {
+            if (rse.getStatusCode().value() == 404) {
+                response.setStatus(404);
                 return "error/404";
             }
         }
 
         // Default → 500 Internal Server Error
-        httpServletResponse.setStatus(500);
+        response.setStatus(500);
         return "error/error";
     }
 }

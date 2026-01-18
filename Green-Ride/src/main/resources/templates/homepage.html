@@ -151,7 +151,7 @@
                                 function pad2(n){ return String(n).padStart(2, "0"); }
 
                                 // ---------- Build time dropdown (12h with AM/PM) ----------
-                                const stepMinutes = 15;
+                                const stepMinutes = 10;
                                 timeEl.innerHTML = "";
 
                                 for (let h = 0; h < 24; h++) {
@@ -174,7 +174,7 @@
                                 dateEl.min = todayStr;
 
                                 // ---------- Default = now + 30 minutes (with rollover day fix) ----------
-                                const plus30 = new Date(now.getTime() + 30 * 60 * 1000);
+                                const plus30 = new Date(now.getTime() + 10 * 60 * 1000);
 
                                 // Round minutes up to stepMinutes
                                 let H24 = plus30.getHours();
@@ -202,8 +202,6 @@
 
                                 const defaultTime = `${pad2(H12)}:${pad2(MM)} ${isPM ? "PM" : "AM"}`;
                                 timeEl.value = defaultTime;
-
-                                // Optional: if user changes date to today, you can also force time >= now+step, but not needed for default
                             });
                         </script>
                     </div>

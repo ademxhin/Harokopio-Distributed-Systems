@@ -1474,3 +1474,173 @@ create global temporary table HTE_person(banned boolean, report_count integer, r
 2026-01-18 14:35:11.785352+02:00 jdbc[23]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
 create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 17:21:38.261087+02:00 jdbc[63]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 17:21:43.437092+02:00 jdbc[73]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 17:24:44.297194+02:00 jdbc[83]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 17:24:48.176469+02:00 jdbc[93]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 18:18:33.169345+02:00 jdbc[121]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 18:18:36.097251+02:00 jdbc[131]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 18:28:41.536668+02:00 jdbc[141]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 18:28:44.697672+02:00 jdbc[151]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 18:41:59.863342+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 18:42:03.984209+02:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 18:44:11.660583+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 18:44:14.839509+02:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 18:45:43.937918+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 18:45:47.012264+02:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 19:07:21.355765+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 19:07:25.065346+02:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 19:57:26.239666+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 19:57:29.821322+02:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 20:01:37.788037+02:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 20:10:10.017210+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 20:10:13.697739+02:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 20:10:38.135596+02:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 20:10:41.768522+02:00 jdbc[43]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 20:11:00.159414+02:00 jdbc[53]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 20:11:01.840912+02:00 jdbc[53]: exception
+org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (to disable automatic closing at VM shutdown, add ";DB_CLOSE_ON_EXIT=FALSE" to the db URL) [90121-232]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.message.DbException.get(DbException.java:188)
+	at org.h2.jdbc.JdbcConnection.checkClosed(JdbcConnection.java:1423)
+	at org.h2.jdbc.JdbcConnection.getAutoCommit(JdbcConnection.java:463)
+	at com.zaxxer.hikari.pool.ProxyConnection.getAutoCommit(ProxyConnection.java:405)
+	at com.zaxxer.hikari.pool.HikariProxyConnection.getAutoCommit(HikariProxyConnection.java)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:49)
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.getIsolatedConnection(GenerationTargetToDatabase.java:60)
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.jdbcStatement(GenerationTargetToDatabase.java:112)
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:79)
+	at org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl.perform(SchemaDropperImpl.java:628)
+	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryClosing(SessionFactoryObserverForSchemaExport.java:48)
+	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryClosing(SessionFactoryObserverChain.java:48)
+	at org.hibernate.internal.SessionFactoryImpl.close(SessionFactoryImpl.java:928)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.invokeProxyMethod(AbstractEntityManagerFactoryBean.java:529)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean$ManagedEntityManagerFactoryInvocationHandler.invoke(AbstractEntityManagerFactoryBean.java:750)
+	at jdk.proxy9/jdk.proxy9.$Proxy220.close(Unknown Source)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.destroy(AbstractEntityManagerFactoryBean.java:662)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:212)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:798)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:748)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1499)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:707)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1492)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1222)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1183)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:179)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1129)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:147)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:116)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+2026-01-18 20:11:01.844909+02:00 jdbc[53]: exception
+org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (to disable automatic closing at VM shutdown, add ";DB_CLOSE_ON_EXIT=FALSE" to the db URL) [90121-232]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.message.DbException.get(DbException.java:188)
+	at org.h2.jdbc.JdbcConnection.checkClosed(JdbcConnection.java:1423)
+	at org.h2.jdbc.JdbcConnection.clearWarnings(JdbcConnection.java:658)
+	at com.zaxxer.hikari.pool.ProxyConnection.close(ProxyConnection.java:258)
+	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.closeConnection(DatasourceConnectionProviderImpl.java:131)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.releaseConnection(JdbcEnvironmentInitiator.java:490)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.release(DdlTransactionIsolatorNonJtaImpl.java:106)
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.release(GenerationTargetToDatabase.java:134)
+	at org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl.perform(SchemaDropperImpl.java:639)
+	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryClosing(SessionFactoryObserverForSchemaExport.java:48)
+	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryClosing(SessionFactoryObserverChain.java:48)
+	at org.hibernate.internal.SessionFactoryImpl.close(SessionFactoryImpl.java:928)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.invokeProxyMethod(AbstractEntityManagerFactoryBean.java:529)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean$ManagedEntityManagerFactoryInvocationHandler.invoke(AbstractEntityManagerFactoryBean.java:750)
+	at jdk.proxy9/jdk.proxy9.$Proxy220.close(Unknown Source)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.destroy(AbstractEntityManagerFactoryBean.java:662)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:212)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:798)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:748)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1499)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:707)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1492)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1222)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1183)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:179)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1129)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:147)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:116)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+2026-01-18 20:55:32.876456+02:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 20:55:36.684971+02:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 22:00:52.214625+02:00 jdbc[30]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 22:00:57.584650+02:00 jdbc[40]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 22:15:19.602732+02:00 jdbc[50]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 22:56:48.267376+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]
+2026-01-18 22:56:51.799363+02:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "hte_person" already exists; SQL statement:
+create global temporary table HTE_person(banned boolean, report_count integer, rn_ integer not null, id bigint, email_address varchar(255), first_name varchar(255), hashed_password varchar(255), last_name varchar(255), mobile_phone_number varchar(255), user_id varchar(255), person_type enum ('ADMIN','DRIVER','PASSENGER'), primary key (rn_)) TRANSACTIONAL [42101-232]

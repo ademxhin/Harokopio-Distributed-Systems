@@ -75,7 +75,7 @@ public class PersonServiceImpl implements PersonService {
         final String rawPassword = createPersonRequest.rawPassword();
         final String confirmRawPassword = createPersonRequest.confirmRawPassword();
 
-        // ✅ ONE ROLE ONLY (PersonType)
+        // ONE ROLE ONLY (PersonType)
         final PersonType personType = createPersonRequest.personType();
         if (personType == null) {
             return CreatePersonResult.fail("Please select a role");
@@ -119,7 +119,7 @@ public class PersonServiceImpl implements PersonService {
         // Hash password
         final String hashedPassword = this.passwordEncoder.encode(rawPassword);
 
-        // ✅ Person constructor now takes PersonType (not UserType)
+        // Person constructor now takes PersonType (not UserType)
         Person person = new Person(
                 userId,
                 firstName,

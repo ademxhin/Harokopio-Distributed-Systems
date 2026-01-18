@@ -11,6 +11,7 @@
 
 <main layout:fragment="main" class="gr-offered-page">
     <div class="container">
+
         <div class="gr-page-head">
             <h1 class="gr-page-title">My Offered Rides</h1>
         </div>
@@ -34,9 +35,13 @@
                 <div class="gr-col gr-col-route">Route</div>
                 <div class="gr-col gr-col-time">Departure</div>
                 <div class="gr-col gr-col-seats">Seats</div>
+                <div class="gr-col gr-col-actions">Actions</div>
             </div>
 
-            <div class="gr-row" th:each="r : ${rides}">
+            <div class="gr-row"
+                 th:each="r : ${rides}"
+                 th:with="canCancel=${r.departureTime.isAfter(T(java.time.LocalDateTime).now().plusMinutes(90))}">
+
                 <div class="gr-col gr-col-route">
                     <div class="gr-route">
                         <span class="gr-loc" th:text="${r.startLocation}">Origin</span>
@@ -66,6 +71,27 @@
                         </span>
                     </div>
                 </div>
+
+                <div class="gr-col gr-col-actions">
+                    <form class="gr-actions"
+                          th:action="@{/rides/offered/cancel/{id}(id=${r.id})}"
+                          method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <button type="submit"
+                                class="gr-btn gr-btn-danger"
+                                th:disabled="${!canCancel}"
+                                th:attr="title=${canCancel} ? 'Cancel this ride'
+                                  : 'You can cancel up to 1.5 hours before departure'">
+                            Cancel
+                        </button>
+                    </form>
+
+                    <div class="gr-action-hint" th:if="${!canCancel}">
+                        Cancel closes 90’ before departure.
+                    </div>
+                </div>
+
             </div>
 
         </div>

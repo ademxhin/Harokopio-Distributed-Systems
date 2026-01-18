@@ -91,12 +91,12 @@ public class RideController {
             return "rides_not_passenger";
         }
 
-        LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
+        LocalDateTime now = LocalDateTime.now();
 
         List<Booking> allBookings = bookingRepository.findByPerson(currentUser);
 
         List<Booking> activeBookings = allBookings.stream()
-                .filter(b -> b.getRide().getDepartureTime().isAfter(limit))
+                .filter(b -> b.getRide().getDepartureTime().isAfter(now))
                 .toList();
 
         model.addAttribute("bookings", activeBookings);
@@ -140,9 +140,8 @@ public class RideController {
             return "rides_not_passenger";
         }
 
-        LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
-
-        List<Ride> drivenRides = rideRepository.findByDriverAndDepartureTimeBefore(currentUser, limit);
+        LocalDateTime now = LocalDateTime.now();
+        List<Ride> drivenRides = rideRepository.findByDriverAndDepartureTimeBefore(currentUser, now);
 
         List<Ride> sorted = drivenRides.stream()
                 .sorted((r1, r2) -> r2.getDepartureTime().compareTo(r1.getDepartureTime()))
@@ -172,10 +171,10 @@ public class RideController {
             return "rides_not_passenger";
         }
 
-        LocalDateTime limit = LocalDateTime.now().plusMinutes(10);
+        LocalDateTime now = LocalDateTime.now();
 
         List<Booking> pastBookings =
-                bookingRepository.findByPersonAndRide_DepartureTimeBefore(currentUser, limit);
+                bookingRepository.findByPersonAndRide_DepartureTimeBefore(currentUser, now);
 
         List<Ride> bookedRides = pastBookings.stream()
                 .map(Booking::getRide)
@@ -217,6 +216,36 @@ public class RideController {
 
         model.addAttribute("rides", sorted);
         return "offered_rides";
+    }
+
+    @PostMapping("/offered/cancel/{id}")
+    @PreAuthorize("hasRole('DRIVER')")
+    public String cancelOfferedRide(@PathVariable Long id,
+                                    @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+
+        if (userDetails == null) return "redirect:/login";
+
+        Person currentUser = userDetails.getPerson();
+
+        Ride ride = rideRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid ride Id:" + id));
+
+        // Must be owner
+        if (ride.getDriver() == null || ride.getDriver().getId() == null ||
+                !ride.getDriver().getId().equals(currentUser.getId())) {
+            return "redirect:/rides/offered?error=not_owner";
+        }
+
+        // 90 minutes rule (1.5 hours) for DRIVER cancel offered ride
+        LocalDateTime limit = LocalDateTime.now().plusMinutes(90);
+        if (!ride.getDepartureTime().isAfter(limit)) {
+            return "redirect:/rides/offered?error=too_late";
+        }
+
+        bookingRepository.deleteAllByRide(ride);
+        rideRepository.delete(ride);
+
+        return "redirect:/rides/offered?canceled";
     }
 
     // =========================================================
