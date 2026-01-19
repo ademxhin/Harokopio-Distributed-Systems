@@ -2,9 +2,6 @@ package dit.hua.gr.greenride.core.port.impl.dto;
 
 import java.util.List;
 
-/**
- * Minimal DTO for OpenRouteService directions response (GeoJSON).
- */
 public record OpenRouteServiceResponse(
         List<Feature> features
 ) {

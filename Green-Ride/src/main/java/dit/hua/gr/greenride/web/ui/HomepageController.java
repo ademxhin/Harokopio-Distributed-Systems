@@ -33,7 +33,6 @@ public class HomepageController {
 
         final String location = "Athens";
 
-        // Weather
         try {
             WeatherResult weather = weatherApiPort.getCurrentWeather(location);
             model.addAttribute("weatherLocation", location);
@@ -44,7 +43,6 @@ public class HomepageController {
             model.addAttribute("weatherError", "Weather service unavailable");
         }
 
-        // Route demo: Harokopio University -> Syntagma (example coords)
         double fromLat = 37.962219;
         double fromLon = 23.700788;
         double toLat = 37.975436;

@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 
     @Query("select avg(r.score) from Rating r where r.ratedPerson.id = :personId")
-    Double findAverageScoreForPerson(@Param("personId") Long personId);
 
     boolean existsByRaterAndRatedPerson(Person rater, Person ratedPerson);
 }

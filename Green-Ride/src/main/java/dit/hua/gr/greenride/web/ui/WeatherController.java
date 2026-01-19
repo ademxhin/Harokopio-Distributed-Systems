@@ -13,12 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
-/**
- * REST controller exposing weather information.
- *
- * This endpoint is part of Green Ride and consumes an external Weather API (black box)
- * through the WeatherApiPort.
- */
 @RestController
 @RequestMapping("/api/weather")
 public class WeatherController {
@@ -55,13 +49,9 @@ public class WeatherController {
             return ResponseEntity.badRequest().body(new ErrorResponse("Invalid request: " + ex.getMessage()));
 
         } catch (WeatherServiceException ex) {
-            // 502 Bad Gateway is appropriate when an upstream service fails
             return ResponseEntity.status(502).body(new ErrorResponse("Weather provider error: " + ex.getMessage()));
         }
     }
 
-    /**
-     * Simple error body for consistent API responses.
-     */
     private record ErrorResponse(String message) { }
 }

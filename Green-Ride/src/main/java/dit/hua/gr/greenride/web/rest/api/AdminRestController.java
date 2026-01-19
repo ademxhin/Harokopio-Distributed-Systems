@@ -30,9 +30,6 @@ public class AdminRestController {
         this.personRepository = personRepository;
     }
 
-    // =========================
-    // DTO for REST (SAFE - no lazy relations)
-    // =========================
     public record AdminUserView(
             Long id,
             String email,
@@ -41,7 +38,6 @@ public class AdminRestController {
     ) {}
 
     private AdminUserView toView(Person p) {
-        // Προσαρμόζεις αν τα getters σου διαφέρουν
         String email = safe(p.getEmailAddress());
         String fullName = safe(p.getFullName());
         String personType = (p.getPersonType() != null) ? p.getPersonType().name() : null;
@@ -58,9 +54,6 @@ public class AdminRestController {
         return (s == null || s.isBlank()) ? null : s;
     }
 
-    // =========================
-    // Dashboard
-    // =========================
     public record AdminDashboardResponse(
             AdminStats stats,
             List<String> flaggedUsers,
@@ -90,9 +83,6 @@ public class AdminRestController {
         return new AdminDashboardResponse(stats, flaggedUsers, allUsers, kickedUserNames);
     }
 
-    // =========================
-    // Kick user
-    // =========================
     @Operation(summary = "Kick a user (delete user and log kicked user full name)")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "User kicked (deleted)"),

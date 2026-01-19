@@ -41,10 +41,6 @@ public class BookingRestController {
         this.personRepository = personRepository;
     }
 
-    // =========================================================
-    // DTOs
-    // =========================================================
-
     public record CreateBookingRequest(@NotNull Long rideId) {}
 
     public record BookingResponse(
@@ -63,10 +59,6 @@ public class BookingRestController {
                 b.getStatus()
         );
     }
-
-    // =========================================================
-    // Helpers
-    // =========================================================
 
     private Person requireUser(final Principal principal) {
         if (principal == null || principal.getName() == null || principal.getName().isBlank()) {
@@ -90,10 +82,6 @@ public class BookingRestController {
         return LocalDateTime.now().plusMinutes(10);
     }
 
-    // =========================================================
-    // 0) Passenger: My bookings (so you can see bookingIds)
-    // =========================================================
-
     @Operation(summary = "Get my bookings (Passenger) - returns bookingIds")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "My bookings returned"),
@@ -113,10 +101,6 @@ public class BookingRestController {
                 .map(this::toBookingResponse)
                 .toList();
     }
-
-    // =========================================================
-    // 1) Create booking
-    // =========================================================
 
     @Operation(summary = "Create a booking (Passenger)")
     @ApiResponses({
@@ -163,9 +147,6 @@ public class BookingRestController {
 
         return toBookingResponse(saved);
     }
-    // =========================================================
-    // 2) Cancel booking (RESTful)
-    // =========================================================
 
     @Operation(summary = "Cancel a booking by id (Passenger) - RESTful")
     @ApiResponses({

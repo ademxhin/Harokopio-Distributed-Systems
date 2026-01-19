@@ -83,7 +83,6 @@ public class BookingController {
         Ride ride = booking.getRide();
         LocalDateTime now = LocalDateTime.now();
 
-        // Cancel NOT allowed in the last 10 minutes before departure
         LocalDateTime cutoff = ride.getDepartureTime().minusMinutes(10);
         if (!now.isBefore(cutoff)) {
             return "redirect:/rides/bookings?error=too_late_to_cancel";

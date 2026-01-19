@@ -32,11 +32,6 @@ public class RideController {
         this.ratingRepository = ratingRepository;
     }
 
-    // =========================================================
-    // Passenger: Search available rides
-    // Driver: friendly message
-    // =========================================================
-
     @GetMapping("/search")
     public String showAvailableRides(Model model,
                                      @AuthenticationPrincipal ApplicationUserDetails userDetails) {
@@ -70,11 +65,6 @@ public class RideController {
         return "rides";
     }
 
-    // =========================================================
-    // Passenger bookings page
-    // Driver: friendly message
-    // =========================================================
-
     @GetMapping("/bookings")
     public String showMyBookings(Model model,
                                  @AuthenticationPrincipal ApplicationUserDetails userDetails) {
@@ -103,10 +93,6 @@ public class RideController {
         return "bookings";
     }
 
-    // =========================================================
-    // History redirect based on current user's PersonType
-    // =========================================================
-
     @GetMapping("/history")
     public String historyRedirect(@AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
@@ -119,10 +105,6 @@ public class RideController {
         }
         return "redirect:/rides/history/passenger";
     }
-
-    // =========================================================
-    // Driver-only history: completed rides you offered
-    // =========================================================
 
     @GetMapping("/history/driver")
     public String showDriverHistory(Model model,
@@ -150,10 +132,6 @@ public class RideController {
         model.addAttribute("rides", sorted);
         return "history";
     }
-
-    // =========================================================
-    // Passenger-only history: completed booked rides
-    // =========================================================
 
     @GetMapping("/history/passenger")
     public String showPassengerHistory(Model model,
@@ -185,10 +163,6 @@ public class RideController {
         model.addAttribute("rides", bookedRides);
         return "history";
     }
-
-    // =========================================================
-    // Driver-only: upcoming rides offered
-    // =========================================================
 
     @GetMapping("/offered")
     public String showMyOfferedRides(Model model,
@@ -230,13 +204,11 @@ public class RideController {
         Ride ride = rideRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid ride Id:" + id));
 
-        // Must be owner
         if (ride.getDriver() == null || ride.getDriver().getId() == null ||
                 !ride.getDriver().getId().equals(currentUser.getId())) {
             return "redirect:/rides/offered?error=not_owner";
         }
 
-        // 90 minutes rule (1.5 hours) for DRIVER cancel offered ride
         LocalDateTime limit = LocalDateTime.now().plusMinutes(90);
         if (!ride.getDepartureTime().isAfter(limit)) {
             return "redirect:/rides/offered?error=too_late";
@@ -247,10 +219,6 @@ public class RideController {
 
         return "redirect:/rides/offered?canceled";
     }
-
-    // =========================================================
-    // Ratings redirect
-    // =========================================================
 
     @GetMapping("/ratings")
     public String ratingsRedirect(@AuthenticationPrincipal ApplicationUserDetails userDetails) {
@@ -263,10 +231,6 @@ public class RideController {
         }
         return "redirect:/rides/ratings/passenger";
     }
-
-    // =========================================================
-    // DRIVER: rate passengers
-    // =========================================================
 
     @GetMapping("/ratings/driver")
     public String showRatingsAsDriver(@RequestParam(value = "search", required = false) String search,
@@ -303,10 +267,6 @@ public class RideController {
         return "ratings";
     }
 
-    // =========================================================
-    // PASSENGER: rate drivers
-    // =========================================================
-
     @GetMapping("/ratings/passenger")
     public String showRatingsAsPassenger(@RequestParam(value = "search", required = false) String search,
                                          Model model,
@@ -342,10 +302,6 @@ public class RideController {
         return "ratings";
     }
 
-    // =========================================================
-    // Submit rating (Driver or Passenger)
-    // =========================================================
-
     @PostMapping("/ratings/submit")
     @PreAuthorize("hasAnyRole('PASSENGER','DRIVER')")
     public String submitRating(@RequestParam("userId") Long userId,
@@ -375,10 +331,6 @@ public class RideController {
 
         return "redirect:/rides/ratings?success";
     }
-
-    // =========================================================
-    // Driver: create ride form
-    // =========================================================
 
     @GetMapping("/offer")
     @PreAuthorize("hasRole('DRIVER')")
@@ -410,10 +362,6 @@ public class RideController {
         return "redirect:/profile";
     }
 
-    // =========================================================
-    // Reservation page
-    // =========================================================
-
     @GetMapping("/reservation")
     public String showReservationPage(@RequestParam("id") Long rideId, Model model) {
         Ride ride = rideRepository.findById(rideId)
@@ -421,10 +369,6 @@ public class RideController {
         model.addAttribute("ride", ride);
         return "reservation";
     }
-
-    // =========================================================
-    // Passenger: book ride
-    // =========================================================
 
     @PostMapping("/book/{id}")
     @PreAuthorize("hasRole('PASSENGER')")

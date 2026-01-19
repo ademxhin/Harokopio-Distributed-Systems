@@ -12,8 +12,6 @@ import java.util.List;
 @Repository
 public interface RideRepository extends JpaRepository<Ride, Long> {
 
-    List<Ride> findByDriver(Person driver);
-
     List<Ride> findByDriverAndDepartureTimeBefore(Person driver, LocalDateTime time);
 
     List<Ride> findByDriverAndDepartureTimeAfter(Person driver, LocalDateTime time);

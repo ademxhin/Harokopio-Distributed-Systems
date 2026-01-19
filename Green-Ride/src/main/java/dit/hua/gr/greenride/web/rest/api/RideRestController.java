@@ -25,15 +25,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-/**
- * REST API endpoints for Rides / Bookings / Ratings.
- *
- * IMPORTANT:
- * - We do NOT use ApplicationUserDetails in REST.
- * - We use Principal.getName() (email/subject from JWT) and fetch Person from DB.
- *
- * DTO-ONLY RESPONSES (avoid LazyInitializationException).
- */
 @Tag(name = "Rides", description = "Ride search, offers, bookings, history and ratings")
 @RestController
 @RequestMapping("/api/rides")
@@ -53,10 +44,6 @@ public class RideRestController {
         this.bookingRepository = bookingRepository;
         this.ratingRepository = ratingRepository;
     }
-
-    // =========================================================
-    // DTOs (keep in this file, no extra files)
-    // =========================================================
 
     public record PersonSummary(
             Long id,
@@ -118,16 +105,6 @@ public class RideRestController {
         );
     }
 
-    private BookingResponse toBookingResponse(Booking b) {
-        if (b == null) return null;
-        return new BookingResponse(
-                b.getId(),
-                b.getCreatedAt(),
-                b.getRide() != null ? b.getRide().getId() : null,
-                toRideResponse(b.getRide())
-        );
-    }
-
     private RatingResponse toRatingResponse(Rating rating) {
         if (rating == null) return null;
         return new RatingResponse(
@@ -137,10 +114,6 @@ public class RideRestController {
                 rating.getRatedPerson() != null ? rating.getRatedPerson().getId() : null
         );
     }
-
-    // =========================================================
-    // 1) Helpers
-    // =========================================================
 
     private Person requireUser(final Principal principal) {
         if (principal == null || principal.getName() == null || principal.getName().isBlank()) {
@@ -168,10 +141,6 @@ public class RideRestController {
     private static LocalDateTime limitNowPlus10() {
         return LocalDateTime.now().plusMinutes(10);
     }
-
-    // =========================================================
-    // 2) Passenger: Search rides
-    // =========================================================
 
     @Operation(summary = "Search available rides (Passenger)")
     @ApiResponses({
@@ -201,10 +170,6 @@ public class RideRestController {
                 .toList();
     }
 
-    // =========================================================
-    // 3) Driver: Offered rides (upcoming)
-    // =========================================================
-
     @Operation(summary = "Get my offered upcoming rides (Driver)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List of upcoming rides offered by driver"),
@@ -228,10 +193,6 @@ public class RideRestController {
                 .toList();
     }
 
-    // =========================================================
-    // 4) History: driver
-    // =========================================================
-
     @Operation(summary = "Get my ride history as driver (completed rides)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List of completed rides"),
@@ -254,10 +215,6 @@ public class RideRestController {
                 .map(this::toRideResponse)
                 .toList();
     }
-
-    // =========================================================
-    // 5) History: passenger
-    // =========================================================
 
     @Operation(summary = "Get my ride history as passenger (completed booked rides)")
     @ApiResponses({
@@ -284,10 +241,6 @@ public class RideRestController {
                 .map(this::toRideResponse)
                 .toList();
     }
-
-    // =========================================================
-    // 6) Driver: Create ride
-    // =========================================================
 
     public record CreateRideRequest(
             @NotBlank String origin,
@@ -337,10 +290,6 @@ public class RideRestController {
         return toRideResponse(saved);
     }
 
-    // =========================================================
-    // 7) Ride details
-    // =========================================================
-
     @Operation(summary = "Get ride details by id")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Ride details"),
@@ -352,10 +301,6 @@ public class RideRestController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ride not found: " + rideId));
         return toRideResponse(ride);
     }
-
-    // =========================================================
-    // 8) Ratings: list users to rate
-    // =========================================================
 
     @Operation(summary = "List users available for rating (Driver rates passengers OR Passenger rates drivers)")
     @ApiResponses({
@@ -379,10 +324,6 @@ public class RideRestController {
 
         return users.stream().map(this::toPersonSummary).toList();
     }
-
-    // =========================================================
-    // 9) Submit rating
-    // =========================================================
 
     public record SubmitRatingRequest(
             @NotNull Long userId,
@@ -418,16 +359,11 @@ public class RideRestController {
 
         Rating saved = ratingRepository.save(rating);
 
-        // Optional; usually not needed if relationship is mapped correctly
         targetPerson.getRatings().add(saved);
         personRepository.save(targetPerson);
 
         return toRatingResponse(saved);
     }
-
-    // =========================================================
-    // 10) Driver: cancel offered ride
-    // =========================================================
 
     @Operation(summary = "Cancel (delete) a ride I offered (Driver)")
     @ApiResponses({

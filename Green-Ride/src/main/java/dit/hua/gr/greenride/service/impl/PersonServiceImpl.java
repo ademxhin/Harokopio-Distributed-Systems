@@ -52,7 +52,6 @@ public class PersonServiceImpl implements PersonService {
     public CreatePersonResult createPerson(final CreatePersonRequest createPersonRequest, final boolean notify) {
         if (createPersonRequest == null) throw new NullPointerException("createPersonRequest is null");
 
-        // Validate CreatePersonRequest
         final Set<ConstraintViolation<CreatePersonRequest>> requestViolations =
                 this.validator.validate(createPersonRequest);
 
@@ -67,7 +66,6 @@ public class PersonServiceImpl implements PersonService {
             return CreatePersonResult.fail(sb.toString());
         }
 
-        // Unpack & normalize
         final String firstName = createPersonRequest.firstName().strip();
         final String lastName = createPersonRequest.lastName().strip();
         final String emailAddress = createPersonRequest.emailAddress().strip();
@@ -75,23 +73,19 @@ public class PersonServiceImpl implements PersonService {
         final String rawPassword = createPersonRequest.rawPassword();
         final String confirmRawPassword = createPersonRequest.confirmRawPassword();
 
-        // ONE ROLE ONLY (PersonType)
         final PersonType personType = createPersonRequest.personType();
         if (personType == null) {
             return CreatePersonResult.fail("Please select a role");
         }
 
-        // IMPORTANT: Do NOT allow ADMIN registration from public endpoint
         if (personType == PersonType.ADMIN) {
             return CreatePersonResult.fail("Admin registration is not allowed");
         }
 
-        // Confirm password check (business rule)
         if (!rawPassword.equals(confirmRawPassword)) {
             return CreatePersonResult.fail("Password and Confirm Password do not match");
         }
 
-        // Advanced phone validation via PhoneNumberPort
         final PhoneNumberValidationResult phoneResult;
         try {
             phoneResult = this.phoneNumberPort.validate(mobilePhoneNumber);
@@ -104,7 +98,6 @@ public class PersonServiceImpl implements PersonService {
         }
         mobilePhoneNumber = phoneResult.e164();
 
-        // Uniqueness checks
         if (this.personRepository.existsByEmailAddress(emailAddress)) {
             return CreatePersonResult.fail("Email Address already registered");
         }
@@ -113,13 +106,10 @@ public class PersonServiceImpl implements PersonService {
             return CreatePersonResult.fail("Mobile Phone Number already registered");
         }
 
-        // Generate unique public userId
         final String userId = generateUniqueUserId();
 
-        // Hash password
         final String hashedPassword = this.passwordEncoder.encode(rawPassword);
 
-        // Person constructor now takes PersonType (not UserType)
         Person person = new Person(
                 userId,
                 firstName,
@@ -130,16 +120,13 @@ public class PersonServiceImpl implements PersonService {
                 hashedPassword
         );
 
-        // Validate Person entity
         final Set<ConstraintViolation<Person>> personViolations = this.validator.validate(person);
         if (!personViolations.isEmpty()) {
             throw new RuntimeException("Invalid Person instance created from request");
         }
 
-        // Persist
         person = this.personRepository.save(person);
 
-        // Map to PersonView
         final PersonView personView = this.personMapper.convertPersonToPersonView(person);
 
         return CreatePersonResult.success(personView);

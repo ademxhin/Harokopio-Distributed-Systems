@@ -10,12 +10,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Objects;
 
-/**
- * Default implementation of {@link WeatherApiPort}.
- *
- * It consumes an external Weather API (Open-Meteo),
- * which is treated as a black box REST service.
- */
 @Service
 public class WeatherApiPortImpl implements WeatherApiPort {
 
@@ -40,11 +34,6 @@ public class WeatherApiPortImpl implements WeatherApiPort {
             throw new IllegalArgumentException("location must not be blank");
         }
 
-        /*
-         * Static coordinates for demo purposes (Athens).
-         * This is acceptable for the assignment and keeps the focus
-         * on REST communication and system distribution.
-         */
         double latitude = 37.9838;
         double longitude = 23.7275;
 
@@ -74,9 +63,6 @@ public class WeatherApiPortImpl implements WeatherApiPort {
         }
     }
 
-    /**
-     * Maps Open-Meteo weather codes to human-readable conditions.
-     */
     private String mapWeatherCode(int code) {
         return switch (code) {
             case 0 -> "Clear";

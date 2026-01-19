@@ -43,10 +43,8 @@ public class RegistrationRestController {
     @ResponseStatus(HttpStatus.CREATED)
     public RegisterResponse register(@Valid @RequestBody CreatePersonRequest request) {
 
-        // password must match confirm (same UI logic)
         if (request.rawPassword() == null || request.confirmRawPassword() == null
                 || !request.rawPassword().equals(request.confirmRawPassword())) {
-            // 400
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password and Confirm Password do not match");
         }
 
@@ -54,14 +52,12 @@ public class RegistrationRestController {
             CreatePersonResult result = personService.createPerson(request, true);
 
             if (!result.created()) {
-                // business failure => 400 with reason
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.reason());
             }
 
             return new RegisterResponse(true, null);
 
         } catch (ExternalServiceUnavailableException ex) {
-            // 503
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                     "Phone validation service is currently unavailable. Please try again later.");
         }
