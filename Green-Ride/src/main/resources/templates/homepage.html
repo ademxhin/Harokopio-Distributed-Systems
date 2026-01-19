@@ -9,10 +9,10 @@
 <th:block layout:fragment="head">
     <title>GreenRide | Homepage</title>
 
-    <!-- ✅ Global theme (buttons etc) -->
+    <!-- ✅ Global theme (buttons etc.) -->
     <link rel="stylesheet" th:href="@{/css/theme.css}">
 
-    <!-- Page css -->
+    <!-- Page CSS -->
     <link rel="stylesheet" th:href="@{/css/homepage.css}">
 
     <!-- Leaflet -->
@@ -188,7 +188,7 @@
                                     plus30.setMinutes(rounded, 0, 0);
                                 }
 
-                                // Use plus30's date (may be tomorrow)
+                                // Use plus30's date (maybe tomorrow)
                                 const defaultDate = `${plus30.getFullYear()}-${pad2(plus30.getMonth()+1)}-${pad2(plus30.getDate())}`;
                                 if (!dateEl.value) dateEl.value = defaultDate;
 
