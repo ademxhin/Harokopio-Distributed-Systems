@@ -12,7 +12,6 @@
 <main layout:fragment="main" class="gr-profile-page">
     <div class="container gr-profile-layout">
 
-        <!-- SIDEBAR -->
         <aside class="gr-side">
             <div class="gr-side-user">
                 <div class="gr-side-avatar">
@@ -36,10 +35,8 @@
             </nav>
         </aside>
 
-        <!-- CONTENT -->
         <section class="gr-content">
 
-            <!-- HOME TAB -->
             <th:block th:if="${activeTab == 'home'}">
 
                 <header class="gr-content-header">
@@ -54,7 +51,6 @@
                     <div class="gr-header-divider"></div>
                 </header>
 
-                <!-- ACTIONS -->
                 <div class="gr-actions-grid">
 
                     <div class="gr-action-card" th:if="${driverEnabled}">
@@ -106,7 +102,6 @@
                     </div>
                 </div>
 
-                <!-- ADMIN -->
                 <th:block th:if="${isAdmin}">
 
                     <div class="gr-admin-sep"></div>
@@ -119,7 +114,6 @@
                             <div class="gr-action-sub gr-sub-compact">
                                 <div class="gr-kv">Total rides: <strong th:text="${stats.totalRides}">0</strong></div>
 
-                                <!-- REQUIRED BY BRIEF: average occupancy -->
                                 <div class="gr-kv">
                                     Average occupancy:
                                     <strong th:text="${stats.averageOccupancyPctRounded} + '%'">0%</strong>
@@ -186,7 +180,6 @@
                 </th:block>
             </th:block>
 
-            <!-- PERSONAL TAB -->
             <th:block th:if="${activeTab == 'personal'}">
                 <header class="gr-content-header">
                     <h1 class="gr-h1">Personal info</h1>

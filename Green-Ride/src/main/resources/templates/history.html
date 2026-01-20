@@ -13,13 +13,11 @@
     <div class="container">
         <div class="gr-history-wrap">
 
-            <!-- Header -->
             <div class="gr-history-head">
                 <h1 class="gr-history-title">Ride History</h1>
                 <p class="gr-history-sub">Your completed rides</p>
             </div>
 
-            <!-- EMPTY -->
             <section th:if="${#lists.isEmpty(rides)}" class="gr-history-card gr-empty">
                 <h3 class="gr-card-title">No History Found</h3>
                 <p class="gr-muted">You haven't participated in any rides yet.</p>
@@ -31,7 +29,6 @@
                 </div>
             </section>
 
-            <!-- LIST -->
             <section th:if="${not #lists.isEmpty(rides)}" class="gr-history-list">
 
                 <article class="gr-history-card"

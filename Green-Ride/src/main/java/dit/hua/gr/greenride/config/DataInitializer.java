@@ -34,9 +34,6 @@ public class DataInitializer {
     @PostConstruct
     public void init() {
 
-        /* =========================
-           ADMIN
-        ========================= */
         personRepository.findByEmailAddress("admin@greenride.com").orElseGet(() -> {
             Person admin = new Person();
             admin.setUserId("admin001");

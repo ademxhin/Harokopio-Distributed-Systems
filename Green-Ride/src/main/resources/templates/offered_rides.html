@@ -16,7 +16,6 @@
             <h1 class="gr-page-title">My Offered Rides</h1>
         </div>
 
-        <!-- Empty state -->
         <div class="gr-card gr-empty" th:if="${#lists.isEmpty(rides)}">
             <h3 class="gr-card-title">No upcoming rides</h3>
             <p class="gr-muted">
@@ -28,7 +27,6 @@
             </a>
         </div>
 
-        <!-- List -->
         <div class="gr-card gr-list" th:if="${!#lists.isEmpty(rides)}">
 
             <div class="gr-list-head">

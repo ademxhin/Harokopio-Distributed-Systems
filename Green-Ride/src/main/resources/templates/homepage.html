@@ -1,4 +1,3 @@
-<!-- src/main/resources/templates/homepage.html -->
 <!DOCTYPE html>
 <html
         lang="en"
@@ -9,13 +8,10 @@
 <th:block layout:fragment="head">
     <title>GreenRide | Homepage</title>
 
-    <!-- ✅ Global theme (buttons etc.) -->
     <link rel="stylesheet" th:href="@{/css/theme.css}">
 
-    <!-- Page CSS -->
     <link rel="stylesheet" th:href="@{/css/homepage.css}">
 
-    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 </th:block>
 
@@ -25,14 +21,12 @@
         <div class="container">
             <div class="gr-hero-grid">
 
-                <!-- LEFT PANEL -->
                 <div class="gr-panel">
                     <h1 class="gr-title">Go anywhere with GreenRide</h1>
                     <p class="gr-subtitle">
                         A distributed system demo for connecting users and drivers with a simple workflow.
                     </p>
 
-                    <!-- WEATHER CARD -->
                     <div class="gr-weather-card"
                          th:if="${weather != null}"
                          th:classappend="${
@@ -74,10 +68,8 @@
                         <div class="gr-weather-temp-big">—</div>
                     </div>
 
-                    <!-- MAIN BOX -->
                     <div class="gr-box">
 
-                        <!-- BOX 1: Search -->
                         <div class="gr-subbox">
                             <div class="gr-search-head">
                                 <div class="gr-search-title">Where do you wanna go?</div>
@@ -89,7 +81,6 @@
                             <form class="gr-search-form" th:action="@{/rides/search}" method="get">
 
                                 <div class="gr-search-grid">
-                                    <!-- FROM -->
                                     <div class="gr-input">
                                         <label class="gr-label" for="from">From</label>
                                         <input class="gr-control"
@@ -100,7 +91,6 @@
                                                required>
                                     </div>
 
-                                    <!-- TO -->
                                     <div class="gr-input">
                                         <label class="gr-label" for="to">To</label>
                                         <input class="gr-control"
@@ -111,7 +101,6 @@
                                                required>
                                     </div>
 
-                                    <!-- DATE -->
                                     <div class="gr-input">
                                         <label class="gr-label" for="date">Date</label>
                                         <input class="gr-control"
@@ -121,19 +110,16 @@
                                                required>
                                     </div>
 
-                                    <!-- TIME (single dropdown with AM/PM) -->
                                     <div class="gr-input">
                                         <label class="gr-label" for="time">Time</label>
                                         <select class="gr-control"
                                                 id="time"
                                                 name="time"
                                                 required>
-                                            <!-- Filled by JS: 12:00 AM → 11:55 PM -->
                                         </select>
                                     </div>
                                 </div>
 
-                                <!-- PRIMARY ACTION -->
                                 <button type="submit" class="gr-btn gr-btn-primary">
                                     Search rides
                                 </button>
@@ -141,7 +127,6 @@
                             </form>
                         </div>
 
-                        <!-- Default date = today | Default time = now + 30 minutes -->
                         <script>
                             document.addEventListener("DOMContentLoaded", function () {
                                 const dateEl = document.getElementById("date");
@@ -150,7 +135,6 @@
 
                                 function pad2(n){ return String(n).padStart(2, "0"); }
 
-                                // ---------- Build time dropdown (12h with AM/PM) ----------
                                 const stepMinutes = 10;
                                 timeEl.innerHTML = "";
 
@@ -168,15 +152,12 @@
                                     }
                                 }
 
-                                // ---------- Today (for min date) ----------
                                 const now = new Date();
                                 const todayStr = `${now.getFullYear()}-${pad2(now.getMonth()+1)}-${pad2(now.getDate())}`;
                                 dateEl.min = todayStr;
 
-                                // ---------- Default = now + 30 minutes (with rollover day fix) ----------
                                 const plus30 = new Date(now.getTime() + 10 * 60 * 1000);
 
-                                // Round minutes up to stepMinutes
                                 let H24 = plus30.getHours();
                                 let M = plus30.getMinutes();
 
@@ -188,11 +169,9 @@
                                     plus30.setMinutes(rounded, 0, 0);
                                 }
 
-                                // Use plus30's date (maybe tomorrow)
                                 const defaultDate = `${plus30.getFullYear()}-${pad2(plus30.getMonth()+1)}-${pad2(plus30.getDate())}`;
                                 if (!dateEl.value) dateEl.value = defaultDate;
 
-                                // Use plus30's time (after rounding)
                                 const HH = plus30.getHours();
                                 const MM = plus30.getMinutes();
 
@@ -207,7 +186,6 @@
                     </div>
                 </div>
 
-                <!-- RIGHT MAP PANEL -->
                 <div class="gr-map">
                     <div class="gr-mini-map-wrap">
                         <div class="gr-mini-map-header">
@@ -232,7 +210,6 @@
         </div>
     </section>
 
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script th:inline="javascript">

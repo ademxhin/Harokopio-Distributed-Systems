@@ -16,7 +16,6 @@
 
         <div class="gr-center">
 
-            <!-- EMPTY STATE -->
             <section class="gr-card gr-card-pad gr-empty" th:if="${#lists.isEmpty(bookings)}">
                 <div class="gr-empty-title">No bookings yet</div>
                 <div class="gr-empty-text">
@@ -29,7 +28,6 @@
                 </div>
             </section>
 
-            <!-- LIST -->
             <section class="gr-stack" th:if="${not #lists.isEmpty(bookings)}">
 
                 <article class="gr-card gr-card-pad" th:each="booking : ${bookings}">

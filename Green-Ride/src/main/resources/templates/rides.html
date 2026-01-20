@@ -16,7 +16,6 @@
             <h1 class="gr-page-title">Available Rides</h1>
         </div>
 
-        <!-- EMPTY STATE -->
         <section th:if="${#lists.isEmpty(rides)}" class="gr-card gr-empty">
             <h3 class="gr-card-title">No rides yet</h3>
             <p class="gr-muted">Currently, there are no active rides. Check back later!</p>
@@ -26,7 +25,6 @@
             </a>
         </section>
 
-        <!-- LIST -->
         <section th:if="${not #lists.isEmpty(rides)}" class="gr-rides-list">
             <article class="gr-ride-card"
                      th:each="ride : ${rides}">
