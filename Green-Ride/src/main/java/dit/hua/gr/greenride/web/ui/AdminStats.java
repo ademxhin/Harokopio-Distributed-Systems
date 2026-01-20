@@ -1,10 +1,8 @@
 package dit.hua.gr.greenride.web.ui;
 
 public class AdminStats {
-
     private long totalRides;
-    private double averageOccupancyPct; // 0..100
-
+    private double averageOccupancyPct;
     private long totalUsers;
     private long activeDrivers;
     private long activePassengers;
@@ -30,10 +28,4 @@ public class AdminStats {
     public long getTotalUsers() { return totalUsers; }
     public long getActiveDrivers() { return activeDrivers; }
     public long getActivePassengers() { return activePassengers; }
-
-    public void setTotalRides(long totalRides) { this.totalRides = totalRides; }
-    public void setAverageOccupancyPct(double averageOccupancyPct) { this.averageOccupancyPct = averageOccupancyPct; }
-    public void setTotalUsers(long totalUsers) { this.totalUsers = totalUsers; }
-    public void setActiveDrivers(long activeDrivers) { this.activeDrivers = activeDrivers; }
-    public void setActivePassengers(long activePassengers) { this.activePassengers = activePassengers; }
 }

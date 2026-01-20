@@ -2,7 +2,7 @@ package dit.hua.gr.greenride.core.port.impl;
 
 import dit.hua.gr.greenride.core.port.WeatherApiPort;
 import dit.hua.gr.greenride.core.port.impl.dto.OpenMeteoResponse;
-import dit.hua.gr.greenride.core.port.impl.dto.WeatherResult;
+import dit.hua.gr.greenride.core.port.model.WeatherResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

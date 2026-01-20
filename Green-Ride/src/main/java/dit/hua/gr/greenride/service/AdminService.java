@@ -32,9 +32,9 @@ public class AdminService {
         long passengers = personRepository.countByPersonType(PersonType.PASSENGER);
 
         return new AdminStats(
-                totalUsers,
-                avgOccupancy != null ? avgOccupancy : 0.0,
                 totalRides,
+                avgOccupancy != null ? avgOccupancy : 0.0,
+                totalUsers,
                 drivers,
                 passengers
         );

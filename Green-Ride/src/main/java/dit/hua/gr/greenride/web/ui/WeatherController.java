@@ -1,8 +1,8 @@
 package dit.hua.gr.greenride.web.ui;
 
 import dit.hua.gr.greenride.core.port.WeatherApiPort;
-import dit.hua.gr.greenride.core.port.impl.WeatherServiceException;
-import dit.hua.gr.greenride.core.port.impl.dto.WeatherResult;
+import dit.hua.gr.greenride.core.port.exception.ExternalServiceException;
+import dit.hua.gr.greenride.core.port.model.WeatherResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,7 +30,7 @@ public class WeatherController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Weather fetched successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid location parameter"),
-            @ApiResponse(responseCode = "502", description = "External Weather API error/unreachable")
+            @ApiResponse(responseCode = "503", description = "External Weather API error/unreachable")
     })
     @GetMapping("/current")
     public ResponseEntity<?> getCurrentWeather(
@@ -41,16 +41,8 @@ public class WeatherController {
             )
             @RequestParam String location
     ) {
-        try {
-            WeatherResult result = weatherApiPort.getCurrentWeather(location);
-            return ResponseEntity.ok(result);
-
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("Invalid request: " + ex.getMessage()));
-
-        } catch (WeatherServiceException ex) {
-            return ResponseEntity.status(502).body(new ErrorResponse("Weather provider error: " + ex.getMessage()));
-        }
+        WeatherResult result = weatherApiPort.getCurrentWeather(location);
+        return ResponseEntity.ok(result);
     }
 
     private record ErrorResponse(String message) { }

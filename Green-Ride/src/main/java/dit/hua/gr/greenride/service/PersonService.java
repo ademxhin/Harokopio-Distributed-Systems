@@ -4,9 +4,5 @@ import dit.hua.gr.greenride.service.model.CreatePersonRequest;
 import dit.hua.gr.greenride.service.model.CreatePersonResult;
 
 public interface PersonService {
-
     CreatePersonResult createPerson(CreatePersonRequest request, boolean notify);
-    default CreatePersonResult createPerson(final CreatePersonRequest createPersonRequest) {
-        return this.createPerson(createPersonRequest, true);
-    }
 }

@@ -2,7 +2,6 @@ package dit.hua.gr.greenride.core.repository;
 
 import dit.hua.gr.greenride.core.model.Person;
 import dit.hua.gr.greenride.core.model.PersonType;
-import org.hibernate.usertype.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;

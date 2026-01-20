@@ -2,11 +2,10 @@ package dit.hua.gr.greenride.web.ui;
 
 import dit.hua.gr.greenride.core.port.MapsApiPort;
 import dit.hua.gr.greenride.core.port.WeatherApiPort;
-import dit.hua.gr.greenride.core.port.impl.MapsServiceException;
-import dit.hua.gr.greenride.core.port.impl.WeatherServiceException;
-import dit.hua.gr.greenride.core.port.impl.dto.RouteRequest;
-import dit.hua.gr.greenride.core.port.impl.dto.RouteResult;
-import dit.hua.gr.greenride.core.port.impl.dto.WeatherResult;
+import dit.hua.gr.greenride.core.port.exception.ExternalServiceException;
+import dit.hua.gr.greenride.core.port.model.RouteRequest;
+import dit.hua.gr.greenride.core.port.model.RouteResult;
+import dit.hua.gr.greenride.core.port.model.WeatherResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -37,8 +36,12 @@ public class HomepageController {
             WeatherResult weather = weatherApiPort.getCurrentWeather(location);
             model.addAttribute("weatherLocation", location);
             model.addAttribute("weather", weather);
-        } catch (WeatherServiceException | IllegalArgumentException ex) {
-            log.warn("Weather API failed: {}", ex.getMessage(), ex);
+        } catch (IllegalArgumentException ex) {
+            log.warn("Weather request invalid: {}", ex.getMessage());
+            model.addAttribute("weatherLocation", location);
+            model.addAttribute("weatherError", "Weather request invalid");
+        } catch (ExternalServiceException ex) {
+            log.warn("Weather external service failed [{}]: {}", ex.getServiceName(), ex.getMessage(), ex);
             model.addAttribute("weatherLocation", location);
             model.addAttribute("weatherError", "Weather service unavailable");
         }
@@ -56,10 +59,13 @@ public class HomepageController {
         try {
             RouteResult route = mapsApiPort.getRoute(new RouteRequest(fromLat, fromLon, toLat, toLon));
             model.addAttribute("route", route);
-        } catch (MapsServiceException ex) {
-            log.error("Maps API failed: {}", ex.getMessage(), ex);
+        } catch (IllegalArgumentException ex) {
+            log.warn("Route request invalid: {}", ex.getMessage());
+            model.addAttribute("routeError", "Route request invalid");
+        } catch (ExternalServiceException ex) {
+            log.warn("Maps external service failed [{}]: {}", ex.getServiceName(), ex.getMessage(), ex);
 
-            model.addAttribute("routeError", ex.getMessage());
+            model.addAttribute("routeError", "Route service unavailable");
         }
 
         return "homepage";

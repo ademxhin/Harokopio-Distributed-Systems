@@ -27,7 +27,6 @@ public class Booking {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // --- Getters & Setters ---
     public Long getId() { return id; }
 
     public Ride getRide() { return ride; }

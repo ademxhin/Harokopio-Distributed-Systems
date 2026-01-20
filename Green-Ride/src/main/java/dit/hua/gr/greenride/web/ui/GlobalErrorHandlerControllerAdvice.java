@@ -1,5 +1,6 @@
 package dit.hua.gr.greenride.web.ui;
 
+import dit.hua.gr.greenride.core.port.exception.ExternalServiceException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -41,6 +42,27 @@ public class GlobalErrorHandlerControllerAdvice {
         return "error/404";
     }
 
+    @ExceptionHandler(ExternalServiceException.class)
+    public String handleExternalService(final ExternalServiceException exception,
+                                        final HttpServletRequest request,
+                                        final HttpServletResponse response,
+                                        final Model model) {
+
+        LOGGER.warn("External service failed [{}] at {}: {}",
+                exception.getServiceName(),
+                request.getRequestURI(),
+                exception.getMessage());
+
+        model.addAttribute(
+                "message",
+                "An external service is temporarily unavailable (" + exception.getServiceName() + "). Please try again."
+        );
+        model.addAttribute("path", request.getRequestURI());
+
+        response.setStatus(503);
+        return "error/error";
+    }
+
     @ExceptionHandler(Exception.class)
     public String handleAnyError(final Exception exception,
                                  final HttpServletRequest request,
@@ -49,7 +71,11 @@ public class GlobalErrorHandlerControllerAdvice {
 
         LOGGER.warn("Handling exception {} {}", exception.getClass(), exception.getMessage());
 
-        model.addAttribute("message", exception.getMessage());
+        String msg = (exception.getMessage() != null && !exception.getMessage().isBlank())
+                ? exception.getMessage()
+                : "Unexpected error";
+
+        model.addAttribute("message", msg);
         model.addAttribute("path", request.getRequestURI());
 
         if (exception instanceof AuthenticationException) {

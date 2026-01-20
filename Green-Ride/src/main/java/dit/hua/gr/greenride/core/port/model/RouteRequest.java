@@ -1,4 +1,4 @@
-package dit.hua.gr.greenride.core.port.impl.dto;
+package dit.hua.gr.greenride.core.port.model;
 
 public record RouteRequest(
         double fromLat,

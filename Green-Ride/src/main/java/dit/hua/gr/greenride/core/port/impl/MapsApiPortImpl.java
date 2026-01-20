@@ -1,9 +1,10 @@
 package dit.hua.gr.greenride.core.port.impl;
 
 import dit.hua.gr.greenride.core.port.MapsApiPort;
+import dit.hua.gr.greenride.core.port.exception.ExternalServiceException;
 import dit.hua.gr.greenride.core.port.impl.dto.OpenRouteServiceResponse;
-import dit.hua.gr.greenride.core.port.impl.dto.RouteRequest;
-import dit.hua.gr.greenride.core.port.impl.dto.RouteResult;
+import dit.hua.gr.greenride.core.port.model.RouteRequest;
+import dit.hua.gr.greenride.core.port.model.RouteResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class MapsApiPortImpl implements MapsApiPort {
 
         if (!isValidLonLat(request.fromLon(), request.fromLat())
                 || !isValidLonLat(request.toLon(), request.toLat())) {
-            throw new MapsServiceException("Invalid coordinates in RouteRequest");
+            throw new IllegalArgumentException("Invalid coordinates in RouteRequest");
         }
 
         if (apiKey.trim().isEmpty()) {
@@ -68,14 +69,33 @@ public class MapsApiPortImpl implements MapsApiPort {
             ResponseEntity<OpenRouteServiceResponse> response =
                     restTemplate.exchange(url, HttpMethod.GET, entity, OpenRouteServiceResponse.class);
 
-            if (!response.getStatusCode().is2xxSuccessful()
-                    || response.getBody() == null
-                    || response.getBody().features() == null
-                    || response.getBody().features().isEmpty()) {
-                return mockRoute(request);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new ExternalServiceException(
+                        "openrouteservice",
+                        "Route API returned status " + response.getStatusCode().value()
+                );
             }
 
-            OpenRouteServiceResponse.Feature feature = response.getBody().features().get(0);
+            OpenRouteServiceResponse body = response.getBody();
+            if (body == null || body.features() == null || body.features().isEmpty()) {
+                throw new ExternalServiceException(
+                        "openrouteservice",
+                        "Route API returned an empty response"
+                );
+            }
+
+            OpenRouteServiceResponse.Feature feature = body.features().get(0);
+
+            if (feature == null
+                    || feature.properties() == null
+                    || feature.properties().summary() == null
+                    || feature.geometry() == null
+                    || feature.geometry().coordinates() == null) {
+                throw new ExternalServiceException(
+                        "openrouteservice",
+                        "Route API returned an incomplete response"
+                );
+            }
 
             double distance = feature.properties().summary().distance();
             double duration = feature.properties().summary().duration();
@@ -83,8 +103,15 @@ public class MapsApiPortImpl implements MapsApiPort {
 
             return new RouteResult(distance, duration, coordinates);
 
+        } catch (ExternalServiceException ex) {
+            throw ex;
+
         } catch (Exception ex) {
-            return mockRoute(request);
+            throw new ExternalServiceException(
+                    "openrouteservice",
+                    "Failed to fetch route from external service",
+                    ex
+            );
         }
     }
 

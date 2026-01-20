@@ -3,7 +3,7 @@ package dit.hua.gr.greenride.service.impl;
 import dit.hua.gr.greenride.core.model.Person;
 import dit.hua.gr.greenride.core.model.PersonType;
 import dit.hua.gr.greenride.core.port.PhoneNumberPort;
-import dit.hua.gr.greenride.core.port.impl.dto.PhoneNumberValidationResult;
+import dit.hua.gr.greenride.core.port.model.PhoneNumberValidationResult;
 import dit.hua.gr.greenride.core.repository.PersonRepository;
 import dit.hua.gr.greenride.service.PersonService;
 import dit.hua.gr.greenride.service.mapper.PersonMapper;

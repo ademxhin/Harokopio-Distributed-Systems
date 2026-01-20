@@ -1,7 +1,7 @@
 package dit.hua.gr.greenride.core.port.impl;
 
 import dit.hua.gr.greenride.core.port.PhoneNumberPort;
-import dit.hua.gr.greenride.core.port.impl.dto.PhoneNumberValidationResult;
+import dit.hua.gr.greenride.core.port.model.PhoneNumberValidationResult;
 import dit.hua.gr.greenride.web.ui.exceptions.ExternalServiceUnavailableException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;

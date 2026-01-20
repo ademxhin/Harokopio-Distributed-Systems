@@ -41,10 +41,6 @@ public class Person {
 
     public Person() {}
 
-    /**
-     * Convenience constructor.
-     * personType is the ONLY role indicator (ADMIN / DRIVER / PASSENGER).
-     */
     public Person(String userId,
                   String firstName,
                   String lastName,
@@ -61,7 +57,6 @@ public class Person {
         this.hashedPassword = hashedPassword;
     }
 
-    // --- GETTERS & SETTERS ---
     public Long getId() { return id; }
 
     public String getUserId() { return userId; }

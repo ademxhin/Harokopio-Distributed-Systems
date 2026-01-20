@@ -43,14 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         final String path = request.getServletPath();
 
-        // Filter only API endpoints
         if (!path.startsWith("/api/")) return true;
-
-        // Public endpoints (no token required)
         if (path.equals("/api/auth/login")) return true;
         if (path.equals("/api/auth/register")) return true;
-
-        // If you keep this endpoint:
         if (path.equals("/api/v1/auth/client-tokens")) return true;
 
         return false;

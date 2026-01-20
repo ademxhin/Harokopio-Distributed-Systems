@@ -25,7 +25,6 @@ public class Rating {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Person ratedPerson;
 
-    // Getters/Setters (Αν δεν χρησιμοποιείς Lombok)
     public Person getRater() { return rater; }
     public void setRater(Person rater) { this.rater = rater; }
     public Person getRatedPerson() { return ratedPerson; }

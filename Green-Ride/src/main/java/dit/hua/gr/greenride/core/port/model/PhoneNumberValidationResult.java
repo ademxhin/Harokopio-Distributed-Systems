@@ -1,8 +1,5 @@
-package dit.hua.gr.greenride.core.port.impl.dto;
+package dit.hua.gr.greenride.core.port.model;
 
-/**
- * PhoneNumberValidationResult DTO.
- */
 public record PhoneNumberValidationResult(
         String raw,
         boolean valid,
