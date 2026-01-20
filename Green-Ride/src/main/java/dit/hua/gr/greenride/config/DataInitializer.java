@@ -143,9 +143,10 @@ public class DataInitializer {
         Booking b = new Booking();
         b.setPerson(passenger);
         b.setRide(ride);
+        b.setStatus(BookingStatus.PENDING);
         b.setCreatedAt(LocalDateTime.now());
 
-        if (ride.getSeatsAvailable() > 1) {
+        if (ride.getSeatsAvailable() >= 1) {
             ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
             ride.setBookedSeats(ride.getBookedSeats() + 1);
             rideRepository.save(ride);

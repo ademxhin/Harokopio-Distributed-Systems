@@ -36,8 +36,9 @@ public class MapsApiPortImpl implements MapsApiPort {
     public RouteResult getRoute(RouteRequest request) {
         if (request == null) throw new NullPointerException("request must not be null");
 
-        if (!isValidLonLat(request.fromLon(), request.fromLat())
-                || !isValidLonLat(request.toLon(), request.toLat())) {
+        boolean fromValid = isValidLonLat(request.fromLon(), request.fromLat());
+        boolean toValid = isValidLonLat(request.toLon(), request.toLat());
+        if (!fromValid || !toValid) {
             throw new IllegalArgumentException("Invalid coordinates in RouteRequest");
         }
 
@@ -49,7 +50,7 @@ public class MapsApiPortImpl implements MapsApiPort {
         String end = request.toLon() + "," + request.toLat();
 
         String url = UriComponentsBuilder
-                .fromHttpUrl(baseUrl)
+                .fromUriString(baseUrl)
                 .path("/v2/directions/driving-car")
                 .queryParam("start", start)
                 .queryParam("end", end)
@@ -77,14 +78,22 @@ public class MapsApiPortImpl implements MapsApiPort {
             }
 
             OpenRouteServiceResponse body = response.getBody();
-            if (body == null || body.features() == null || body.features().isEmpty()) {
+            if (body == null) {
                 throw new ExternalServiceException(
                         "openrouteservice",
                         "Route API returned an empty response"
                 );
             }
 
-            OpenRouteServiceResponse.Feature feature = body.features().get(0);
+            List<OpenRouteServiceResponse.Feature> features = body.features();
+            if (features == null || features.isEmpty()) {
+                throw new ExternalServiceException(
+                        "openrouteservice",
+                        "Route API returned an empty response"
+                );
+            }
+
+            OpenRouteServiceResponse.Feature feature = features.get(0);
 
             if (feature == null
                     || feature.properties() == null

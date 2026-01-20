@@ -66,9 +66,6 @@ public class PhoneNumberPortImpl implements PhoneNumberPort {
         if (digits.length() == 10 && digits.startsWith("69")) {
             return "+30" + digits;
         }
-        if (trimmed.startsWith("+")) {
-            return trimmed;
-        }
         return trimmed;
     }
 

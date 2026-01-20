@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -38,8 +39,7 @@ public class RideController {
 
         if (userDetails == null) return "redirect:/login";
 
-        Person currentUser = userDetails.getPerson();
-
+        Person currentUser = userDetails.person();
         if (currentUser.getPersonType() == PersonType.DRIVER) {
             model.addAttribute("title", "Passenger access required");
             model.addAttribute("message", "Please login as a passenger to search rides.");
@@ -71,7 +71,7 @@ public class RideController {
 
         if (userDetails == null) return "redirect:/login";
 
-        Person currentUser = userDetails.getPerson();
+        Person currentUser = userDetails.person();
 
         if (currentUser.getPersonType() == PersonType.DRIVER) {
             model.addAttribute("title", "Passenger access required");
@@ -98,7 +98,7 @@ public class RideController {
 
         if (userDetails == null) return "redirect:/login";
 
-        Person currentUser = userDetails.getPerson();
+        Person currentUser = userDetails.person();
 
         if (currentUser.getPersonType() == PersonType.DRIVER) {
             return "redirect:/rides/history/driver";
@@ -112,7 +112,7 @@ public class RideController {
 
         if (userDetails == null) return "redirect:/login";
 
-        Person currentUser = userDetails.getPerson();
+        Person currentUser = userDetails.person();
 
         if (currentUser.getPersonType() != PersonType.DRIVER) {
             model.addAttribute("title", "Driver access required");
@@ -126,7 +126,7 @@ public class RideController {
         List<Ride> drivenRides = rideRepository.findByDriverAndDepartureTimeBefore(currentUser, now);
 
         List<Ride> sorted = drivenRides.stream()
-                .sorted((r1, r2) -> r2.getDepartureTime().compareTo(r1.getDepartureTime()))
+                .sorted(Comparator.comparing(Ride::getDepartureTime).reversed())
                 .toList();
 
         model.addAttribute("rides", sorted);
@@ -139,7 +139,7 @@ public class RideController {
 
         if (userDetails == null) return "redirect:/login";
 
-        Person currentUser = userDetails.getPerson();
+        Person currentUser = userDetails.person();
 
         if (currentUser.getPersonType() != PersonType.PASSENGER) {
             model.addAttribute("title", "Passenger access required");
@@ -157,7 +157,7 @@ public class RideController {
         List<Ride> bookedRides = pastBookings.stream()
                 .map(Booking::getRide)
                 .distinct()
-                .sorted((r1, r2) -> r2.getDepartureTime().compareTo(r1.getDepartureTime()))
+                .sorted(Comparator.comparing(Ride::getDepartureTime).reversed())
                 .toList();
 
         model.addAttribute("rides", bookedRides);
@@ -170,7 +170,7 @@ public class RideController {
 
         if (userDetails == null) return "redirect:/login";
 
-        Person currentUser = userDetails.getPerson();
+        Person currentUser = userDetails.person();
 
         if (currentUser.getPersonType() != PersonType.DRIVER) {
             model.addAttribute("title", "Driver access required");
@@ -185,7 +185,7 @@ public class RideController {
         List<Ride> upcoming = rideRepository.findByDriverAndDepartureTimeAfter(currentUser, limit);
 
         List<Ride> sorted = upcoming.stream()
-                .sorted((r1, r2) -> r1.getDepartureTime().compareTo(r2.getDepartureTime()))
+                .sorted(Comparator.comparing(Ride::getDepartureTime))
                 .toList();
 
         model.addAttribute("rides", sorted);
@@ -199,7 +199,7 @@ public class RideController {
 
         if (userDetails == null) return "redirect:/login";
 
-        Person currentUser = userDetails.getPerson();
+        Person currentUser = userDetails.person();
 
         Ride ride = rideRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid ride Id:" + id));
@@ -224,7 +224,7 @@ public class RideController {
     public String ratingsRedirect(@AuthenticationPrincipal ApplicationUserDetails userDetails) {
         if (userDetails == null) return "redirect:/login";
 
-        Person currentUser = userDetails.getPerson();
+        Person currentUser = userDetails.person();
 
         if (currentUser.getPersonType() == PersonType.DRIVER) {
             return "redirect:/rides/ratings/driver";
@@ -238,8 +238,7 @@ public class RideController {
                                       @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
         if (userDetails == null) return "redirect:/login";
-
-        Person currentUser = userDetails.getPerson();
+        Person currentUser = userDetails.person();
 
         if (currentUser.getPersonType() != PersonType.DRIVER) {
             model.addAttribute("title", "Driver access required");
@@ -249,22 +248,7 @@ public class RideController {
             return "rides_not_passenger";
         }
 
-        PersonType targetType = PersonType.PASSENGER;
-
-        List<Person> availableUsers = (search != null && !search.isBlank())
-                ? personRepository.findByFirstNameContainingIgnoreCaseAndPersonType(search, targetType)
-                : personRepository.findAllByPersonType(targetType);
-
-        List<Long> alreadyRatedIds = availableUsers.stream()
-                .filter(p -> ratingRepository.existsByRaterAndRatedPerson(currentUser, p))
-                .map(Person::getId)
-                .toList();
-
-        model.addAttribute("users", availableUsers);
-        model.addAttribute("alreadyRatedIds", alreadyRatedIds);
-        model.addAttribute("search", search);
-
-        return "ratings";
+        return buildRatingsPage(model, currentUser, PersonType.PASSENGER, search);
     }
 
     @GetMapping("/ratings/passenger")
@@ -273,8 +257,7 @@ public class RideController {
                                          @AuthenticationPrincipal ApplicationUserDetails userDetails) {
 
         if (userDetails == null) return "redirect:/login";
-
-        Person currentUser = userDetails.getPerson();
+        Person currentUser = userDetails.person();
 
         if (currentUser.getPersonType() != PersonType.PASSENGER) {
             model.addAttribute("title", "Passenger access required");
@@ -284,7 +267,13 @@ public class RideController {
             return "rides_not_passenger";
         }
 
-        PersonType targetType = PersonType.DRIVER;
+        return buildRatingsPage(model, currentUser, PersonType.DRIVER, search);
+    }
+
+    private String buildRatingsPage(Model model,
+                                    Person currentUser,
+                                    PersonType targetType,
+                                    String search) {
 
         List<Person> availableUsers = (search != null && !search.isBlank())
                 ? personRepository.findByFirstNameContainingIgnoreCaseAndPersonType(search, targetType)
@@ -310,7 +299,7 @@ public class RideController {
 
         if (userDetails == null) return "redirect:/login";
 
-        Person currentUser = userDetails.getPerson();
+        Person currentUser = userDetails.person();
 
         Person targetPerson = personRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -356,7 +345,7 @@ public class RideController {
         ride.setEndLocation(form.getDestination());
         ride.setDepartureTime(departureDateTime);
         ride.setSeatsAvailable(form.getSeatsAvailable());
-        ride.setDriver(userDetails.getPerson());
+        ride.setDriver(userDetails.person());
 
         rideRepository.save(ride);
         return "redirect:/profile";
@@ -377,10 +366,12 @@ public class RideController {
 
         if (userDetails == null) return "redirect:/login";
 
+        Person currentUser = userDetails.person();
+
         Ride ride = rideRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid ride Id:" + id));
 
-        boolean alreadyBooked = bookingRepository.existsByRideAndPerson(ride, userDetails.getPerson());
+        boolean alreadyBooked = bookingRepository.existsByRideAndPerson(ride, currentUser);
         if (alreadyBooked) {
             return "redirect:/rides/search?error=already_booked";
         }
@@ -392,8 +383,10 @@ public class RideController {
         if (ride.getSeatsAvailable() > 0) {
             Booking booking = new Booking();
             booking.setRide(ride);
-            booking.setPerson(userDetails.getPerson());
+            booking.setPerson(currentUser);
             booking.setCreatedAt(LocalDateTime.now());
+
+            booking.setStatus(BookingStatus.PENDING);
 
             bookingRepository.save(booking);
 

@@ -46,7 +46,7 @@ public class BookingController {
             return "redirect:/rides/search?error=too_late";
         }
 
-        Person passenger = userDetails.getPerson();
+        Person passenger = userDetails.person();
 
         if (bookingRepository.existsByRideAndPerson(ride, passenger)) {
             return "redirect:/rides/search?error=already_booked";
@@ -76,7 +76,11 @@ public class BookingController {
         Booking booking = bookingRepository.findById(bookingId).orElse(null);
 
         if (booking == null ||
-                !booking.getPerson().getId().equals(userDetails.getPerson().getId())) {
+                booking.getPerson() == null ||
+                booking.getPerson().getId() == null ||
+                userDetails.person() == null ||
+                userDetails.person().getId() == null ||
+                !booking.getPerson().getId().equals(userDetails.person().getId())) {
             return "redirect:/rides/bookings?error=unauthorized";
         }
 

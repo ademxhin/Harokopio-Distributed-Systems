@@ -9,27 +9,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-public final class ApplicationUserDetails implements UserDetails {
-
-    private final Person person;
-
-    public ApplicationUserDetails(final Person person) {
-        this.person = person;
-    }
-
-    public Person getPerson() {
-        return this.person;
-    }
+public record ApplicationUserDetails(Person person) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
         PersonType type = person.getPersonType();
-
-        if (type == null) {
-            return List.of();
-        }
-
+        if (type == null) return List.of();
         return List.of(new SimpleGrantedAuthority("ROLE_" + type.name()));
     }
 

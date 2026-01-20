@@ -1,34 +1,35 @@
 package dit.hua.gr.greenride.core.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "rating")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Rating {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private int score;
 
-    @ManyToOne
-//    @JoinColumn(name = "rater_id")
+    @ManyToOne(optional = false)
+//    @JoinColumn(name = "rater_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Person rater;
 
-    @ManyToOne
-    @JoinColumn(name = "rated_person_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "rated_person_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Person ratedPerson;
-
-    public Person getRater() { return rater; }
-    public void setRater(Person rater) { this.rater = rater; }
-    public Person getRatedPerson() { return ratedPerson; }
-    public void setRatedPerson(Person ratedPerson) { this.ratedPerson = ratedPerson; }
-    public int getScore() { return score; }
-    public void setScore(int score) { this.score = score; }
 }

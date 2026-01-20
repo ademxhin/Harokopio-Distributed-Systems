@@ -1,51 +1,51 @@
 package dit.hua.gr.greenride.core.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ride")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Ride {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String startLocation;
+
+    @Column(nullable = false)
     private String endLocation;
+
+    @Column(nullable = false)
     private LocalDateTime departureTime;
+
+    @Column(nullable = false)
     private int seatsAvailable;
+
+    @Column(nullable = false)
     private int bookedSeats = 0;
 
-    @ManyToOne
-    @JoinColumn(name = "driver_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "driver_id", nullable = false)
     private Person driver;
 
-    public Ride() {}
+    public String getOrigin() {
+        return startLocation;
+    }
 
-    public String getOrigin() { return startLocation; }
+    public String getDestination() {
+        return endLocation;
+    }
 
-    public String getDestination() { return endLocation; }
-
-    public int getAvailableSeats() { return seatsAvailable; }
-
-    public Long getId() { return id; }
-
-    public String getStartLocation() { return startLocation; }
-    public void setStartLocation(String startLocation) { this.startLocation = startLocation; }
-
-    public String getEndLocation() { return endLocation; }
-    public void setEndLocation(String endLocation) { this.endLocation = endLocation; }
-
-    public LocalDateTime getDepartureTime() { return departureTime; }
-    public void setDepartureTime(LocalDateTime departureTime) { this.departureTime = departureTime; }
-
-    public int getSeatsAvailable() { return seatsAvailable; }
-    public void setSeatsAvailable(int seatsAvailable) { this.seatsAvailable = seatsAvailable; }
-
-    public int getBookedSeats() { return bookedSeats; }
-    public void setBookedSeats(int bookedSeats) { this.bookedSeats = bookedSeats; }
-
-    public Person getDriver() { return driver; }
-    public void setDriver(Person driver) { this.driver = driver; }
+    public int getAvailableSeats() {
+        return seatsAvailable - bookedSeats;
+    }
 }
