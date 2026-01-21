@@ -35,6 +35,10 @@ This project was developed as part of the **Distributed Systems** course of the 
 - System monitoring
 - View basic usage statistics
 
+
+- **Username:** admin@greenride.com
+- **Password:** GreenRide2026
+
 ---
 
 ## System Architecture
