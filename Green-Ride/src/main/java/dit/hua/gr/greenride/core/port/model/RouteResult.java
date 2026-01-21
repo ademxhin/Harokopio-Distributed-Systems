@@ -6,4 +6,5 @@ public record RouteResult(
         double distanceMeters,
         double durationSeconds,
         List<List<Double>> polyline
-) { }
+) {
+}

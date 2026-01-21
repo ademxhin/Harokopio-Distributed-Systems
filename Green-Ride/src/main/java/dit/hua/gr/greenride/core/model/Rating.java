@@ -24,7 +24,7 @@ public class Rating {
     private int score;
 
     @ManyToOne(optional = false)
-//    @JoinColumn(name = "rater_id", nullable = false)
+    @JoinColumn(name = "rater_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Person rater;
 

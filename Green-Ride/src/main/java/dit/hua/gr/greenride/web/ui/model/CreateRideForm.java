@@ -17,11 +17,11 @@ public class CreateRideForm {
     private String destination;
 
     @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) // expects yyyy-MM-dd
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
 
     @NotNull
-    @DateTimeFormat(pattern = "HH:mm") // expects 24h time like 00:30 or 14:15
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime time;
 
     @Min(1)

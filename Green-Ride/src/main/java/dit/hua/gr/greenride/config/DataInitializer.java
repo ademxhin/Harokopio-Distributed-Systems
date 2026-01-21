@@ -7,9 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Configuration
 public class DataInitializer {
@@ -63,27 +61,51 @@ public class DataInitializer {
         List<Person> passengers = createPassengers();
 
         List<Ride> rides = new ArrayList<>();
-
         for (Person driver : drivers) {
             for (int i = 0; i < 2; i++) {
                 Ride ride = createRide(
                         driver,
                         randomDepartureBetween5And120Minutes(),
-                        3
+                        1 + random.nextInt(4)
                 );
                 rides.add(rideRepository.save(ride));
             }
         }
 
+        Collections.shuffle(rides, random);
+
         for (Person passenger : passengers) {
-            rides.stream()
-                    .limit(2)
-                    .forEach(ride -> bookingRepository.save(
-                            createBooking(passenger, ride)
-                    ));
+            int bookingsToCreate = 2;
+            int created = 0;
+
+            for (Ride ride : rides) {
+                if (created >= bookingsToCreate) break;
+
+                boolean ok = tryCreateConfirmedBooking(passenger, ride);
+                if (ok) created++;
+            }
         }
 
         System.out.println("Dummy data initialized successfully");
+    }
+
+    private boolean tryCreateConfirmedBooking(Person passenger, Ride ride) {
+        if (ride.getSeatsAvailable() <= 0) {
+            return false;
+        }
+
+        Booking b = new Booking();
+        b.setPerson(passenger);
+        b.setRide(ride);
+        b.setStatus(BookingStatus.APPROVED);
+        b.setCreatedAt(LocalDateTime.now());
+
+        ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
+        ride.setBookedSeats(ride.getBookedSeats() + 1);
+
+        rideRepository.save(ride);
+        bookingRepository.save(b);
+        return true;
     }
 
     private List<Person> createDrivers() {
@@ -134,25 +156,10 @@ public class DataInitializer {
         ride.setStartLocation(randomAthensLocation());
         ride.setEndLocation(randomAthensLocationDifferent(ride.getStartLocation()));
         ride.setDepartureTime(departure);
-        ride.setSeatsAvailable(seats);
+        ride.setSeatsAvailable(seats); // remaining seats
         ride.setBookedSeats(0);
+
         return ride;
-    }
-
-    private Booking createBooking(Person passenger, Ride ride) {
-        Booking b = new Booking();
-        b.setPerson(passenger);
-        b.setRide(ride);
-        b.setStatus(BookingStatus.PENDING);
-        b.setCreatedAt(LocalDateTime.now());
-
-        if (ride.getSeatsAvailable() >= 1) {
-            ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
-            ride.setBookedSeats(ride.getBookedSeats() + 1);
-            rideRepository.save(ride);
-        }
-
-        return b;
     }
 
     private LocalDateTime randomDepartureBetween5And120Minutes() {

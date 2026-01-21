@@ -1,7 +1,6 @@
 package dit.hua.gr.greenride.web.ui;
 
 import dit.hua.gr.greenride.core.port.WeatherApiPort;
-import dit.hua.gr.greenride.core.port.exception.ExternalServiceException;
 import dit.hua.gr.greenride.core.port.model.WeatherResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

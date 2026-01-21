@@ -36,4 +36,5 @@ public record CreatePersonRequest(
         @NotNull(message = "Please select a role")
         PersonType personType
 
-) { }
+) {
+}

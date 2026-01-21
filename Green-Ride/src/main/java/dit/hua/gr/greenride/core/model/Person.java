@@ -1,5 +1,7 @@
 package dit.hua.gr.greenride.core.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,12 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonIgnoreProperties({
+        "ratings", "ratingsGiven",
+        "rides", "bookings",
+        "hashedPassword",
+        "hibernateLazyInitializer", "handler"
+})
 public class Person {
 
     @Id
@@ -71,6 +79,7 @@ public class Person {
 
     public String getFullName() { return firstName + " " + lastName; }
 
+    @JsonIgnore
     public Double getAverageRating() {
         if (ratings == null || ratings.isEmpty()) return null;
         return ratings.stream()

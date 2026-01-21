@@ -5,4 +5,5 @@ public record RouteRequest(
         double fromLon,
         double toLat,
         double toLon
-) { }
+) {
+}

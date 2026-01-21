@@ -255,7 +255,7 @@ public class RideRestController {
             @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
             LocalTime time,
 
-            @Min(1) @Max(8) int seatsAvailable
+            @Min(1) @Max(4) int seatsAvailable
     ) {}
 
     @Operation(summary = "Offer a new ride (Driver)")

@@ -74,15 +74,18 @@ public class BookingRestController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
         }
         if (user.getPersonType() != PersonType.PASSENGER) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied for user type: " + user.getPersonType());
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Access denied for user type: " + user.getPersonType()
+            );
         }
     }
 
-    private static LocalDateTime limitNowPlus10() {
+    private static LocalDateTime nowPlus10() {
         return LocalDateTime.now().plusMinutes(10);
     }
 
-    @Operation(summary = "Get my bookings (Passenger) - returns bookingIds")
+    @Operation(summary = "Get my bookings (Passenger)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "My bookings returned"),
             @ApiResponse(responseCode = "401", description = "Not authenticated"),
@@ -94,6 +97,7 @@ public class BookingRestController {
 
         Person passenger = requireUser(principal);
         requirePassenger(passenger);
+
         List<Booking> bookings = bookingRepository.findByPerson(passenger);
 
         return bookings.stream()
@@ -102,7 +106,7 @@ public class BookingRestController {
                 .toList();
     }
 
-    @Operation(summary = "Create a booking (Passenger)")
+    @Operation(summary = "Create a booking (Passenger) - same logic as UI")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Booking created"),
             @ApiResponse(responseCode = "400", description = "Ride not found / full / too late / already booked"),
@@ -120,9 +124,15 @@ public class BookingRestController {
         requirePassenger(passenger);
 
         Ride ride = rideRepository.findById(request.rideId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ride not found: " + request.rideId()));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Ride not found: " + request.rideId()
+                ));
 
-        if (ride.getDepartureTime() != null && ride.getDepartureTime().isBefore(limitNowPlus10())) {
+        if (ride.getDepartureTime() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ride has no departure time");
+        }
+        if (ride.getDepartureTime().isBefore(nowPlus10())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Too late to book this ride");
         }
 
@@ -140,17 +150,18 @@ public class BookingRestController {
         booking.setStatus(BookingStatus.PENDING);
         booking.setCreatedAt(LocalDateTime.now());
 
-        Booking saved = bookingRepository.save(booking);
+        bookingRepository.save(booking);
 
         ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
         rideRepository.save(ride);
 
-        return toBookingResponse(saved);
+        return toBookingResponse(booking);
     }
 
-    @Operation(summary = "Cancel a booking by id (Passenger) - RESTful")
+    @Operation(summary = "Cancel a booking by id (Passenger) - same logic as UI")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Booking cancelled"),
+            @ApiResponse(responseCode = "400", description = "Too late to cancel"),
             @ApiResponse(responseCode = "401", description = "Not authenticated"),
             @ApiResponse(responseCode = "403", description = "Not authorized (not PASSENGER)"),
             @ApiResponse(responseCode = "404", description = "Booking not found (or not yours)")
@@ -172,10 +183,17 @@ public class BookingRestController {
                 ));
 
         Ride ride = booking.getRide();
-        if (ride != null) {
-            ride.setSeatsAvailable(ride.getSeatsAvailable() + 1);
-            rideRepository.save(ride);
+        if (ride == null || ride.getDepartureTime() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking has invalid ride/departure time");
         }
+
+        LocalDateTime cutoff = ride.getDepartureTime().minusMinutes(10);
+        if (!LocalDateTime.now().isBefore(cutoff)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Too late to cancel this booking");
+        }
+
+        ride.setSeatsAvailable(ride.getSeatsAvailable() + 1);
+        rideRepository.save(ride);
 
         bookingRepository.delete(booking);
     }

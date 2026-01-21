@@ -10,9 +10,9 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
 
     boolean existsByRaterAndRatedPerson(Person rater, Person ratedPerson);
     @Query("""
-        select coalesce(avg(r.score), 0)
-        from Rating r
-        where r.ratedPerson.id = :personId
+        SELECT COALESCE(AVG(r.score), 0)
+        FROM Rating r
+        WHERE r.ratedPerson.id = :personId
     """)
     Double getAverageRatingForPerson(@Param("personId") Long personId);
 }
