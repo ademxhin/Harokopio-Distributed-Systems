@@ -275,16 +275,15 @@ public class RideController {
                                     PersonType targetType,
                                     String search) {
 
-        List<Person> availableUsers = (search != null && !search.isBlank())
-                ? personRepository.findByFirstNameContainingIgnoreCaseAndPersonType(search, targetType)
-                : personRepository.findAllByPersonType(targetType);
+        List<PersonRepository.PersonRatingStats> users =
+                (search != null && !search.isBlank())
+                        ? personRepository.searchWithRatingStatsByPersonType(search, targetType)
+                        : personRepository.findAllWithRatingStatsByPersonType(targetType);
 
-        List<Long> alreadyRatedIds = availableUsers.stream()
-                .filter(p -> ratingRepository.existsByRaterAndRatedPerson(currentUser, p))
-                .map(Person::getId)
-                .toList();
+        List<Long> alreadyRatedIds =
+                ratingRepository.findRatedPersonIdsByRaterId(currentUser.getId());
 
-        model.addAttribute("users", availableUsers);
+        model.addAttribute("users", users);
         model.addAttribute("alreadyRatedIds", alreadyRatedIds);
         model.addAttribute("search", search);
 
@@ -299,6 +298,10 @@ public class RideController {
 
         if (userDetails == null) return "redirect:/login";
 
+        if (score < 1 || score > 5) {
+            return "redirect:/rides/ratings?error=invalid_score";
+        }
+
         Person currentUser = userDetails.person();
 
         Person targetPerson = personRepository.findById(userId)
@@ -312,11 +315,7 @@ public class RideController {
         rating.setRater(currentUser);
         rating.setRatedPerson(targetPerson);
         rating.setScore(score);
-
         ratingRepository.save(rating);
-
-        targetPerson.getRatings().add(rating);
-        personRepository.save(targetPerson);
 
         return "redirect:/rides/ratings?success";
     }

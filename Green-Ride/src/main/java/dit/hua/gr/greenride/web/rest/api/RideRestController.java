@@ -51,8 +51,7 @@ public class RideRestController {
             String firstName,
             String lastName,
             String emailAddress,
-            PersonType personType,
-            Double averageRating
+            PersonType personType
     ) {}
 
     public record RideResponse(
@@ -82,17 +81,13 @@ public class RideRestController {
     private PersonSummary toPersonSummary(Person p) {
         if (p == null) return null;
 
-        Double avg = ratingRepository.getAverageRatingForPerson(p.getId());
-        if (avg == null) avg = 0.0;
-
         return new PersonSummary(
                 p.getId(),
                 p.getUserId(),
                 p.getFirstName(),
                 p.getLastName(),
                 p.getEmailAddress(),
-                p.getPersonType(),
-                avg
+                p.getPersonType()
         );
     }
 
@@ -341,6 +336,7 @@ public class RideRestController {
             @ApiResponse(responseCode = "401", description = "Not authenticated"),
             @ApiResponse(responseCode = "404", description = "Target user not found")
     })
+
     @PostMapping("/ratings")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('PASSENGER','DRIVER')")
@@ -350,7 +346,8 @@ public class RideRestController {
         Person currentUser = requireUser(principal);
 
         Person targetPerson = personRepository.findById(request.userId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + request.userId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "User not found: " + request.userId()));
 
         if (ratingRepository.existsByRaterAndRatedPerson(currentUser, targetPerson)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Already rated this user");

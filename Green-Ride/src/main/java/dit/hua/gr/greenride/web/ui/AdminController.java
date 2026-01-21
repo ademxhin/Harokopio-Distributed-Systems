@@ -22,8 +22,9 @@ public class AdminController {
     @GetMapping("/kick/{id}")
     public String kickUser(@PathVariable Long id) {
         personRepository.findById(id).ifPresent(u -> {
+            u.setBanned(true);
             adminService.logKickedUser(u.getFullName());
-            personRepository.delete(u);
+            personRepository.save(u);
         });
 
         return "redirect:/profile?tab=home";

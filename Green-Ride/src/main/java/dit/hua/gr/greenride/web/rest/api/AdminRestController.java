@@ -34,19 +34,18 @@ public class AdminRestController {
             Long id,
             String email,
             String fullName,
-            String personType
+            String personType,
+            boolean banned
     ) {}
 
     private AdminUserView toView(Person p) {
-        String email = safe(p.getEmailAddress());
-        String fullName = safe(p.getFullName());
-        String personType = (p.getPersonType() != null) ? p.getPersonType().name() : null;
-
+        if (p == null) return null;
         return new AdminUserView(
                 p.getId(),
-                email,
-                fullName,
-                personType
+                safe(p.getEmailAddress()),
+                safe(p.getFullName()),
+                p.getPersonType() != null ? p.getPersonType().name() : null,
+                p.isBanned()
         );
     }
 
@@ -61,15 +60,8 @@ public class AdminRestController {
             List<String> kickedUserNames
     ) {}
 
-    @Operation(summary = "Admin dashboard data (stats + users)")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Dashboard payload returned"),
-            @ApiResponse(responseCode = "401", description = "Not authenticated"),
-            @ApiResponse(responseCode = "403", description = "Not authorized (not ADMIN)")
-    })
     @GetMapping("/dashboard")
     public AdminDashboardResponse dashboard() {
-
         AdminStats stats = adminService.getSystemStatistics();
         List<String> flaggedUsers = adminService.getFlaggedUsers();
 
@@ -83,12 +75,10 @@ public class AdminRestController {
         return new AdminDashboardResponse(stats, flaggedUsers, allUsers, kickedUserNames);
     }
 
-    @Operation(summary = "Kick a user (delete user and log kicked user full name)")
+    @Operation(summary = "Ban a user (soft-kick)")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "User kicked (deleted)"),
-            @ApiResponse(responseCode = "404", description = "User not found"),
-            @ApiResponse(responseCode = "401", description = "Not authenticated"),
-            @ApiResponse(responseCode = "403", description = "Not authorized (not ADMIN)")
+            @ApiResponse(responseCode = "204", description = "User banned"),
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     @Transactional
     @DeleteMapping("/users/{id}")
@@ -98,16 +88,11 @@ public class AdminRestController {
         Person user = personRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + id));
 
+        user.setBanned(true);
         adminService.logKickedUser(user.getFullName());
-        personRepository.delete(user);
+        personRepository.save(user);
     }
 
-    @Operation(summary = "Get all non-admin users")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Users returned"),
-            @ApiResponse(responseCode = "401", description = "Not authenticated"),
-            @ApiResponse(responseCode = "403", description = "Not authorized (not ADMIN)")
-    })
     @GetMapping("/users")
     public List<AdminUserView> allUsers() {
         return adminService.getAllUsersExcludingAdmins()
@@ -116,23 +101,11 @@ public class AdminRestController {
                 .toList();
     }
 
-    @Operation(summary = "Get flagged users (as names/identifiers)")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Flagged users returned"),
-            @ApiResponse(responseCode = "401", description = "Not authenticated"),
-            @ApiResponse(responseCode = "403", description = "Not authorized (not ADMIN)")
-    })
     @GetMapping("/flagged")
     public List<String> flaggedUsers() {
         return adminService.getFlaggedUsers();
     }
 
-    @Operation(summary = "Get kicked user names (audit log)")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Kicked user names returned"),
-            @ApiResponse(responseCode = "401", description = "Not authenticated"),
-            @ApiResponse(responseCode = "403", description = "Not authorized (not ADMIN)")
-    })
     @GetMapping("/kicked")
     public List<String> kickedUsers() {
         return adminService.getKickedUserNames();

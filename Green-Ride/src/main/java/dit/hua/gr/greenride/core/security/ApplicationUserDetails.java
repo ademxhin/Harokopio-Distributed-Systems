@@ -22,7 +22,16 @@ public record ApplicationUserDetails(Person person) implements UserDetails {
     @Override public String getUsername() { return person.getEmailAddress(); }
 
     @Override public boolean isAccountNonExpired() { return true; }
-    @Override public boolean isAccountNonLocked() { return true; }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return person == null || !person.isBanned();
+    }
+
     @Override public boolean isCredentialsNonExpired() { return true; }
-    @Override public boolean isEnabled() { return true; }
+
+    @Override
+    public boolean isEnabled() {
+        return person == null || !person.isBanned();
+    }
 }

@@ -1,6 +1,5 @@
 package dit.hua.gr.greenride.core.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -78,13 +77,4 @@ public class Person {
     public boolean isPassenger() { return this.personType == PersonType.PASSENGER; }
 
     public String getFullName() { return firstName + " " + lastName; }
-
-    @JsonIgnore
-    public Double getAverageRating() {
-        if (ratings == null || ratings.isEmpty()) return null;
-        return ratings.stream()
-                .mapToInt(Rating::getScore)
-                .average()
-                .orElse(0);
-    }
 }

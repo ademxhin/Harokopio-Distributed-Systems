@@ -28,6 +28,10 @@ public class BookingController {
         this.rideRepository = rideRepository;
     }
 
+    private static LocalDateTime nowPlus10() {
+        return LocalDateTime.now().plusMinutes(10);
+    }
+
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
     public String createBooking(@RequestParam("rideId") Long rideId,
@@ -37,16 +41,19 @@ public class BookingController {
 
         Ride ride = rideRepository.findById(rideId).orElse(null);
         if (ride == null) {
-            return "redirect:/rides/search?error=ride-not-found";
+            return "redirect:/rides/search?error=ride_not_found";
         }
 
-        if (ride.getAvailableSeats() <= 0) {
-            return "redirect:/rides/search?error=ride-full";
+        if (ride.getDepartureTime() == null) {
+            return "redirect:/rides/search?error=invalid_ride_time";
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        if (ride.getDepartureTime() == null || !ride.getDepartureTime().isAfter(now.plusMinutes(10))) {
+        if (ride.getDepartureTime().isBefore(nowPlus10())) {
             return "redirect:/rides/search?error=too_late";
+        }
+
+        if (ride.getSeatsAvailable() <= 0) {
+            return "redirect:/rides/search?error=no_seats";
         }
 
         Person passenger = userDetails.person();
@@ -55,15 +62,23 @@ public class BookingController {
             return "redirect:/rides/search?error=already_booked";
         }
 
+        LocalDateTime dep = ride.getDepartureTime();
+        LocalDateTime from = dep.minusHours(1);
+        LocalDateTime to = dep.plusHours(1);
+
+        if (bookingRepository.existsBookingConflict(passenger, from, to)) {
+            return "redirect:/rides/search?error=booking_time_conflict";
+        }
+
         Booking booking = new Booking();
         booking.setRide(ride);
         booking.setPerson(passenger);
         booking.setStatus(BookingStatus.PENDING);
-        booking.setCreatedAt(now);
+        booking.setCreatedAt(LocalDateTime.now());
 
         bookingRepository.save(booking);
 
-        ride.setBookedSeats(ride.getBookedSeats() + 1);
+        ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
         rideRepository.save(ride);
 
         return "redirect:/rides/bookings?success";
@@ -77,13 +92,9 @@ public class BookingController {
         if (userDetails == null) return "redirect:/login";
 
         Booking booking = bookingRepository.findById(bookingId).orElse(null);
-
-        if (booking == null ||
-                booking.getPerson() == null ||
-                booking.getPerson().getId() == null ||
-                userDetails.person() == null ||
-                userDetails.person().getId() == null ||
-                !booking.getPerson().getId().equals(userDetails.person().getId())) {
+        if (booking == null || booking.getPerson() == null || booking.getPerson().getId() == null
+                || userDetails.person() == null || userDetails.person().getId() == null
+                || !booking.getPerson().getId().equals(userDetails.person().getId())) {
             return "redirect:/rides/bookings?error=unauthorized";
         }
 
@@ -92,14 +103,12 @@ public class BookingController {
             return "redirect:/rides/bookings?error=invalid_ride";
         }
 
-        LocalDateTime now = LocalDateTime.now();
         LocalDateTime cutoff = ride.getDepartureTime().minusMinutes(10);
-
-        if (!now.isBefore(cutoff)) {
+        if (!LocalDateTime.now().isBefore(cutoff)) {
             return "redirect:/rides/bookings?error=too_late_to_cancel";
         }
 
-        ride.setBookedSeats(Math.max(0, ride.getBookedSeats() - 1));
+        ride.setSeatsAvailable(ride.getSeatsAvailable() + 1);
         rideRepository.save(ride);
 
         bookingRepository.delete(booking);

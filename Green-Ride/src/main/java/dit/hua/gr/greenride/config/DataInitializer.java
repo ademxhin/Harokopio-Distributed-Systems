@@ -63,11 +63,8 @@ public class DataInitializer {
         List<Ride> rides = new ArrayList<>();
         for (Person driver : drivers) {
             for (int i = 0; i < 2; i++) {
-                Ride ride = createRide(
-                        driver,
-                        randomDepartureBetween5And120Minutes(),
-                        1 + random.nextInt(4)
-                );
+                int seats = 2 + random.nextInt(3);
+                Ride ride = createRide(driver, randomDepartureBetween5And120Minutes(), seats);
                 rides.add(rideRepository.save(ride));
             }
         }
@@ -81,7 +78,7 @@ public class DataInitializer {
             for (Ride ride : rides) {
                 if (created >= bookingsToCreate) break;
 
-                boolean ok = tryCreateApprovedBookingLeavingOneSeatFree(passenger, ride);
+                boolean ok = tryCreateConfirmedBooking(passenger, ride);
                 if (ok) created++;
             }
         }
@@ -89,24 +86,25 @@ public class DataInitializer {
         System.out.println("Dummy data initialized successfully");
     }
 
-    private boolean tryCreateApprovedBookingLeavingOneSeatFree(Person passenger, Ride ride) {
+    private boolean tryCreateConfirmedBooking(Person passenger, Ride ride) {
 
         Ride managedRide = rideRepository.findById(ride.getId()).orElse(null);
         if (managedRide == null) return false;
 
-        int available = managedRide.getSeatsAvailable() - managedRide.getBookedSeats();
+        if (managedRide.getSeatsAvailable() <= 1) {
+            return false;
+        }
 
-        if (available <= 1) return false;
-
-        if (bookingRepository.existsByRideAndPerson(managedRide, passenger)) return false;
+        if (bookingRepository.existsByRideAndPerson(managedRide, passenger)) {
+            return false;
+        }
 
         Booking b = new Booking();
         b.setPerson(passenger);
         b.setRide(managedRide);
         b.setStatus(BookingStatus.APPROVED);
         b.setCreatedAt(LocalDateTime.now());
-
-        managedRide.setBookedSeats(managedRide.getBookedSeats() + 1);
+        managedRide.setSeatsAvailable(managedRide.getSeatsAvailable() - 1);
 
         rideRepository.save(managedRide);
         bookingRepository.save(b);
@@ -156,13 +154,13 @@ public class DataInitializer {
         return created;
     }
 
-    private Ride createRide(Person driver, LocalDateTime departure, int seatsTotal) {
+    private Ride createRide(Person driver, LocalDateTime departure, int seats) {
         Ride ride = new Ride();
         ride.setDriver(driver);
         ride.setStartLocation(randomAthensLocation());
         ride.setEndLocation(randomAthensLocationDifferent(ride.getStartLocation()));
         ride.setDepartureTime(departure);
-        ride.setSeatsAvailable(seatsTotal);
+        ride.setSeatsAvailable(seats);
         ride.setBookedSeats(0);
         return ride;
     }
@@ -177,26 +175,10 @@ public class DataInitializer {
     }
 
     private static final String[] ATHENS_LOCATIONS = {
-            "Syntagma",
-            "Omonia",
-            "Monastiraki",
-            "Kolonaki",
-            "Exarchia",
-            "Kifisia",
-            "Marousi",
-            "Chalandri",
-            "Peristeri",
-            "Ilion",
-            "Nea Smyrni",
-            "Palaio Faliro",
-            "Glyfada",
-            "Voula",
-            "Alimos",
-            "Zografou",
-            "Kaisariani",
-            "Vyronas",
-            "Petralona",
-            "Piraeus"
+            "Syntagma","Omonia","Monastiraki","Kolonaki","Exarchia",
+            "Kifisia","Marousi","Chalandri","Peristeri","Ilion",
+            "Nea Smyrni","Palaio Faliro","Glyfada","Voula","Alimos",
+            "Zografou","Kaisariani","Vyronas","Petralona","Piraeus"
     };
 
     private String randomAthensLocation() {
@@ -205,9 +187,7 @@ public class DataInitializer {
 
     private String randomAthensLocationDifferent(String from) {
         String to;
-        do {
-            to = randomAthensLocation();
-        } while (to.equals(from));
+        do { to = randomAthensLocation(); } while (to.equals(from));
         return to;
     }
 }
