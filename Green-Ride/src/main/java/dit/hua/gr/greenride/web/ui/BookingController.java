@@ -62,14 +62,6 @@ public class BookingController {
             return "redirect:/rides/search?error=already_booked";
         }
 
-        LocalDateTime dep = ride.getDepartureTime();
-        LocalDateTime from = dep.minusHours(1);
-        LocalDateTime to = dep.plusHours(1);
-
-        if (bookingRepository.existsBookingConflict(passenger, from, to)) {
-            return "redirect:/rides/search?error=booking_time_conflict";
-        }
-
         Booking booking = new Booking();
         booking.setRide(ride);
         booking.setPerson(passenger);
