@@ -132,7 +132,7 @@ public class BookingRestController {
         if (ride.getDepartureTime() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ride has no departure time");
         }
-        if (ride.getDepartureTime().isBefore(nowPlus10())) {
+        if (!ride.getDepartureTime().isAfter(nowPlus10())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Too late to book this ride");
         }
 
@@ -140,7 +140,7 @@ public class BookingRestController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Already booked this ride");
         }
 
-        if (ride.getSeatsAvailable() <= 0) {
+        if (ride.getAvailableSeats() <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No available seats");
         }
 
@@ -149,10 +149,8 @@ public class BookingRestController {
         booking.setPerson(passenger);
         booking.setStatus(BookingStatus.PENDING);
         booking.setCreatedAt(LocalDateTime.now());
-
         bookingRepository.save(booking);
-
-        ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
+        ride.setBookedSeats(ride.getBookedSeats() + 1);
         rideRepository.save(ride);
 
         return toBookingResponse(booking);
@@ -192,9 +190,8 @@ public class BookingRestController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Too late to cancel this booking");
         }
 
-        ride.setSeatsAvailable(ride.getSeatsAvailable() + 1);
+        ride.setBookedSeats(Math.max(0, ride.getBookedSeats() - 1));
         rideRepository.save(ride);
-
         bookingRepository.delete(booking);
     }
 }

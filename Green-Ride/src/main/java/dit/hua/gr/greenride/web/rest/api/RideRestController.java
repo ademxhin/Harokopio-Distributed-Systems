@@ -81,6 +81,10 @@ public class RideRestController {
 
     private PersonSummary toPersonSummary(Person p) {
         if (p == null) return null;
+
+        Double avg = ratingRepository.getAverageRatingForPerson(p.getId());
+        if (avg == null) avg = 0.0;
+
         return new PersonSummary(
                 p.getId(),
                 p.getUserId(),
@@ -88,7 +92,7 @@ public class RideRestController {
                 p.getLastName(),
                 p.getEmailAddress(),
                 p.getPersonType(),
-                p.getAverageRating()
+                avg
         );
     }
 
@@ -358,10 +362,6 @@ public class RideRestController {
         rating.setScore(request.score());
 
         Rating saved = ratingRepository.save(rating);
-
-        targetPerson.getRatings().add(saved);
-        personRepository.save(targetPerson);
-
         return toRatingResponse(saved);
     }
 

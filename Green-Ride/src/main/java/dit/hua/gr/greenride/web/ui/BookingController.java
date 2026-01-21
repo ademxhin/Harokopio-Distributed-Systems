@@ -36,13 +36,16 @@ public class BookingController {
         if (userDetails == null) return "redirect:/login";
 
         Ride ride = rideRepository.findById(rideId).orElse(null);
-        if (ride == null || ride.getSeatsAvailable() <= 0) {
-            return "redirect:/rides/search?error=ride-not-found-or-full";
+        if (ride == null) {
+            return "redirect:/rides/search?error=ride-not-found";
+        }
+
+        if (ride.getAvailableSeats() <= 0) {
+            return "redirect:/rides/search?error=ride-full";
         }
 
         LocalDateTime now = LocalDateTime.now();
-
-        if (!ride.getDepartureTime().isAfter(now)) {
+        if (ride.getDepartureTime() == null || !ride.getDepartureTime().isAfter(now.plusMinutes(10))) {
             return "redirect:/rides/search?error=too_late";
         }
 
@@ -60,7 +63,7 @@ public class BookingController {
 
         bookingRepository.save(booking);
 
-        ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
+        ride.setBookedSeats(ride.getBookedSeats() + 1);
         rideRepository.save(ride);
 
         return "redirect:/rides/bookings?success";
@@ -85,14 +88,18 @@ public class BookingController {
         }
 
         Ride ride = booking.getRide();
-        LocalDateTime now = LocalDateTime.now();
+        if (ride == null || ride.getDepartureTime() == null) {
+            return "redirect:/rides/bookings?error=invalid_ride";
+        }
 
+        LocalDateTime now = LocalDateTime.now();
         LocalDateTime cutoff = ride.getDepartureTime().minusMinutes(10);
+
         if (!now.isBefore(cutoff)) {
             return "redirect:/rides/bookings?error=too_late_to_cancel";
         }
 
-        ride.setSeatsAvailable(ride.getSeatsAvailable() + 1);
+        ride.setBookedSeats(Math.max(0, ride.getBookedSeats() - 1));
         rideRepository.save(ride);
 
         bookingRepository.delete(booking);

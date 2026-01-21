@@ -81,7 +81,7 @@ public class DataInitializer {
             for (Ride ride : rides) {
                 if (created >= bookingsToCreate) break;
 
-                boolean ok = tryCreateConfirmedBooking(passenger, ride);
+                boolean ok = tryCreateApprovedBookingLeavingOneSeatFree(passenger, ride);
                 if (ok) created++;
             }
         }
@@ -89,22 +89,28 @@ public class DataInitializer {
         System.out.println("Dummy data initialized successfully");
     }
 
-    private boolean tryCreateConfirmedBooking(Person passenger, Ride ride) {
-        if (ride.getSeatsAvailable() <= 0) {
-            return false;
-        }
+    private boolean tryCreateApprovedBookingLeavingOneSeatFree(Person passenger, Ride ride) {
+
+        Ride managedRide = rideRepository.findById(ride.getId()).orElse(null);
+        if (managedRide == null) return false;
+
+        int available = managedRide.getSeatsAvailable() - managedRide.getBookedSeats();
+
+        if (available <= 1) return false;
+
+        if (bookingRepository.existsByRideAndPerson(managedRide, passenger)) return false;
 
         Booking b = new Booking();
         b.setPerson(passenger);
-        b.setRide(ride);
+        b.setRide(managedRide);
         b.setStatus(BookingStatus.APPROVED);
         b.setCreatedAt(LocalDateTime.now());
 
-        ride.setSeatsAvailable(ride.getSeatsAvailable() - 1);
-        ride.setBookedSeats(ride.getBookedSeats() + 1);
+        managedRide.setBookedSeats(managedRide.getBookedSeats() + 1);
 
-        rideRepository.save(ride);
+        rideRepository.save(managedRide);
         bookingRepository.save(b);
+
         return true;
     }
 
@@ -150,20 +156,19 @@ public class DataInitializer {
         return created;
     }
 
-    private Ride createRide(Person driver, LocalDateTime departure, int seats) {
+    private Ride createRide(Person driver, LocalDateTime departure, int seatsTotal) {
         Ride ride = new Ride();
         ride.setDriver(driver);
         ride.setStartLocation(randomAthensLocation());
         ride.setEndLocation(randomAthensLocationDifferent(ride.getStartLocation()));
         ride.setDepartureTime(departure);
-        ride.setSeatsAvailable(seats); // remaining seats
+        ride.setSeatsAvailable(seatsTotal);
         ride.setBookedSeats(0);
-
         return ride;
     }
 
     private LocalDateTime randomDepartureBetween5And120Minutes() {
-        int minutes = 5 + random.nextInt(116); // 5–120
+        int minutes = 5 + random.nextInt(116);
         return LocalDateTime.now().plusMinutes(minutes);
     }
 
